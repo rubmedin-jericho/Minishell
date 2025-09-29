@@ -1,15 +1,21 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+/*----LIBRERY----*/
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
 # include <signal.h>
 # include <readline/readline.h>
 # include <readline/history.h>
-#define COLOR_RED "\x1b[31m"
-#define COLOR_RESET "\x1b[0m"
-#define COLOR_GOLD "\x1b[38;5;220m"
+
+/*----COLORS----*/
+# define COLOR_RED "\x1b[31m"
+# define COLOR_RESET "\x1b[0m"
+# define COLOR_GOLD "\x1b[38;5;220m"
+
+/*----FUNCTIONS----*/
+int	ft_strcmp(const char *s1, const char *s2);
 
 #define MINISHELL_BANNER COLOR_GOLD "\n\
                  $$\\           $$\\    $$\\    $$\\                 $$\\ $$\\ \n\

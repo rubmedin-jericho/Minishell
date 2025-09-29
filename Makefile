@@ -4,7 +4,8 @@ CFLAGS = -Wall -Werror -Wextra #No borrar porque estas flags se compilan con los
 NAME = minishell
 HEADER = minishell.h
 SRCS = minishell_main.c \
-	   minishell_parser.c
+	   minishell_parser.c \
+	   minishell_utils.c
 OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
