@@ -23,8 +23,11 @@ int	main(void)
 		if(str)
 			add_history(str);
 		printf("%s\n", str);
-		free(str);
+		//free(str);
+		if (!str)
+			break;
 	}
+	rl_clear_history();//Borra historial completo y libera la memoria
 	return (0);
 }
 
