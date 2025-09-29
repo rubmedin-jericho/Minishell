@@ -35,8 +35,9 @@ int	main(void)
 		}
 		contador++;
 		printf("%s\n", str);
+		free(str);
 	}
-	rl_clear_history();
+	rl_clear_history();//Borra historial completo y libera la memoria
 	return (0);
 }
 
