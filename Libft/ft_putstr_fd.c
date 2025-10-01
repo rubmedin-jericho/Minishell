@@ -1,23 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell_utils.c                                  :+:      :+:    :+:   */
+/*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rubmedin <rubmedin@student.42barcelona.co  +#+  +:+       +#+        */
+/*   By: mregada- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/29 19:22:27 by rubmedin          #+#    #+#             */
-/*   Updated: 2025/09/29 19:25:02 by rubmedin         ###   ########.fr       */
+/*   Created: 2024/10/09 17:26:29 by mregada-          #+#    #+#             */
+/*   Updated: 2024/11/14 19:42:59 by mregada-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include <unistd.h>
+#include "libft.h"
 
-#include "minishell.h"
-/*
-int	ft_strcmp(const char *s1, const char *s2)
+int	ft_putstr_fd(char *s, int fd)
 {
+	int	len;
 	int	i;
 
+	len = ft_strlen(s);
 	i = 0;
-	while (s1[i] == s2[i] && s1[i] != '\0')
+	while (i < len)
+	{
+		if ((write (fd, &s[i], 1)) == -1)
+			return (-1);
 		i++;
-	return (s1[i] - s2[i]);
-}*/
+	}
+	return (0);
+}
