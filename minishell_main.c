@@ -12,6 +12,35 @@
 
 #include "minishell.h"
 
+void ft_command(char *str) /*FUNCION DE PRUEBA - para poner las funciones*/
+{
+	char *pwd;
+
+	if(!ft_strcmp(str, "pwd"))
+	{
+		pwd = getcwd(NULL, 0);
+		printf("%s\n", pwd);
+	}
+}
+
+static int	 ft_getout(char *str, int *contador)
+{
+	if (!str)
+		return (1);
+	else if (!ft_strcmp(str, "exit"))
+		return (1);
+	else if (str)
+		add_history(str);
+	if (*contador == 3)
+	{
+		*contador = 0;
+		rl_clear_history();
+		add_history(str);
+	}
+	*contador += 1;
+	return (0);
+}
+
 int	main(void)
 {
 	char *str;
@@ -22,19 +51,10 @@ int	main(void)
 	while(1)
 	{
 		str = readline("minishell> ");
-		if (!str)
+		if (ft_getout(str, &contador))
 			break;
-		if (str)
-			add_history(str);
-		if (!ft_strcmp(str, "exit"))
-			break;
-		if (contador == 100)
-		{
-			contador = 0;
-			rl_clear_history();
-		}
-		contador++;
-		printf("%s\n", str);
+		ft_command(str);
+		//printf("%s\n", str);
 		free(str);
 	}
 	rl_clear_history();//Borra historial completo y libera la memoria

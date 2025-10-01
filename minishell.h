@@ -11,8 +11,8 @@
 
 /*----COLORS----*/
 # define COLOR_RED "\x1b[31m"
-# define COLOR_RESET "\x1b[0m"
 # define COLOR_GOLD "\x1b[38;5;220m"
+# define COLOR_RESET "\x1b[0m"
 
 /*----FUNCTIONS----*/
 int	ft_strcmp(const char *s1, const char *s2);
