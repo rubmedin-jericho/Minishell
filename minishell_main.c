@@ -11,12 +11,13 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "Libft/libft.h"
 
 void ft_command(char *str) /*FUNCION DE PRUEBA - para poner las funciones*/
 {
 	char *pwd;
 
-	if(!ft_strcmp(str, "pwd"))
+	if(ft_strcmp(str, "pwd") <= 0)
 	{
 		pwd = getcwd(NULL, 0);
 		printf("%s\n", pwd);

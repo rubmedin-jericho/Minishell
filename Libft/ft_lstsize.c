@@ -1,23 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell_utils.c                                  :+:      :+:    :+:   */
+/*   ft_lstsize.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rubmedin <rubmedin@student.42barcelona.co  +#+  +:+       +#+        */
+/*   By: mregada- <mregada-@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/29 19:22:27 by rubmedin          #+#    #+#             */
-/*   Updated: 2025/09/29 19:25:02 by rubmedin         ###   ########.fr       */
+/*   Created: 2025/02/04 15:27:50 by mregada-          #+#    #+#             */
+/*   Updated: 2025/02/04 16:59:01 by mregada-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-/*
-int	ft_strcmp(const char *s1, const char *s2)
-{
-	int	i;
+#include "libft.h"
 
-	i = 0;
-	while (s1[i] == s2[i] && s1[i] != '\0')
-		i++;
-	return (s1[i] - s2[i]);
-}*/
+int	ft_lstsize(t_list *lst)
+{
+	int	counter;
+
+	counter = 0;
+	while (lst != NULL)
+	{
+		counter++;
+		lst = lst->next;
+	}
+	return (counter);
+}

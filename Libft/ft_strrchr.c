@@ -1,23 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell_utils.c                                  :+:      :+:    :+:   */
+/*   ft_strrchr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rubmedin <rubmedin@student.42barcelona.co  +#+  +:+       +#+        */
+/*   By: mregada- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/29 19:22:27 by rubmedin          #+#    #+#             */
-/*   Updated: 2025/09/29 19:25:02 by rubmedin         ###   ########.fr       */
+/*   Created: 2024/10/02 14:27:31 by mregada-          #+#    #+#             */
+/*   Updated: 2024/10/11 20:49:35 by mregada-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "libft.h"
 
-#include "minishell.h"
-/*
-int	ft_strcmp(const char *s1, const char *s2)
+char	*ft_strrchr(const char *str, int c)
 {
 	int	i;
 
 	i = 0;
-	while (s1[i] == s2[i] && s1[i] != '\0')
+	while (str[i] != '\0')
 		i++;
-	return (s1[i] - s2[i]);
-}*/
+	if (c == '\0')
+	{
+		return ((char *)&str[i]);
+	}
+	while (i >= 0)
+	{
+		if (str[i] == (char)c)
+			return ((char *)&str[i]);
+		i--;
+	}
+	return (NULL);
+}

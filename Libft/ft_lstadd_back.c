@@ -1,23 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell_utils.c                                  :+:      :+:    :+:   */
+/*   ft_lstadd_back.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rubmedin <rubmedin@student.42barcelona.co  +#+  +:+       +#+        */
+/*   By: mregada- <mregada-@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/29 19:22:27 by rubmedin          #+#    #+#             */
-/*   Updated: 2025/09/29 19:25:02 by rubmedin         ###   ########.fr       */
+/*   Created: 2025/02/04 17:43:33 by mregada-          #+#    #+#             */
+/*   Updated: 2025/02/04 18:02:12 by mregada-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-/*
-int	ft_strcmp(const char *s1, const char *s2)
-{
-	int	i;
+#include "libft.h"
 
-	i = 0;
-	while (s1[i] == s2[i] && s1[i] != '\0')
-		i++;
-	return (s1[i] - s2[i]);
-}*/
+void	ft_lstadd_back(t_list	**lst, t_list	*new)
+{
+	t_list	*index;
+
+	if (!lst || !new)
+		return ;
+	if (!*lst)
+	{
+		*lst = new;
+		return ;
+	}
+	index = *lst;
+	while (index->next)
+	{
+		index = index->next;
+	}
+	index->next = new;
+}

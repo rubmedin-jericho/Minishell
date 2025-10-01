@@ -1,23 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell_utils.c                                  :+:      :+:    :+:   */
+/*   ft_striteri.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rubmedin <rubmedin@student.42barcelona.co  +#+  +:+       +#+        */
+/*   By: mregada- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/29 19:22:27 by rubmedin          #+#    #+#             */
-/*   Updated: 2025/09/29 19:25:02 by rubmedin         ###   ########.fr       */
+/*   Created: 2024/10/09 16:53:58 by mregada-          #+#    #+#             */
+/*   Updated: 2024/10/09 17:02:20 by mregada-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-/*
-int	ft_strcmp(const char *s1, const char *s2)
+void	ft_striteri(char *s, void (*f)(unsigned int i, char *str))
 {
-	int	i;
+	unsigned int	i;
 
 	i = 0;
-	while (s1[i] == s2[i] && s1[i] != '\0')
+	while (s[i] != '\0')
+	{
+		(*f)(i, &s[i]);
 		i++;
-	return (s1[i] - s2[i]);
-}*/
+	}
+}

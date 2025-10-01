@@ -1,23 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell_utils.c                                  :+:      :+:    :+:   */
+/*   ft_bzero.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rubmedin <rubmedin@student.42barcelona.co  +#+  +:+       +#+        */
+/*   By: mregada- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/29 19:22:27 by rubmedin          #+#    #+#             */
-/*   Updated: 2025/09/29 19:25:02 by rubmedin         ###   ########.fr       */
+/*   Created: 2024/09/26 17:07:33 by mregada-          #+#    #+#             */
+/*   Updated: 2025/02/08 13:19:33 by mregada-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "libft.h"
 
-#include "minishell.h"
-/*
-int	ft_strcmp(const char *s1, const char *s2)
+void	ft_bzero(void *str, size_t c)
 {
-	int	i;
+	size_t		i;
+	char		*pt_str;
 
+	pt_str = (char *)str;
 	i = 0;
-	while (s1[i] == s2[i] && s1[i] != '\0')
+	while (i < c)
+	{
+		pt_str[i] = 0;
 		i++;
-	return (s1[i] - s2[i]);
-}*/
+	}
+}
