@@ -10,7 +10,20 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-void lexer(t_cmd *token)
+#include "minishell.h"
+
+int	lexer(t_cmd *command, char *str)
 {
-	
+	int i;
+
+	i = 0;
+	command->tokens = ft_split(str, ' ');
+	if(!command->tokens)
+		return (1);
+	while(command->tokens[i])
+	{
+		printf("%s\n", command->tokens[i]);
+		i++;
+	}
+	return (0);
 }

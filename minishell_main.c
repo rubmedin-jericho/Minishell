@@ -11,13 +11,12 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "Libft/libft.h"
 
 void ft_command(char *str) /*FUNCION DE PRUEBA - para poner las funciones*/
 {
 	char *pwd;
 
-	if(ft_strcmp(str, "pwd") <= 0)
+	if(ft_strcmp(str, "pwd") == 0)
 	{
 		pwd = getcwd(NULL, 0);
 		printf("%s\n", pwd);
@@ -58,7 +57,7 @@ int	main(void)
 		str = readline("minishell> ");
 		if (ft_getout(str, &contador))
 			break;
-		if (lexer(token))
+		if (lexer(token, str))
 			break;
 		ft_command(str);
 		//printf("%s\n", str);

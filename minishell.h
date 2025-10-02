@@ -15,9 +15,6 @@
 # define COLOR_GOLD "\x1b[38;5;220m"
 # define COLOR_RESET "\x1b[0m"
 
-/*----FUNCTIONS----*/
-void lexer(t_cmd *token);
-
 /*----MACROS----*/
 #define MINISHELL_BANNER COLOR_GOLD "\n\
                  \\__|          \\__| $$$$$$\\  $$ |                $$ |$$ |\n\
@@ -34,22 +31,24 @@ void lexer(t_cmd *token);
  * ESTE ES UN ENUM PARA SELECCIONAR EL TIPO DE TOKEN QUE ES PARA EVITAR TENER MUCHOS IF COMPARANDO QUE ES.
  * FUNCION EN PROGRESO.
  * */
-enum type_token
+typedef enum s_token
 {
 	T_INPUT,
 	T_OUTPUT,
 	T_APPEND,
 	T_HEREDOC,
 	T_PIPE,
-};
+}			t_token;
 
 /*ESTA ES LA STRUCT PARA GUARDAR LOS TOKENS*/
 typedef struct s_cmd
 {
 	char	**tokens;
 	int		count;
-	enum lexer;
+	t_token	lexer;
 }			t_cmd;
 
-
+/*----FUNCTIONS----*/
+int	lexer(t_cmd *command, char *str);
+char	**ft_split(char const *s, char c);
 #endif
