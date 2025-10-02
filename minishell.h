@@ -16,10 +16,10 @@
 # define COLOR_RESET "\x1b[0m"
 
 /*----FUNCTIONS----*/
-//int	ft_strcmp(const char *s1, const char *s2); ## Esta en el libft
+void lexer(t_cmd *token);
 
+/*----MACROS----*/
 #define MINISHELL_BANNER COLOR_GOLD "\n\
-                 $$\\           $$\\    $$\\    $$\\                 $$\\ $$\\ \n\
                  \\__|          \\__| $$$$$$\\  $$ |                $$ |$$ |\n\
    $$$$$$\\$$$$\\  $$\\ $$$$$$$\\  $$\\ $$  __$$\\ $$$$$$$\\   $$$$$$\\  $$ |$$ |\n\
    $$  _$$  _$$\\ $$ |$$  __$$\\ $$ |$$ /  \\__|$$  __$$\\ $$  __$$\\ $$ |$$ |\n\
@@ -29,10 +29,26 @@
    \\__| \\__| \\__|\\__|\\__|  \\__|\\__|\\$$$$$$  |\\__|  \\__| \\_______|\\__|\\__|\n\
                                     \\______/                             \n\
 \n" COLOR_RESET
+
+/*----STRUCTS----
+ * ESTE ES UN ENUM PARA SELECCIONAR EL TIPO DE TOKEN QUE ES PARA EVITAR TENER MUCHOS IF COMPARANDO QUE ES.
+ * FUNCION EN PROGRESO.
+ * */
+enum type_token
+{
+	T_INPUT,
+	T_OUTPUT,
+	T_APPEND,
+	T_HEREDOC,
+	T_PIPE,
+};
+
+/*ESTA ES LA STRUCT PARA GUARDAR LOS TOKENS*/
 typedef struct s_cmd
 {
 	char	**tokens;
 	int		count;
+	enum lexer;
 }			t_cmd;
 
 

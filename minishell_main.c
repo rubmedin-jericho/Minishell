@@ -45,20 +45,28 @@ static int	 ft_getout(char *str, int *contador)
 int	main(void)
 {
 	char *str;
+	t_cmd *token;
 	int contador;
 
 	printf(MINISHELL_BANNER);
+	token = malloc(sizeof(t_cmd));
+	if(!token)
+		return (1);
 	contador = 0;
 	while(1)
 	{
 		str = readline("minishell> ");
 		if (ft_getout(str, &contador))
 			break;
+		if (lexer(token))
+			break;
 		ft_command(str);
 		//printf("%s\n", str);
 		free(str);
 	}
 	rl_clear_history();//Borra historial completo y libera la memoria
+	if(token)
+		free(token);
 	return (0);
 }
 
