@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void ft_command(char *str) /*FUNCION DE PRUEBA - para poner las funciones*/
+static int ft_command(char *str) /*FUNCION DE PRUEBA - para poner las funciones*/
 {
 	char *pwd;
 
@@ -21,13 +21,14 @@ void ft_command(char *str) /*FUNCION DE PRUEBA - para poner las funciones*/
 		pwd = getcwd(NULL, 0);
 		printf("%s\n", pwd);
 	}
+	else if (!ft_strcmp(str, "exit"))
+		return (1);
+	return (0);
 }
 
 static int	 ft_getout(char *str, int *contador)
 {
 	if (!str)
-		return (1);
-	else if (!ft_strcmp(str, "exit"))
 		return (1);
 	else if (str)
 		add_history(str);
@@ -59,7 +60,8 @@ int	main(void)
 			break;
 		if (lexer(token, str))
 			break;
-		ft_command(str);
+		if(ft_command(str))
+			break;
 		//printf("%s\n", str);
 		free(str);
 	}
