@@ -42,20 +42,33 @@ static int	 ft_getout(char *str, int *contador)
 	return (0);
 }
 
+static char **one_split(char *str)
+{
+	int iter;
+
+	iter = 0;
+	count_word = mini_count_word(str)
+	while(iter++ < count_word)
+	{
+		while()
+	}
+}
+
 int	main(void)
 {
 	char *str;
-	t_cmd *token;
+	t_token **tokens;
 	int contador;
+	int count_word;
 
 	printf(MINISHELL_BANNER);
-	token = malloc(sizeof(t_cmd));
 	if(!token)
 		return (1);
 	contador = 0;
 	while(1)
 	{
 		str = readline("minishell> ");
+		tokens = one_split(str);
 		if (ft_getout(str, &contador))
 			break;
 		if (lexer(token, str))
