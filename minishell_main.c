@@ -42,36 +42,21 @@ static int	 ft_getout(char *str, int *contador)
 	return (0);
 }
 
-static char **one_split(char *str)
-{
-	int iter;
-
-	iter = 0;
-	count_word = mini_count_word(str)
-	while(iter++ < count_word)
-	{
-		while()
-	}
-}
-
 int	main(void)
 {
 	char *str;
-	t_token **tokens;
+	t_token *tokens;
 	int contador;
-	int count_word;
 
 	printf(MINISHELL_BANNER);
-	if(!token)
-		return (1);
 	contador = 0;
+	tokens = NULL;
 	while(1)
 	{
 		str = readline("minishell> ");
-		tokens = one_split(str);
 		if (ft_getout(str, &contador))
 			break;
-		if (lexer(token, str))
+		if (lexer(&tokens, str))
 			break;
 		if(ft_command(str))
 			break;
@@ -79,8 +64,6 @@ int	main(void)
 		free(str);
 	}
 	rl_clear_history();//Borra historial completo y libera la memoria
-	if(token)
-		free(token);
 	return (0);
 }
 

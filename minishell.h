@@ -31,27 +31,25 @@
  * ESTE ES UN ENUM PARA SELECCIONAR EL TIPO DE TOKEN QUE ES PARA EVITAR TENER MUCHOS IF COMPARANDO QUE ES.
  * FUNCION EN PROGRESO.
  * */
-typedef enum s_type
+typedef enum	s_type
 {
-	T_INPUT,
-	T_OUTPUT,
-	T_APPEND,
-	T_HEREDOC,
-	T_PIPE,
-}			t_type;
+				T_INPUT,
+				T_OUTPUT,
+				T_APPEND,
+				T_HEREDOC,
+				T_PIPE,
+}				t_type;
 
 /*ESTA ES LA STRUCT PARA GUARDAR LOS TOKENS*/
-typedef struct s_token
+typedef struct	s_token
 {
-	char	*data;
-	int		count;
-	t_type	lexer;
-}			t_token;
+	char		*data;
+	t_type		lexer;
+	struct 		s_token *next;
+}				t_token;
 
 /*----FUNCTIONS----*/
-int		lexer(t_cmd *command, char *str);
+int		lexer(t_token **l_tokens, char *str);
 char	**ft_split(char const *s, char c);
-int		mini_count_word(char const *s, char c);
-int		mini_count_letters_comis(char const *s, char c);
 char	*asignar_palabra(const char *s, int len);
 #endif
