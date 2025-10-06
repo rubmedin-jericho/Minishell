@@ -3,11 +3,13 @@ FLAGS = -Wall -Werror -Wextra -lreadline -lncurses
 CFLAGS = -Wall -Werror -Wextra ## -fsanitize=address -fsanitize=leak ## para analisis de leaks #No borrar porque estas flags se compilan con los .o porque si intentas compilar con las flag del readline da error.
 NAME = minishell
 LIBFT_DIR = Libft
+B_DIR = builtins
 HEADER = minishell.h $(LIBFT_DIR)/libft.h
 
 SRCS = minishell_main.c \
 	   minishell_parser.c \
-	   minishell_utils.c
+	   minishell_utils.c \
+	   $(B_DIR)/ft_echo.c
 	   
 LIBFT_SRCS = $(LIBFT_DIR)/ft_isalpha.c $(LIBFT_DIR)/ft_isdigit.c \
 	$(LIBFT_DIR)/ft_isalnum.c $(LIBFT_DIR)/ft_strlen.c $(LIBFT_DIR)/ft_isascii.c \

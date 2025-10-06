@@ -17,6 +17,8 @@
 
 /*----FUNCTIONS----*/
 //int	ft_strcmp(const char *s1, const char *s2); ## Esta en el libft
+int	ft_echo(char *content, int n);
+void	free2d(char **arr);
 
 #define MINISHELL_BANNER COLOR_GOLD "\n\
                  $$\\           $$\\    $$\\    $$\\                 $$\\ $$\\ \n\

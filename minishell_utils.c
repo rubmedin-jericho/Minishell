@@ -21,3 +21,17 @@ int	ft_strcmp(const char *s1, const char *s2)
 		i++;
 	return (s1[i] - s2[i]);
 }*/
+
+void	free2d(char **arr)
+{
+	int	i;
+	
+	i = 0;
+	if (!arr)
+		return ;
+	while (arr[i])
+	{
+		if (arr[i])
+			free(arr[i++]);
+	}
+}

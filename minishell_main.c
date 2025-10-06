@@ -17,7 +17,7 @@ void ft_command(char *str) /*FUNCION DE PRUEBA - para poner las funciones*/
 {
 	char *pwd;
 
-	if(ft_strcmp(str, "pwd") <= 0)
+	if(ft_strcmp(str, "pwd") == 0)
 	{
 		pwd = getcwd(NULL, 0);
 		printf("%s\n", pwd);
@@ -45,6 +45,7 @@ static int	 ft_getout(char *str, int *contador)
 int	main(void)
 {
 	char *str;
+	char **splited;
 	int contador;
 
 	printf(MINISHELL_BANNER);
@@ -52,11 +53,25 @@ int	main(void)
 	while(1)
 	{
 		str = readline("minishell> ");
-		if (ft_getout(str, &contador))
+		splited = ft_split(str, ' ');
+		if (ft_getout(splited[0], &contador))
 			break;
-		ft_command(str);
+		//ft_command(splited[0]);
 		//printf("%s\n", str);
-		free(str);
+		
+		if (ft_strcmp(splited[0],"echo") == 0)
+		{
+			int n = 0;
+			if (ft_strcmp(splited[1],"-n") == 0)
+			{
+				n = 1;
+				ft_echo(splited[2],n);
+			}
+			else
+				ft_echo(splited[1],n);
+			free2d(splited);
+		}
+		free(splited);
 	}
 	rl_clear_history();//Borra historial completo y libera la memoria
 	return (0);
