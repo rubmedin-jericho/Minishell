@@ -6,7 +6,7 @@
 /*   By: rubmedin <rubmedin@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 20:30:29 by rubmedin          #+#    #+#             */
-/*   Updated: 2025/10/02 20:32:07 by rubmedin         ###   ########.fr       */
+/*   Updated: 2025/10/07 18:46:18 by rubmedin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ char	*asignar_palabra(const char *s, int len)
 	palabra[j] = '\0';
 	return (palabra);
 }
-int	mini_count_word(char const *s, char c)
+int	ft_count_word(char const *s, char c)
 {
 	int	num;
 	int	palabra_flag;

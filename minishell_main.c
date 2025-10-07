@@ -6,7 +6,7 @@
 /*   By: rubmedin <rubmedin@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:25:43 by rubmedin          #+#    #+#             */
-/*   Updated: 2025/09/29 19:52:48 by rubmedin         ###   ########.fr       */
+/*   Updated: 2025/10/07 19:36:20 by rubmedin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,18 +50,18 @@ int	main(void)
 
 	printf(MINISHELL_BANNER);
 	contador = 0;
-	tokens = NULL;
 	while(1)
 	{
-		str = readline("minishell> ");
+		tokens = NULL;
+		str = readline(COLOR_GOLD "[🐚" COLOR_MAGENTA "MiniConcha$" COLOR_GOLD "🐚>]" COLOR_RESET);
 		if (ft_getout(str, &contador))
 			break;
 		if (lexer(&tokens, str))
 			break;
 		if(ft_command(str))
 			break;
-		//printf("%s\n", str);
 		free(str);
+		free(tokens);
 	}
 	rl_clear_history();//Borra historial completo y libera la memoria
 	return (0);
