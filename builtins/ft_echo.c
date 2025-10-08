@@ -1,17 +1,17 @@
 #include "../minishell.h"
 #include <stdio.h>
 
-int	ft_echo(char *content, int n)
+int	ft_echo(char *content, char *flag)
 {
 	if (content == NULL)
 	{
-		if (n == 1)
+		if (ft_strcmp(flag, "-n") == 0)
 			return (0);
 		printf("\n");
 	}
 	else
 	{
-		if (n == 1)
+		if (ft_strcmp(flag, "-n") == 0)
 		{
 			printf("%s", content);
 			return (0);
