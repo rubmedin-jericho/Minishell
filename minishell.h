@@ -40,9 +40,10 @@
  * */
 typedef enum	s_type
 {
-				T_INPUT,
+				T_STRING,
 				T_OUTPUT,
 				T_APPEND,
+				T_COMMAND,
 				T_HEREDOC,
 				T_PIPE,
 }				t_type;
@@ -51,6 +52,7 @@ typedef enum	s_type
 typedef struct	s_token
 {
 	char		*data;
+	char		*quote_data;
 	t_type		lexer;
 	struct 		s_token *next;
 }				t_token;
@@ -63,4 +65,5 @@ void	print_list(t_token **l_tokens);
 void	init_list_token(t_token **tokens, char *str, int count);
 int		ft_count_word(char const *s, char c);
 int		contador_letras_comis(char const *s, char c);
+int		getype(char *str, char **enp);
 #endif

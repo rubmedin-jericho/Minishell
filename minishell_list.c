@@ -38,7 +38,7 @@ static t_token *create_token(char *str)
 	if(!buff_tmp)
 		return NULL;
 	buff_tmp->data = ft_strdup(str);
-	buff_tmp->lexer = T_OUTPUT;
+	buff_tmp->lexer = getype(data); 
 	return (buff_tmp);
 }
 
