@@ -1,28 +1,71 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mregada- <mregada-@student.42barcelon      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/08 18:21:58 by mregada-          #+#    #+#             */
+/*   Updated: 2025/10/08 18:22:00 by mregada-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 #include <stdio.h>
-
-int	ft_echo(char *content, char *flag)
+/*Modifico echo para que reciba todo como argumentos,
+se anade control de -nnn y -n -n
+*/
+static void	printContent(char **args, int i)
 {
-	if (content == NULL)
+	while (args[i + 1])
 	{
-		if (ft_strcmp(flag, "-n") == 0)
+		printf("%s ", args[i]);
+		i++;
+	}
+	printf("%s", args[i]);
+}
+
+static int	n_flag(char *args)
+{
+	int	i;
+	
+	i = 0;
+	if (!args || args[i] != '-')
+		return (0);
+	i++;
+	while (args[i])
+	{
+		if(args[i] != 'n')
 			return (0);
+		i++;
+	}
+	return(1);
+}
+
+int	ft_echo(char **args)
+{
+	int	i;
+	int	line;
+
+	i = 0;
+	line = 1;
+	if (!args)
+	{
 		printf("\n");
+		return (0);
+		
 	}
-	else
+	while (n_flag(args[i]) && args[i])
 	{
-		if (ft_strcmp(flag, "-n") == 0)
-		{
-			printf("%s", content);
-			return (0);
-		}
-		printf("%s\n", content);
+		line = 0;
+		i++;
 	}
+	printContent(args, i);
+	if (line)
+		printf("\n");
 	return (0);
 }
 /*
-Este echo de momento recibe el flag -n como int, 
-en funcion de como se reciban los flags se cambia
 dejo prueba con main debajo: 
 static int	 ft_getout(char *str, int *contador)
 {
@@ -56,19 +99,11 @@ int	main(void)
 		splited = ft_split(str, ' ');
 		if (ft_getout(splited[0], &contador))
 			break;
-		//ft_command(splited[0]);
-		//printf("%s\n", str);
 		
 		if (ft_strcmp(splited[0],"echo") == 0)
 		{
-			int n = 0;
-			if (ft_strcmp(splited[1],"-n") == 0)
-			{
-				n = 1;
-				ft_echo(splited[2],n);
-			}
-			else
-				ft_echo(splited[1],n);
+			splited++;
+			ft_echo(splitted);
 			free2d(splited);
 		}
 		free(splited);

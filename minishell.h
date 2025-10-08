@@ -63,6 +63,6 @@ void	print_list(t_token **l_tokens);
 void	init_list_token(t_token **tokens, char *str, int count);
 int		ft_count_word(char const *s, char c);
 int		contador_letras_comis(char const *s, char c);
-int		ft_echo(char *content, int n);
+int		ft_echo(char **args);
 void	free2d(char **arr);
 #endif
