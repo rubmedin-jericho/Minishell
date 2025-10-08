@@ -22,6 +22,7 @@ int	ft_strcmp(const char *s1, const char *s2)
 	return (s1[i] - s2[i]);
 }*/
 
+/**** Free de array de 2 dimensiones ****/
 void	free2d(char **arr)
 {
 	int	i;
