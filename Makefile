@@ -1,5 +1,5 @@
 CC = cc
-FLAGS = -Wall -Werror -Wextra -lreadline -lncurses
+READLINE = -lreadline -lncurses
 CFLAGS = -Wall -Werror -Wextra ## -fsanitize=address -fsanitize=leak ## para analisis de leaks #No borrar porque estas flags se compilan con los .o porque si intentas compilar con las flag del readline da error.
 NAME = minishell
 LIBFT_DIR = Libft
@@ -8,6 +8,8 @@ HEADER = minishell.h $(LIBFT_DIR)/libft.h
 
 SRCS = minishell_main.c \
 	   minishell_parser.c \
+	   minishell_lexer.c \
+	   minishell_list.c \
 	   minishell_utils.c \
 	   $(B_DIR)/ft_echo.c
 	   
@@ -32,7 +34,7 @@ LIBFT_OBJS = $(LIBFT_SRCS:.c=.o)
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT_OBJS) Makefile $(HEADRS) ## Si cambia el Makefile o los headers, volver a compilar 
-	$(CC) $(FLAGS) $(OBJS) $(LIBFT_OBJS) -o $(NAME)
+	$(CC) $(FLAGS) $(OBJS) $(LIBFT_OBJS) -o $(NAME) $(READLINE)
 
 %.o: %.c Makefile $(HEADER)
 	$(CC) $(CFLAGS) -c $< -o $@

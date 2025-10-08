@@ -6,14 +6,13 @@
 /*   By: rubmedin <rubmedin@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:25:43 by rubmedin          #+#    #+#             */
-/*   Updated: 2025/09/29 19:52:48 by rubmedin         ###   ########.fr       */
+/*   Updated: 2025/10/07 19:36:20 by rubmedin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "Libft/libft.h"
 
-void ft_command(char *str) /*FUNCION DE PRUEBA - para poner las funciones*/
+static int ft_command(char *str) /*FUNCION DE PRUEBA - para poner las funciones*/
 {
 	char *pwd;
 
@@ -22,13 +21,14 @@ void ft_command(char *str) /*FUNCION DE PRUEBA - para poner las funciones*/
 		pwd = getcwd(NULL, 0);
 		printf("%s\n", pwd);
 	}
+	else if (!ft_strcmp(str, "exit"))
+		return (1);
+	return (0);
 }
 
 static int	 ft_getout(char *str, int *contador)
 {
 	if (!str)
-		return (1);
-	else if (!ft_strcmp(str, "exit"))
 		return (1);
 	else if (str)
 		add_history(str);
@@ -45,37 +45,28 @@ static int	 ft_getout(char *str, int *contador)
 int	main(void)
 {
 	char *str;
-	char **splited;
+	t_token *tokens;
 	int contador;
 
 	printf(MINISHELL_BANNER);
 	contador = 0;
 	while(1)
 	{
-		str = readline("minishell> ");
-		splited = ft_split(str, ' ');
-		if (ft_getout(splited[0], &contador))
+		tokens = NULL;
+		str = readline(COLOR_GOLD "[🐚" COLOR_MAGENTA "MiniConcha$" COLOR_GOLD "🐚>]" COLOR_RESET);
+		if (ft_getout(str, &contador))
 			break;
-		//ft_command(splited[0]);
-		//printf("%s\n", str);
-		
-		if (ft_strcmp(splited[0],"echo") == 0)
-		{
-			int n = 0;
-			if (ft_strcmp(splited[1],"-n") == 0)
-			{
-				n = 1;
-				ft_echo(splited[2],n);
-			}
-			else
-				ft_echo(splited[1],n);
-			free2d(splited);
-		}
-		free(splited);
+		if (lexer(&tokens, str))
+			break;
+		if(ft_command(str))
+			break;
+		free(str);
+		free(tokens);
 	}
 	rl_clear_history();//Borra historial completo y libera la memoria
 	return (0);
 }
+
 
 /*		readline()
  *	-------------------
