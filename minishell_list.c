@@ -29,7 +29,7 @@ static void adding_token(t_token **l_tokens, t_token *token)
 	token->next = NULL;
 }
 
-static t_token *create_token(char *str)
+static t_token *create_token(char *str, char **envp, int *flag_quot)
 {
 	t_token *buff_tmp;
 	(void)str;
@@ -38,26 +38,28 @@ static t_token *create_token(char *str)
 	if(!buff_tmp)
 		return NULL;
 	buff_tmp->data = ft_strdup(str);
-	buff_tmp->lexer = T_OUTPUT;
+	buff_tmp->type_tok = getype(buff_tmp->data, envp, flag_quot); /*A MEDIO HACER*/
 	return (buff_tmp);
 }
 
-void	init_list_token(t_token **tokens, char *str, int count)
+void	init_list_token(t_token **tokens, char *str, int count, char **envp)
 {
 	t_token *buff_tmp;
-	int	i;
-	int	c;
-	char *cpy_str;
-	char *buff_str;
+	int		i;
+	int		c;
+	int		flag_quot;
+	char	*cpy_str;
+	char	*buff_str;
 
 	i = 0;
 	buff_str = ft_strdup(str);
+	flag_quot = 0;
 	while(i < count)
 	{
 		c = contador_letras_comis(buff_str, ' ');
 		cpy_str = ft_substr(buff_str, 0, c);
 		buff_str = &buff_str[c + 1];
-		buff_tmp = create_token(cpy_str);
+		buff_tmp = create_token(cpy_str, envp, &flag_quot);
 		if(!buff_tmp)
 			return ;
 		adding_token(tokens, buff_tmp);
@@ -74,7 +76,7 @@ void print_list(t_token **l_tokens)
 	buff_token = *l_tokens;
 	while(buff_token)
 	{
-		printf(" data: %s\n lexer: %i\n", buff_token->data, buff_token->lexer);
+		printf(" data: %s\n type_tok: %i\n", buff_token->data, buff_token->type_tok);
 		buff_token = buff_token->next;
 	}
 }

@@ -9,7 +9,9 @@ SRCS = minishell_main.c \
 	   minishell_parser.c \
 	   minishell_lexer.c \
 	   minishell_list.c \
-	   minishell_utils.c
+	   minishell_utils.c \
+	   minishell_simple_quot.c
+
 LIBFT_SRCS = $(LIBFT_DIR)/ft_isalpha.c $(LIBFT_DIR)/ft_isdigit.c \
 	$(LIBFT_DIR)/ft_isalnum.c $(LIBFT_DIR)/ft_strlen.c $(LIBFT_DIR)/ft_isascii.c \
 	$(LIBFT_DIR)/ft_isprint.c $(LIBFT_DIR)/ft_memset.c $(LIBFT_DIR)/ft_bzero.c \
