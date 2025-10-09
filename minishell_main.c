@@ -42,12 +42,14 @@ static int	 ft_getout(char *str, int *contador)
 	return (0);
 }
 
-int	main(void)
+int	main(int ac, char **av, char **ae)
 {
 	char *str;
 	t_token *tokens;
 	int contador;
 
+	(void)ac;
+	(void)av;
 	printf(MINISHELL_BANNER);
 	contador = 0;
 	while(1)
@@ -56,7 +58,7 @@ int	main(void)
 		str = readline(COLOR_GOLD "[🐚" COLOR_MAGENTA "MiniConcha$" COLOR_GOLD "🐚>]" COLOR_RESET);
 		if (ft_getout(str, &contador))
 			break;
-		if (lexer(&tokens, str))
+		if (lexer(&tokens, str, ae))
 			break;
 		if(ft_command(str))
 			break;

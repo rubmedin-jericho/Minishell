@@ -20,21 +20,14 @@ void	free_array(char **arr, int size)
 		return ;
 	if (size == 0)
 		while (arr[i])
-		{
-			//printf("FREE arr[%d] %p (%s)\n", i, arr[i], arr[i]);
 			free(arr[i++]);
-		}
 	else
 		while (i < size)
 		{
 			if (arr[i])
-			{
-				//printf("FREE arr[%d] %p (%s)\n", i, arr[i], arr[i]);
 				free(arr[i]);
-			}
 			i++;
 		}
-	//printf("FREE arr %p\n", arr);
 	free(arr);
 }
 /*funcion que comprueba si es ejecutable*/
@@ -55,9 +48,7 @@ static char	*check_paths(char *cmd, char **paths)
 		}
 		if (access(full_path, X_OK) == 0)//si es ejecutable
 		{
-			//printf("FREE_ARRAY paths %p\n", paths);
 			free_array(paths, 0);//se libera el array de strings paths del split
-			//printf("RETURNING full_path %p\n", full_path);
 			return (full_path);//devolvemos ruta valida
 		}
 		free(full_path);//liberamos full_path no ejecutable
@@ -86,23 +77,29 @@ char	*get_cmd_path(char *cmd, char **envp)
 	return (full_path);
 }
 
-int	getype(char *str, char **enp)
+int	getype(char *str, char **enp, int *flag_quot)
 {
 	char *exist_path;
 
 	exist_path = get_cmd_path(str, enp);
-	if(exist_path)
+	if (exist_path)
 		return (T_COMMAND);	
+	else if (is_simple_quoted(str, flag_quot))
+		return (T_SIMPLE_QUOTED);
+	else if (is_double_quoted(str, flag_quot))
+		return (T_DOUBLE_QUOTED);
+	else if (is_pipe(str))
+		return (T_PIPE);
 	return (T_STRING);
 }
 
 /*Lexer se encarga de tokenizar, categorizar y mirar la sintaxys este bien escrita.*/
-int	lexer(t_token **l_tokens, char *str)
+int	lexer(t_token **l_tokens, char *str, char **envp)
 {
 	int	count;
 
 	count = ft_count_word(str, ' ');
-	init_list_token(l_tokens, str, count);
+	init_list_token(l_tokens, str, count, envp);
 	print_list(l_tokens);
 	return (0);
 }
