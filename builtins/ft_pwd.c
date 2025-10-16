@@ -11,8 +11,14 @@
 /* ************************************************************************** */
 
 #include "../minishell.h"
-//Primero voy a guardar las variables de entorno
+#include <unistd.h>
+#include <stdio.h>
+
 void	ft_pwd()
 {
+	char	*path;
 
+	path = getcwd(NULL, 0);
+	printf("%s\n", path);
+	free(path);
 }

@@ -103,4 +103,30 @@ void	free2d(char **arr)
 		if (arr[i])
 			free(arr[i++]);
 	}
+	if (arr)
+		free(arr);
+}
+
+/******Copia entorno******/
+
+char	**envp_dup(char **ae)
+{
+	char	**copy;
+	int		i;
+	int		len;
+
+	i = 0;
+	len = 0;
+	while (ae[len])
+		len++;
+	copy = malloc(sizeof(char *) * (len + 1));
+	if (!copy)
+		return NULL;
+	while (i < len)
+	{
+		copy[i] = ft_strdup(ae[i]);
+		i++;
+	}
+	copy[len] = NULL;
+	return (copy);
 }

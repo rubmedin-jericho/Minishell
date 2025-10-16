@@ -69,7 +69,18 @@ typedef struct	s_token
 	struct 		s_token *next;
 }				t_token;
 
+/*STRUCT BASE, TIPICA STRUCT PARA PASAR VARIABLES GENERALES*/
+typedef struct	s_base
+{
+	char	**envp;
+	int		exit_status; //probable futuro manejo de exit
+}			t_base;
+
 /*----FUNCTIONS----*/
+
+void	free2d(char **arr);
+char	**envp_dup(char **ae);
+
 /*Tokenizer & Parser*/
 int		lexer(t_token **l_tokens, char *str, char **envp);
 char	**ft_split(char const *s, char c);
@@ -78,10 +89,13 @@ void	print_list(t_token **l_tokens);
 void	init_list_token(t_token **tokens, char *str, int count, char **envp);
 int		ft_count_word(char const *s, char c);
 int		contador_letras_comis(char const *s, char c);
-int		ft_echo(char **args);
-void	free2d(char **arr);
 int		getype(char *str, char **enp, int *flag_quot);
 int		is_simple_quoted(char *str, int *flag_quot);
 int		is_double_quoted(char *str, int *flag_quot);
 int		is_pipe(char *str);
+
+/**BUILTINS**/
+void	ft_pwd();
+int		ft_echo(char **args);
+
 #endif
