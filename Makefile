@@ -43,7 +43,8 @@ clean:
 
 fclean: clean
 	rm -rf $(NAME)
+nvim: clean fclean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re nvim

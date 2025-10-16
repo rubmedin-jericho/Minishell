@@ -77,29 +77,30 @@ char	*get_cmd_path(char *cmd, char **envp)
 	return (full_path);
 }
 
-int	getype(char *str, char **enp, int *flag_quot)
+int	getype(char *str, char **enp, t_flags *flags)
 {
 	char *exist_path;
 
 	exist_path = get_cmd_path(str, enp);
 	if (exist_path)
-		return (T_COMMAND);	
-	else if (is_simple_quoted(str, flag_quot))
+		return (T_COMMAND);
+	else if (is_simple_quoted(str, flags) && !flags->flag_double_quot)
 		return (T_SIMPLE_QUOTED);
-	else if (is_double_quoted(str, flag_quot))
+	else if (is_double_quoted(str, flags) && !flags->flag_simple_quot)
 		return (T_DOUBLE_QUOTED);
-	else if (is_pipe(str))
+	else if (is_pipe(str, flags))
 		return (T_PIPE);
 	return (T_STRING);
 }
 
 /*Lexer se encarga de tokenizar, categorizar y mirar la sintaxys este bien escrita.*/
-int	lexer(t_token **l_tokens, char *str, char **envp)
+int	lexer(t_token **l_tokens, char *str, char **envp, t_flags *flags)
 {
 	int	count;
 
+	init_flags(flags);
 	count = ft_count_word(str, ' ');
-	init_list_token(l_tokens, str, count, envp);
+	init_list(l_tokens, str, envp, flags);
 	print_list(l_tokens);
 	return (0);
 }

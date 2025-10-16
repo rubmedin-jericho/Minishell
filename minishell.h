@@ -49,37 +49,32 @@ typedef enum	s_type
 				T_PIPE, /*---6---*/
 }				t_type;
 
-typedef enum	s_quoted
+typedef struct	s_flags
 {
-	start_simple_quoted,
-				non_quoted,
-				start_double_quoted,
-				simple_quoted,
-				double_quoted,
-				end_simple_quoted,
-				end_double_quoted,
-}				t_quoted;
+	int			flag_simple_quot;
+	int			flag_double_quot;
+}				t_flags;
 
 /*ESTA ES LA STRUCT PARA GUARDAR LOS TOKENS*/
 typedef struct	s_token
 {
 	char		*data;
 	t_type		type_tok;
-	t_quoted	quot_state;
 	struct 		s_token *next;
 }				t_token;
 
 /*----FUNCTIONS----*/
 /*Tokenizer & Parser*/
-int		lexer(t_token **l_tokens, char *str, char **envp);
+int		lexer(t_token **l_tokens, char *str, char **envp, t_flags *flags);
 char	**ft_split(char const *s, char c);
 char	*asignar_palabra(const char *s, int len);
 void	print_list(t_token **l_tokens);
-void	init_list_token(t_token **tokens, char *str, int count, char **envp);
+void	init_list(t_token **tokens, char *str, char **envp, t_flags *flags);
 int		ft_count_word(char const *s, char c);
 int		contador_letras_comis(char const *s, char c);
-int		getype(char *str, char **enp, int *flag_quot);
-int		is_simple_quoted(char *str, int *flag_quot);
-int		is_double_quoted(char *str, int *flag_quot);
-int		is_pipe(char *str);
+int		getype(char *str, char **enp, t_flags *flags);
+int		is_simple_quoted(char *str, t_flags *flags);
+int		is_double_quoted(char *str, t_flags *flags);
+int		is_pipe(char *str, t_flags *flags);
+void	init_flags(t_flags *flags);
 #endif

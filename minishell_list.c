@@ -29,7 +29,7 @@ static void adding_token(t_token **l_tokens, t_token *token)
 	token->next = NULL;
 }
 
-static t_token *create_token(char *str, char **envp, int *flag_quot)
+static t_token *create_token(char *str, char **envp, t_flags *flags)
 {
 	t_token *buff_tmp;
 	(void)str;
@@ -38,28 +38,26 @@ static t_token *create_token(char *str, char **envp, int *flag_quot)
 	if(!buff_tmp)
 		return NULL;
 	buff_tmp->data = ft_strdup(str);
-	buff_tmp->type_tok = getype(buff_tmp->data, envp, flag_quot); /*A MEDIO HACER*/
+	buff_tmp->type_tok = getype(buff_tmp->data, envp, flags); /*A MEDIO HACER*/
 	return (buff_tmp);
 }
 
-void	init_list_token(t_token **tokens, char *str, int count, char **envp)
+void	init_list(t_token **tokens, char *str, char **envp, t_flags *flags)
 {
 	t_token *buff_tmp;
 	int		i;
-	int		c;
-	int		flag_quot;
+	int		count;
 	char	*cpy_str;
 	char	*buff_str;
 
 	i = 0;
 	buff_str = ft_strdup(str);
-	flag_quot = 0;
+	count = ft_count_word(str, ' ');
 	while(i < count)
 	{
-		c = contador_letras_comis(buff_str, ' ');
-		cpy_str = ft_substr(buff_str, 0, c);
-		buff_str = &buff_str[c + 1];
-		buff_tmp = create_token(cpy_str, envp, &flag_quot);
+		cpy_str = ft_substr(buff_str, 0, contador_letras_comis(buff_str, ' '));
+		buff_str = &buff_str[contador_letras_comis(buff_str, ' ') + 1];
+		buff_tmp = create_token(cpy_str, envp, flags);
 		if(!buff_tmp)
 			return ;
 		adding_token(tokens, buff_tmp);

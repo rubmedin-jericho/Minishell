@@ -46,19 +46,21 @@ int	main(int ac, char **av, char **ae)
 {
 	char *str;
 	t_token *tokens;
+	t_flags flags;
 	int contador;
 
 	(void)ac;
 	(void)av;
 	printf(MINISHELL_BANNER);
 	contador = 0;
+	init_flags(&flags);
 	while(1)
 	{
 		tokens = NULL;
 		str = readline(COLOR_GOLD "[🐚" COLOR_MAGENTA "MiniConcha$" COLOR_GOLD "🐚>]" COLOR_RESET);
 		if (ft_getout(str, &contador))
 			break;
-		if (lexer(&tokens, str, ae))
+		if (lexer(&tokens, str, ae, &flags))
 			break;
 		if(ft_command(str))
 			break;
