@@ -12,13 +12,17 @@
 
 #include "minishell.h"
 
-static int ft_command(char *str) /*FUNCION DE PRUEBA - para poner las funciones*/
+static int ft_command(char *str, t_base *base, t_token *tokens) /*FUNCION DE PRUEBA - para poner las funciones*/
 {
 	if(ft_strcmp(str, "pwd") == 0)
 		ft_pwd();
-
-	else if (!ft_strcmp(str, "exit"))
-		return (1);
+	if(ft_strcmp(str, "env") == 0)
+		ft_env(base);
+	if (ft_strcmp(str, "exit") >= 0)
+	{
+		free(tokens);
+		ft_exit(base, ft_split(str, ' '), 0);
+	}
 	return (0);
 }
 
@@ -28,7 +32,7 @@ static int	 ft_getout(char *str, int *contador)
 		return (1);
 	else if (str)
 		add_history(str);
-	if (*contador == 3)
+	if (*contador == 5)
 	{
 		*contador = 0;
 		rl_clear_history();
@@ -64,13 +68,12 @@ int	main(int ac, char **av, char **ae)
 			break;
 		if (lexer(&tokens, str, ae))
 			break;
-		if(ft_command(str))
-			break;
+		ft_command(str, &base, tokens);
 		free(str);
 		free(tokens);
 	}
-	free2d(base.envp);
-	rl_clear_history();//Borra historial completo y libera la memoria
+	//free2d(base.envp);
+	//rl_clear_history();
 	return (0);
 }
 

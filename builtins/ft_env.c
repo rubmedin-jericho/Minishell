@@ -1,27 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_pwd.c                                           :+:      :+:    :+:   */
+/*   ft_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mregada- <mregada-@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/08 18:22:12 by mregada-          #+#    #+#             */
-/*   Updated: 2025/10/08 18:22:14 by mregada-         ###   ########.fr       */
+/*   Created: 2025/10/17 18:53:47 by mregada-          #+#    #+#             */
+/*   Updated: 2025/10/17 18:53:50 by mregada-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include <unistd.h>
 #include <stdio.h>
 
-int	ft_pwd()
+int	ft_env(t_base *base)
 {
-	char	*path;
+	int i;
 
-	path = getcwd(NULL, 0);
-	if (!path)
-		return (0);
-	printf("%s\n", path);
-	free(path);
+	i = 0;
+	while(base->envp[i])
+	{
+		if (ft_strchr(base->envp[i], '='))
+			printf("%s\n",base->envp[i++]);
+	}
 	return (1);
 }

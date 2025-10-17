@@ -52,8 +52,7 @@ int	ft_echo(char **args)
 	if (!args)
 	{
 		printf("\n");
-		return (0);
-		
+		return (0);	
 	}
 	while (n_flag(args[i]) && args[i])
 	{

@@ -1,27 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_pwd.c                                           :+:      :+:    :+:   */
+/*   builtin_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mregada- <mregada-@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/08 18:22:12 by mregada-          #+#    #+#             */
-/*   Updated: 2025/10/08 18:22:14 by mregada-         ###   ########.fr       */
+/*   Created: 2025/10/17 19:57:38 by mregada-          #+#    #+#             */
+/*   Updated: 2025/10/17 19:57:40 by mregada-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include <unistd.h>
-#include <stdio.h>
 
-int	ft_pwd()
+void	clear_and_leave(t_base *base, char **args)
 {
-	char	*path;
-
-	path = getcwd(NULL, 0);
-	if (!path)
-		return (0);
-	printf("%s\n", path);
-	free(path);
-	return (1);
+	free2d(args);
+	free2d(base->envp);
+	rl_clear_history();//Borra historial completo y libera la memoria
+	exit(base->exit_status);
 }

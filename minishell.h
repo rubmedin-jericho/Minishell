@@ -80,6 +80,7 @@ typedef struct	s_base
 
 void	free2d(char **arr);
 char	**envp_dup(char **ae);
+void	clear_and_leave(t_base *base, char **args);
 
 /*Tokenizer & Parser*/
 int		lexer(t_token **l_tokens, char *str, char **envp);
@@ -95,7 +96,9 @@ int		is_double_quoted(char *str, int *flag_quot);
 int		is_pipe(char *str);
 
 /**BUILTINS**/
-void	ft_pwd();
+int		ft_pwd();
 int		ft_echo(char **args);
+int		ft_env(t_base *base);
+void	ft_exit(t_base *base, char **args, int is_child);
 
 #endif

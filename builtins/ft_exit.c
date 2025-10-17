@@ -1,27 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_pwd.c                                           :+:      :+:    :+:   */
+/*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mregada- <mregada-@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/08 18:22:12 by mregada-          #+#    #+#             */
-/*   Updated: 2025/10/08 18:22:14 by mregada-         ###   ########.fr       */
+/*   Created: 2025/10/17 19:41:22 by mregada-          #+#    #+#             */
+/*   Updated: 2025/10/17 19:41:23 by mregada-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "../minishell.h"
-#include <unistd.h>
-#include <stdio.h>
 
-int	ft_pwd()
+void	ft_exit(t_base *base, char **args, int is_child)
 {
-	char	*path;
+	int	code;
 
-	path = getcwd(NULL, 0);
-	if (!path)
-		return (0);
-	printf("%s\n", path);
-	free(path);
-	return (1);
+	code = base->exit_status;
+	if (args[1])
+		code = ft_atoi(args[1]);
+	if(is_child)
+		exit(code);
+	else
+	{
+		base->exit_status = code;
+		clear_and_leave(base, args);
+	}
 }

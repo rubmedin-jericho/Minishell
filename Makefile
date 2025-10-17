@@ -13,6 +13,9 @@ SRCS = minishell_main.c \
 	   minishell_utils.c \
 	   $(B_DIR)/ft_echo.c \
 	   $(B_DIR)/ft_pwd.c \
+	   $(B_DIR)/ft_env.c \
+	   $(B_DIR)/ft_exit.c \
+	   $(B_DIR)/builtin_utils.c \
 	   minishell_simple_quot.c
 
 
