@@ -12,17 +12,17 @@
 
 #include "minishell.h"
 
-static int ft_command(char *str) /*FUNCION DE PRUEBA - para poner las funciones*/
+static int ft_command(char *str, t_base *base, t_token *tokens) /*FUNCION DE PRUEBA - para poner las funciones*/
 {
-	char *pwd;
-
 	if(ft_strcmp(str, "pwd") == 0)
+		ft_pwd();
+	if(ft_strcmp(str, "env") == 0)
+		ft_env(base);
+	if (ft_strcmp(str, "exit") >= 0)
 	{
-		pwd = getcwd(NULL, 0);
-		printf("%s\n", pwd);
+		free(tokens);
+		ft_exit(base, ft_split(str, ' '), 0);
 	}
-	else if (!ft_strcmp(str, "exit"))
-		return (1);
 	return (0);
 }
 
@@ -32,7 +32,7 @@ static int	 ft_getout(char *str, int *contador)
 		return (1);
 	else if (str)
 		add_history(str);
-	if (*contador == 3)
+	if (*contador == 5)
 	{
 		*contador = 0;
 		rl_clear_history();
@@ -42,16 +42,24 @@ static int	 ft_getout(char *str, int *contador)
 	return (0);
 }
 
+static void	init_base(char **ae,t_base *base)
+{
+	base->envp = envp_dup(ae);
+	base->exit_status = 0;
+}
+
 int	main(int ac, char **av, char **ae)
 {
 	char *str;
 	t_token *tokens;
 	int contador;
+	t_base	base;
 
 	(void)ac;
 	(void)av;
 	printf(MINISHELL_BANNER);
 	contador = 0;
+	init_base(ae, &base);
 	while(1)
 	{
 		tokens = NULL;
@@ -60,14 +68,15 @@ int	main(int ac, char **av, char **ae)
 			break;
 		if (lexer(&tokens, str, ae))
 			break;
-		if(ft_command(str))
-			break;
+		ft_command(str, &base, tokens);
 		free(str);
 		free(tokens);
 	}
-	rl_clear_history();//Borra historial completo y libera la memoria
+	//free2d(base.envp);
+	//rl_clear_history();
 	return (0);
 }
+
 
 /*		readline()
  *	-------------------

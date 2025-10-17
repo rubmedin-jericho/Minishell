@@ -22,7 +22,7 @@
 # define COLOR_CYAN    "\x1b[36m"
 # define COLOR_WHITE   "\x1b[37m"
 
-/*----MACROS----*/
+
 #define MINISHELL_BANNER COLOR_GOLD "\n\
                  \\__|          \\__| $$$$$$\\  $$ |                $$ |$$ |\n\
    $$$$$$\\$$$$\\  $$\\ $$$$$$$\\  $$\\ $$  __$$\\ $$$$$$$\\   $$$$$$\\  $$ |$$ |\n\
@@ -69,7 +69,19 @@ typedef struct	s_token
 	struct 		s_token *next;
 }				t_token;
 
+/*STRUCT BASE, TIPICA STRUCT PARA PASAR VARIABLES GENERALES*/
+typedef struct	s_base
+{
+	char	**envp;
+	int		exit_status; //probable futuro manejo de exit
+}			t_base;
+
 /*----FUNCTIONS----*/
+
+void	free2d(char **arr);
+char	**envp_dup(char **ae);
+void	clear_and_leave(t_base *base, char **args);
+
 /*Tokenizer & Parser*/
 int		lexer(t_token **l_tokens, char *str, char **envp);
 char	**ft_split(char const *s, char c);
@@ -82,4 +94,11 @@ int		getype(char *str, char **enp, int *flag_quot);
 int		is_simple_quoted(char *str, int *flag_quot);
 int		is_double_quoted(char *str, int *flag_quot);
 int		is_pipe(char *str);
+
+/**BUILTINS**/
+int		ft_pwd();
+int		ft_echo(char **args);
+int		ft_env(t_base *base);
+void	ft_exit(t_base *base, char **args, int is_child);
+
 #endif
