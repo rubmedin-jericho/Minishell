@@ -2,8 +2,9 @@ CC = cc
 READLINE = -lreadline -lncurses -fsanitize=address -fsanitize=leak
 CFLAGS = -Wall -Werror -Wextra## -fsanitize=address -fsanitize=leak ## para analisis de leaks #No borrar porque estas flags se compilan con los .o porque si intentas compilar con las flag del readline da error.
 NAME = minishell
+RM = rm -rf
 
-
+MKDIR = mkdir -p
 B_DIR = builtins
 
 # Includes
@@ -24,17 +25,7 @@ LIBS = -Llibft -lft
 
 SRCS_DIR = src/
 
-SRCS = minishell_main.c \
-	   minishell_parser.c \
-	   minishell_lexer.c \
-	   minishell_list.c \
-	   minishell_utils.c \
-	   $(B_DIR)/ft_echo.c \
-	   $(B_DIR)/ft_pwd.c \
-	   $(B_DIR)/ft_env.c \
-	   $(B_DIR)/ft_exit.c \
-	   $(B_DIR)/builtin_utils.c \
-	   minishell_simple_quot.c
+SRCS = main.c
 
 # Objects
 OBJS_DIR		= objs/
