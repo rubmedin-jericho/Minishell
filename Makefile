@@ -1,65 +1,76 @@
+# Compiler and flags
 CC = cc
-READLINE = -lreadline -lncurses -fsanitize=address -fsanitize=leak
-CFLAGS = -Wall -Werror -Wextra## -fsanitize=address -fsanitize=leak ## para analisis de leaks #No borrar porque estas flags se compilan con los .o porque si intentas compilar con las flag del readline da error.
-NAME = minishell
-RM = rm -rf
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -fsanitize=leak
+READLINE = -lreadline -lncurses
 
-MKDIR = mkdir -p
-B_DIR = builtins
+# Program name
+NAME = minishell
+
+# Directories
+SRCS_DIR = src
+OBJS_DIR = objs
+INCLUDES_DIR = include
 
 # Includes
-INCLUDES_DIR 	= include
-INCLUDES_FLAG 	= -I$(INCLUDES_DIR)
-INCLUDES		= $(wildcard $(INCLUDES_DIR)/minishell.h)
+INCLUDES_FLAG = -I$(INCLUDES_DIR)
 
-HEADER = minishell.h
-
-# Objects
-OBJS_DIR		= objs/
-OBJ_FILES		= $(SRC_FILES:.c=.o)
-OBJS			= $(addprefix $(OBJS_DIR), $(OBJ_FILES))
-
-# Libraries
+# Libft
 LIBFT = libft/libft.a
-LIBS = -Llibft -lft
+LIBS = -Llibft -lft $(READLINE)
 
-SRCS_DIR = src/
-
+# Source files
 SRCS = main.c
+SRCS := $(addprefix $(SRCS_DIR)/, $(SRCS))
 
-# Objects
-OBJS_DIR		= objs/
-OBJ_FILES		= $(SRCS:.c=.o)
-OBJS			= $(addprefix $(OBJS_DIR), $(OBJ_FILES))
+# Object files
+OBJS = $(SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
 
-all: $(OBJS_DIR) $(NAME)
+# Colors
+GREEN  = \033[0;32m
+YELLOW = \033[0;33m
+RED    = \033[0;31m
+RESET  = \033[0m
 
-$(OBJS_DIR) :
-	@$(MKDIR) $(OBJS_DIR)
 
-$(NAME) : $(OBJS) Makefile $(LIBFT)
-	@echo $(GREEN) " - Compiling $(NAME)..." $(RESET)
-	@$(CC) $(CFLAGS) $(OBJS) $(LINKER) -o $(NAME) $(LIBS)
-	@echo $(YELLOW) " - Compiling FINISHED" $(RESET)
+# ---------------------------------------------------------
+#                   COMPILATION RULES
+# ---------------------------------------------------------
 
-$(OBJS_DIR)%.o : $(SRCS_DIR)%.c $(INCLUDES)
-	@$(CC) $(CFLAGS) $(INCLUDES_FLAG) -c $< -o $@	
+all: $(OBJS_DIR) $(LIBFT) $(NAME)
 
-# Library Rules
+$(OBJS_DIR):
+	@mkdir -p $(OBJS_DIR)
+
+$(NAME): $(OBJS)
+	@echo "$(GREEN) - Building $(NAME)...$(RESET)"
+	@$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LIBS)
+	@echo "$(YELLOW) - Compilation finished!$(RESET)"
+
+$(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
+	@$(CC) $(CFLAGS) $(INCLUDES_FLAG) -c $< -o $@
+
+
+# ---------------------------------------------------------
+#                        LIBFT
+# ---------------------------------------------------------
 $(LIBFT):
 	@make -C libft
 
-clean :
-	@$(RM) $(OBJS_DIR)
-	@make clean -C libft
-	@echo $(RED) " - Cleaned!" $(RESET)
+# ---------------------------------------------------------
+#                      CLEAN RULES
+# ---------------------------------------------------------
+clean:
+	@rm -rf $(OBJS_DIR)
+	@make -C libft clean
+	@echo "$(RED) - Objects cleaned$(RESET)"
 
-fclean : clean
-	@$(RM) $(NAME) $(LIBFT)
-	@echo $(RED) " - Full Cleaned!" $(RESET)
-
-nvim: clean fclean
+fclean: clean
+	@rm -f $(NAME)
+	@rm -f $(LIBFT)
+	@echo "$(RED) - Full clean done$(RESET)"
 
 re: fclean all
+
+nvim: fclean
 
 .PHONY: all clean fclean re nvim
