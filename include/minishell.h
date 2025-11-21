@@ -8,7 +8,7 @@
 # include <signal.h>
 # include <readline/readline.h>
 # include <readline/history.h>
-# include "Libft/libft.h"
+# include "libft.h"
 
 /* ─── COLORES DE TEXTO ────────────────────────────────*/
 # define COLOR_GOLD "\x1b[38;5;220m"

@@ -98,9 +98,6 @@ int	getype(char *str, char **enp, t_flags *flags)
 /*Lexer se encarga de tokenizar, categorizar y mirar la sintaxys este bien escrita.*/
 int	lexer(t_token **l_tokens, char *str, char **envp, t_flags *flags)
 {
-	int	count;
-
-	count = ft_count_word(str, ' ');
 	init_list(l_tokens, str, envp, flags);
 	print_list(l_tokens);
 	return (0);

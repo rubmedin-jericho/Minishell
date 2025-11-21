@@ -12,35 +12,21 @@
 
 #include "minishell.h"
 
-static int ft_command(char *str, t_base *base, t_token *tokens) /*FUNCION DE PRUEBA - para poner las funciones*/
+/*
+static int ft_command(char *str, t_base *base, t_token *tokens) FUNCION DE PRUEBA - para poner las funciones
 {
-	if(ft_strcmp(str, "pwd") == 0)
+	if(ft_strncmp(str, "pwd", ft_strlen(str)) == 0)
 		ft_pwd();
-	if(ft_strcmp(str, "env") == 0)
+	if(ft_strncmp(str, "env", ft_strlen(str)) == 0)
 		ft_env(base);
-	if (ft_strcmp(str, "exit") == 0)
+	if (ft_strncmp(str, "exit", ft_strlen(str)) == 0)
 	{
 		free(tokens);
 		ft_exit(base, ft_split(str, ' '), 0);
 	}
 	return (0);
 }
-
-static int	 ft_getout(char *str, int *contador)
-{
-	if (!str)
-		return (1);
-	else if (str)
-		add_history(str);
-	if (*contador == 5)
-	{ *contador = 0;
-		rl_clear_history();
-		add_history(str);
-	}
-	*contador += 1;
-	return (0);
-}
-
+*/
 //static int	count_commands(t_token *tokens)
 //{
 //	int	i;
@@ -92,25 +78,22 @@ int	main(int ac, char **av, char **ae)
 	char *str;
 	t_token *tokens;
 	t_flags flags;
-	int contador;
 	t_base	*base;
 
 	(void)ac;
 	(void)av;
 	printf(MINISHELL_BANNER);
 	base = malloc(sizeof(t_base));
-	contador = 0;
 	init_flags(&flags);
 	while(1)
 	{
 		tokens = NULL;
 		str = readline(COLOR_GOLD "[🐚" COLOR_MAGENTA "MiniConcha$" COLOR_GOLD "🐚>]" COLOR_RESET);
-		if (ft_getout(str, &contador))
-			break;
+		add_history(str);
 		if (lexer(&tokens, str, ae, &flags))
 			break;
 		init_base(ae, base, tokens);
-		ft_command(str, base, tokens);
+		//ft_command(str, base, tokens);
 //		free(base);
 //		free(tokens);
 	}
