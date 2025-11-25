@@ -54,6 +54,7 @@ typedef struct	s_flags
 {
 	int			flag_simple_quot;
 	int			flag_double_quot;
+	int			flag_heredoc;
 }				t_flags;
 
 /*ESTA ES LA STRUCT PARA GUARDAR LOS TOKENS*/
@@ -79,6 +80,7 @@ char	**envp_dup(char **ae);
 void	clear_and_leave(t_base *base, char **args);
 
 /*Tokenizer & Parser*/
+int		is_heredoc(char *str, t_flags *flags);
 int		lexer(t_token **l_tokens, char *str, char **envp, t_flags *flags);
 char	**ft_split(char const *s, char c);
 char	*asignar_palabra(const char *s, int len);

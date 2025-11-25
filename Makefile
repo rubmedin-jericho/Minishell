@@ -36,7 +36,9 @@ LEXER_SRCS = \
 	$(SRCS_DIR)/lexer/utils.c
 
 # Combine all sources
-SRCS = $(MAIN) $(PARSER_SRCS) $(LEXER_SRCS)
+SRCS = $(MAIN) \
+	   $(PARSER_SRCS)\
+	   $(LEXER_SRCS)
 
 # Object files
 OBJS = $(SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
