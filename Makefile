@@ -1,6 +1,6 @@
 # Compiler and flags
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -fsanitize=leak
+CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -fsanitize=leak
 READLINE = -lreadline -lncurses
 
 # Program name

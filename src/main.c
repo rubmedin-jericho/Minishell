@@ -73,25 +73,32 @@ void	init_base(char **ae,t_base *base, t_token *tokens)
 //	fill_commands(base, tokens);
 }
 
+
 int	main(int ac, char **av, char **ae)
 {
 	char *str;
 	t_token *tokens;
 	t_flags flags;
 	t_base	*base;
+	t_ast	*ast;
 
-	(void)ac;
-	(void)av;
+	if (ac > 1 && av[1])
+		return (0);
 	printf(MINISHELL_BANNER);
 	base = malloc(sizeof(t_base));
 	init_flags(&flags);
+	ast = malloc(sizeof(t_ast));
+	if (!ast)
+		return (1);
 	while(1)
 	{
 		tokens = NULL;
 		str = readline(COLOR_GOLD "[🐚" COLOR_MAGENTA "MiniConcha$" COLOR_GOLD "🐚>]" COLOR_RESET);
 		add_history(str);
 		if (lexer(&tokens, str, ae, &flags))
-			break;
+			break ;
+		if (parser(tokens, ast))
+			break ;
 		init_base(ae, base, tokens);
 		//ft_command(str, base, tokens);
 //		free(base);

@@ -72,6 +72,20 @@ typedef struct	s_base
 	int		exit_status; //probable futuro manejo de exit
 }			t_base;
 
+typedef enum e_node_type {
+    CMD,
+    PIPE,
+    REDIR_OUT,
+    REDIR_IN,
+} t_node_type;
+
+typedef struct s_ast {
+    t_node_type      type;
+    char            **args;
+    char             *file;
+    struct s_ast     *left;
+    struct s_ast     *right;
+} t_ast;
 /*----FUNCTIONS----*/
 
 void	free2d(char **arr);
@@ -94,10 +108,9 @@ int		is_or_operator(char *str, t_flags *flags);
 void	init_flags(t_flags *flags);
 void	init_base(char **ae,t_base *base, t_token *tokens);
 
-/**BUILTINS**/
-int		ft_pwd();
-int		ft_echo(char **args);
-int		ft_env(t_base *base);
-void	ft_exit(t_base *base, char **args, int is_child);
+/*Parser*/
 
+int		parser(t_token *token, t_ast *ast);
+int		init_ast(t_token *token, t_ast *ast);
+int		create_ast(t_token *token, t_ast *ast);
 #endif
