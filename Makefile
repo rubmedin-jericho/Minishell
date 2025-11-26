@@ -12,7 +12,7 @@ OBJS_DIR = objs
 INCLUDES_DIR = include
 
 # Includes
-INCLUDES_FLAG = -I$(INCLUDES_DIR) -Ilibft
+INCLUDES_FLAG = -I$(INCLUDES_DIR) -Ilibft/
 
 # Libft
 LIBFT = libft/libft.a
@@ -27,16 +27,19 @@ MAIN = $(SRCS_DIR)/main.c
 
 # Parser sources
 PARSER_SRCS = \
-	$(SRCS_DIR)/parser/parser.c
+		$(SRCS_DIR)/parser/parser.c
+
 # Lexer sources
 LEXER_SRCS = \
-	$(SRCS_DIR)/lexer/lexer.c \
-	$(SRCS_DIR)/lexer/list.c \
-	$(SRCS_DIR)/lexer/simple_quot.c \
-	$(SRCS_DIR)/lexer/utils.c
+		$(SRCS_DIR)/lexer/lexer.c \
+		$(SRCS_DIR)/lexer/simple_quot.c \
+		$(SRCS_DIR)/lexer/list.c \
+		$(SRCS_DIR)/lexer/utils.c
 
 # Combine all sources
-SRCS = $(MAIN) $(PARSER_SRCS) $(LEXER_SRCS)
+SRCS =	$(MAIN) \
+		$(PARSER_SRCS) \
+		$(LEXER_SRCS)
 
 # Object files
 OBJS = $(SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
@@ -66,7 +69,7 @@ $(NAME): $(OBJS)
 	@echo "$(YELLOW) - Compilation finished!$(RESET)"
 
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
-	@$(CC) $(CFLAGS) $(INCLUDES_FLAG) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDES_FLAG) -c $< -o $@
 
 
 # ---------------------------------------------------------
@@ -85,7 +88,7 @@ clean:
 
 fclean: clean
 	@rm -f $(NAME)
-	@rm -f $(LIBFT)
+	@make -C libft fclean
 	@echo "$(RED) - Full clean done$(RESET)"
 
 re: fclean all
