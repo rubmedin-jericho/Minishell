@@ -95,9 +95,9 @@ int	main(int ac, char **av, char **ae)
 		tokens = NULL;
 		str = readline(COLOR_GOLD "[🐚" COLOR_MAGENTA "MiniConcha$" COLOR_GOLD "🐚>]" COLOR_RESET);
 		add_history(str);
-		if (lexer(&tokens, str, ae, &flags))
+		if (lexer(&tokens, str, ae, &flags) == -1)
 			break ;
-		if (parser(tokens, ast))
+		if (parser(tokens, ast) == -1)
 			break ;
 		init_base(ae, base, tokens);
 		//ft_command(str, base, tokens);
