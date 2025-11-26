@@ -127,4 +127,6 @@ void	init_base(char **ae, t_base *base, t_token *tokens);
 int		parser(t_token *token, t_ast *ast);
 int		init_ast(t_token *token, t_ast *ast);
 int		create_ast(t_token *token, t_ast *ast);
+int		redirection(t_token *token, t_ast *ast);
+int		pipe_operator(t_token *token, t_ast *ast);
 #endif

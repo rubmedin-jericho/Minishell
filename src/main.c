@@ -85,8 +85,10 @@ int	main(int ac, char **av, char **ae)
 	if (ac > 1 && av[1])
 		return (0);
 	printf(MINISHELL_BANNER);
-	base = malloc(sizeof(t_base));
 	init_flags(&flags);
+	base = malloc(sizeof(t_base));
+	if (!base)
+		return (1);
 	ast = malloc(sizeof(t_ast));
 	if (!ast)
 		return (1);
