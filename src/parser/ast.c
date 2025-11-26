@@ -12,20 +12,32 @@
 
 #include "minishell.h"
 
-static void	fill_array(t_token *token, t_ast *ast)
+static int	fill_array(t_token *token, t_ast *ast)
 {
 	t_token	*buf;
 	int		i;
+	int		j;
 
 	buf = token;
 	i = 0;
 	while (buf)
 	{
 		if (buf->type_tok == T_STRING)
-			ast->args[i++] = ft_strdup(buf->data);
+		{
+			ast->args[i] = ft_strdup(buf->data);
+			if (!ast->args[i])
+			{
+				j = 0;
+				while (j < i)
+					free(ast->args[j++]);
+				return (-1);
+			}
+			i++;
+		}
 		buf = buf->next;
 	}
 	ast->args[i] = NULL;
+	return (1);
 }
 
 static int	allocate_array(t_token *token, t_ast *ast)
@@ -46,8 +58,8 @@ static int	allocate_array(t_token *token, t_ast *ast)
 	ast->args = malloc(sizeof(char *) * (count + 1));
 	if (!ast->args)
 		return (-1);
-	fill_array(token, ast);
-	return (1);
+	ft_memset(ast->args, 0, sizeof(char *) * (count + 1));
+	return (fill_array(token, ast));
 }
 
 int	init_ast(t_ast *ast)
@@ -83,5 +95,5 @@ int	create_ast(t_token *token, t_ast *ast)
 			return (0);
 		return (-1);
 	}
-	return (fill_command_node(token, ast));
+	return (allocate_array(token, ast));
 }

@@ -49,7 +49,7 @@ static int	allocate_left_ast(t_ast *ast)
 	ast->left = malloc(sizeof(t_ast));
 	if (!ast->left)
 		return (-1);
-	memset(ast->left, 0, sizeof(t_ast));
+	ft_memset(ast->left, 0, sizeof(t_ast));
 	return (0);
 }
 

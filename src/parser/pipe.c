@@ -41,8 +41,8 @@ static int	allocate_ast_children(t_ast *ast)
 	ast->right = malloc(sizeof(t_ast));
 	if (!ast->left || !ast->right)
 		return (-1);
-	memset(ast->left, 0, sizeof(t_ast));
-	memset(ast->right, 0, sizeof(t_ast));
+	ft_memset(ast->left, 0, sizeof(t_ast));
+	ft_memset(ast->right, 0, sizeof(t_ast));
 	return (0);
 }
 
