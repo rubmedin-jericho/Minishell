@@ -10,6 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "minishell.h"
+
 static t_token	*find_redirection(t_token *token, t_token **prev_to_redir)
 {
 	t_token	*buf;
@@ -31,16 +33,17 @@ static t_token	*find_redirection(t_token *token, t_token **prev_to_redir)
 	return (NULL);
 }
 
+// need to change the returns
 static int	get_redir_type(t_token *redir)
 {
 	if (ft_strncmp(redir->data, ">", 2) == 0)
-		return (REDIR_OUT);
+		return (T_HEREDOC);
 	else if (ft_strncmp(redir->data, ">>", 3) == 0)
-		return (REDIR_APPEND);
+		return (T_HEREDOC);
 	else if (ft_strncmp(redir->data, "<", 2) == 0)
-		return (REDIR_IN);
+		return (T_HEREDOC);
 	else if (ft_strncmp(redir->data, "<<", 3) == 0)
-		return (REDIR_HEREDOC);
+		return (T_HEREDOC);
 	return (-1);
 }
 
