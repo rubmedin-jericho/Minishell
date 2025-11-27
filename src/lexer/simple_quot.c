@@ -69,7 +69,7 @@ int	is_double_quoted(char *str, t_flags *flags)
 int	is_pipe(char *str, t_flags *flags)
 {
 	if((!flags->flag_simple_quot || !flags->flag_double_quot) && 
-		!ft_strncmp(str, "| ", ft_strlen(str)))
+		!ft_strncmp(str, "|", ft_strlen(str)))
 			return (1);
 	return (0);
 }

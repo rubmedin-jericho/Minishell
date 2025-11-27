@@ -50,7 +50,7 @@
  * EVITAR TENER MUCHOS IF COMPARANDO QUE ES.
  * FUNCION EN PROGRESO.
  * */
-typedef enum s_type
+typedef enum e_type
 {
 	T_STRING, /*---0---*/
 	T_SIMPLE_QUOTED, /*---1---*/
@@ -60,7 +60,16 @@ typedef enum s_type
 	T_HEREDOC, /*---5---*/
 	T_PIPE, /*---6---*/
 	T_FLOW_OPERATOR, /*---7---*/
+	
 }	t_type;
+
+typedef enum e_node_type
+{
+	CMD,
+	PIPE,
+	REDIR_OUT,
+	REDIR_IN,
+}	t_node_type;
 
 typedef struct s_flags
 {
@@ -76,22 +85,6 @@ typedef struct s_token
 	struct s_token	*next;
 }	t_token;
 
-/*STRUCT BASE, TIPICA STRUCT PARA PASAR VARIABLES GENERALES*/
-typedef struct s_base
-{
-	char	**envp;
-	char	**commands;
-	int		exit_status; //probable futuro manejo de exit
-}	t_base;
-
-typedef enum e_node_type
-{
-	CMD,
-	PIPE,
-	REDIR_OUT,
-	REDIR_IN,
-}	t_node_type;
-
 typedef struct s_ast
 {
 	t_node_type		type;
@@ -100,11 +93,23 @@ typedef struct s_ast
 	struct s_ast	*left;
 	struct s_ast	*right;
 }	t_ast;
+
+/*STRUCT BASE, TIPICA STRUCT PARA PASAR VARIABLES GENERALES*/
+typedef struct s_shell
+{
+	char	**envp;
+	char	**commands;
+	int		exit_status; //probable futuro manejo de exit
+	t_token	*tokens;
+	t_ast	*ast;
+	t_flags	flags;
+}	t_shell;
+
 /*----FUNCTIONS----*/
 
 void	free2d(char **arr);
 char	**envp_dup(char **ae);
-void	clear_and_leave(t_base *base, char **args);
+void	clear_and_leave(t_shell *base, char **args);
 
 /*Tokenizer & Parser*/
 int		lexer(t_token **l_tokens, char *str, char **envp, t_flags *flags);
@@ -120,12 +125,12 @@ int		is_double_quoted(char *str, t_flags *flags);
 int		is_pipe(char *str, t_flags *flags);
 int		is_or_operator(char *str, t_flags *flags);
 void	init_flags(t_flags *flags);
-void	init_base(char **ae, t_base *base, t_token *tokens);
+void	init_base(char **ae, t_shell *base, t_token *tokens);
 
 /*Parser*/
 
 int		parser(t_token *token, t_ast *ast);
-int		init_ast(t_token *token, t_ast *ast);
+int		init_ast(t_ast *ast);
 int		create_ast(t_token *token, t_ast *ast);
 int		redirection(t_token *token, t_ast *ast);
 int		pipe_operator(t_token *token, t_ast *ast);

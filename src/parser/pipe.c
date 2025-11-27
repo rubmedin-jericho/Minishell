@@ -51,8 +51,7 @@ int	pipe_operator(t_token *token, t_ast *ast)
 	t_token	*prev_to_last_pipe;
 	t_token	*op_token;
 
-	*op_token = find_last_pipe(token, &prev_to_last_pipe);
-	*prev_to_last_pipe = NULL;
+	op_token = find_last_pipe(token, &prev_to_last_pipe);
 	if (prev_to_last_pipe)
 		prev_to_last_pipe->next = NULL;
 	if (!op_token || !op_token->next)

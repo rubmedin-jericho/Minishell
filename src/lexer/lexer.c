@@ -41,11 +41,12 @@ static char	*check_paths(char *cmd, char **paths)
 	while (paths[i])
 	{
 		joined = ft_strjoin(paths[i], "/");// "/usr/bin"+ "/"
+		if (!joined)
+			break ;
 		full_path = ft_strjoin(joined, cmd);// /usr/bin/ls
-		if (joined != full_path)
-		{
-			free(joined);
-		}
+		free(joined);
+		if (!full_path)
+			break ;
 		if (access(full_path, X_OK) == 0)//si es ejecutable
 		{
 			free_array(paths, 0);//se libera el array de strings paths del split
@@ -54,6 +55,7 @@ static char	*check_paths(char *cmd, char **paths)
 		free(full_path);//liberamos full_path no ejecutable
 		i++;
 	}
+	free_array(paths, 0);
 	return (NULL);
 }
 /* Funcion que busca la ruta del ejecutable del comando*/
@@ -61,6 +63,13 @@ char	*get_cmd_path(char *cmd, char **envp)
 {
 	char	**paths;
 	char	*full_path;
+	
+	if (ft_strchr(cmd, '/'))
+	{
+		if (access(cmd, X_OK) == 0)
+			return ft_strdup(cmd);
+		return (NULL);
+	}
 	while (*envp && ft_strncmp(*envp, "PATH=", 5) != 0)
 		envp++; // situamos el puntero en la linea que contiene PATH=/usr/local/bin:/usr/bin:/bin
 	if (!*envp)
@@ -69,11 +78,6 @@ char	*get_cmd_path(char *cmd, char **envp)
 	if (!paths)//array ={/usr/local/bin, /usr/bin , /bin, NULL}
 		return (NULL);
 	full_path = check_paths(cmd, paths);
-	if (!full_path)
-	{
-		free_array(paths, 0);
-		return (NULL);
-	}
 	return (full_path);
 }
 
