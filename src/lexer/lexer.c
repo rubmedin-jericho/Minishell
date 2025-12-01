@@ -94,6 +94,8 @@ int	getype(char *str, char **enp, t_flags *flags)
 		return (T_DOUBLE_QUOTED);
 	else if (is_pipe(str, flags))
 		return (T_PIPE);
+	else if (is_heredoc(str, flags))
+		return (T_HEREDOC);
 	else if (is_or_operator(str, flags))
 		return (T_FLOW_OPERATOR);
 	return (T_STRING);

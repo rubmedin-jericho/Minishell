@@ -65,17 +65,24 @@ typedef enum e_type
 
 typedef enum e_node_type
 {
-	CMD,
-	PIPE,
-	REDIR_OUT,
-	REDIR_IN,
-}	t_node_type;
+				T_STRING, /*---0---*/
+				T_SIMPLE_QUOTED, /*---1---*/
+				T_DOUBLE_QUOTED, /*---2---*/
+				T_APPEND, /*---3---*/
+				T_COMMAND, /*---4---*/
+				T_HEREDOC, /*---5---*/
+				T_PIPE, /*---6---*/
+				T_FLOW_OPERATOR, /*---7---*/
+				T_REDI_OUT, /*---8---*/
+				T_REDI_IN, /*---9---*/
+}				t_type;
 
 typedef struct s_flags
 {
-	int	flag_simple_quot;
-	int	flag_double_quot;
-}	t_flags;
+	int			flag_simple_quot;
+	int			flag_double_quot;
+	int			flag_heredoc;
+}				t_flags;
 
 /*ESTA ES LA STRUCT PARA GUARDAR LOS TOKENS*/
 typedef struct s_token
@@ -112,6 +119,7 @@ char	**envp_dup(char **ae);
 void	clear_and_leave(t_shell *base, char **args);
 
 /*Tokenizer & Parser*/
+int		is_heredoc(char *str, t_flags *flags);
 int		lexer(t_token **l_tokens, char *str, char **envp, t_flags *flags);
 char	**ft_split(char const *s, char c);
 char	*asignar_palabra(const char *s, int len);

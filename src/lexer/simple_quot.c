@@ -12,10 +12,38 @@
 
 #include "minishell.h"
 
+
 void	init_flags(t_flags *flags)
 {
 	flags->flag_simple_quot = 0;
 	flags->flag_double_quot = 0;
+	flags->flag_heredoc = 0;
+}
+
+int	is_heredoc(char *str, t_flags *flags)
+{
+	int	iter;
+
+	iter = 0;
+	while(str[iter])
+	{
+		if (str[iter] == '<' && str[iter + 1] && str[iter + 1] == '<' && 
+			flags->flag_heredoc == 0)
+		{
+			flags->flag_heredoc = 1;
+			return (1);
+		}
+		else if(str[iter] == '<' && str[iter + 1] && str[iter + 1] == '<' && 
+			flags->flag_heredoc == 1)
+		{
+			flags->flag_heredoc = 0;
+			return (1);
+		}
+		else if  (flags->flag_heredoc == 1)
+			return (1);
+		iter++;
+	}
+	return (0);
 }
 
 int	is_simple_quoted(char *str, t_flags *flags)
