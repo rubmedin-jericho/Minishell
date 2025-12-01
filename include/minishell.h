@@ -50,6 +50,15 @@
  * EVITAR TENER MUCHOS IF COMPARANDO QUE ES.
  * FUNCION EN PROGRESO.
  * */
+
+typedef enum e_node_type
+{
+	CMD,
+	PIPE,
+	REDIR_OUT,
+	REDIR_IN,
+}	t_node_type;
+
 typedef enum e_type
 {
 	T_STRING, /*---0---*/
@@ -60,22 +69,9 @@ typedef enum e_type
 	T_HEREDOC, /*---5---*/
 	T_PIPE, /*---6---*/
 	T_FLOW_OPERATOR, /*---7---*/
-	
+	T_REDI_OUT, /*---8---*/
+	T_REDI_IN, /*---9---*/
 }	t_type;
-
-typedef enum e_node_type
-{
-				T_STRING, /*---0---*/
-				T_SIMPLE_QUOTED, /*---1---*/
-				T_DOUBLE_QUOTED, /*---2---*/
-				T_APPEND, /*---3---*/
-				T_COMMAND, /*---4---*/
-				T_HEREDOC, /*---5---*/
-				T_PIPE, /*---6---*/
-				T_FLOW_OPERATOR, /*---7---*/
-				T_REDI_OUT, /*---8---*/
-				T_REDI_IN, /*---9---*/
-}				t_type;
 
 typedef struct s_flags
 {
@@ -143,3 +139,4 @@ int		create_ast(t_token *token, t_ast *ast);
 int		redirection(t_token *token, t_ast *ast);
 int		pipe_operator(t_token *token, t_ast *ast);
 #endif
+
