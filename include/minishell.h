@@ -48,6 +48,8 @@ typedef enum	s_type
 				T_HEREDOC, /*---5---*/
 				T_PIPE, /*---6---*/
 				T_FLOW_OPERATOR, /*---7---*/
+				T_REDI_OUT, /*---8---*/
+				T_REDI_IN, /*---9---*/
 }				t_type;
 
 typedef struct	s_flags
