@@ -1,8 +1,9 @@
 # Compiler and flags
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -fsanitize=leak
+CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -fsanitize=leak
 READLINE = -lreadline -lncurses
 
+MAKEFLAGS += --no-print-directory
 # Program name
 NAME = minishell
 
@@ -10,9 +11,10 @@ NAME = minishell
 SRCS_DIR = src
 OBJS_DIR = objs
 INCLUDES_DIR = include
+DIRS := $(shell find $(SRCS_DIR) -type d | sed "s/$(SRCS_DIR)/$(OBJS_DIR)/")
 
 # Includes
-INCLUDES_FLAG = -I$(INCLUDES_DIR) -Ilibft
+INCLUDES_FLAG = -I$(INCLUDES_DIR) -Ilibft/
 
 # Libft
 LIBFT = libft/libft.a
@@ -27,18 +29,28 @@ MAIN = $(SRCS_DIR)/main.c
 
 # Parser sources
 PARSER_SRCS = \
-	$(SRCS_DIR)/parser/parser.c
+		$(SRCS_DIR)/parser/parser.c \
+		$(SRCS_DIR)/parser/ast.c \
+		$(SRCS_DIR)/parser/pipe.c \
+		$(SRCS_DIR)/parser/redirection.c \
+		
+
 # Lexer sources
 LEXER_SRCS = \
-	$(SRCS_DIR)/lexer/lexer.c \
-	$(SRCS_DIR)/lexer/list.c \
-	$(SRCS_DIR)/lexer/simple_quot.c \
-	$(SRCS_DIR)/lexer/utils.c
+		$(SRCS_DIR)/lexer/lexer.c \
+		$(SRCS_DIR)/lexer/simple_quot.c \
+		$(SRCS_DIR)/lexer/list.c \
+		$(SRCS_DIR)/lexer/utils.c
+
+# Builtin sources
+BUILTIN_SRCS = \
+		$(SRCS_DIR)/builtins/ft_pwd.c
 
 # Combine all sources
-SRCS = $(MAIN) \
-	   $(PARSER_SRCS)\
-	   $(LEXER_SRCS)
+SRCS =	$(MAIN) \
+		$(PARSER_SRCS) \
+		$(LEXER_SRCS) \
+		$(BUILTIN_SRCS)
 
 # Object files
 OBJS = $(SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
@@ -58,9 +70,7 @@ RESET  = \033[0m
 all: $(OBJS_DIR) $(LIBFT) $(NAME)
 
 $(OBJS_DIR):
-	@mkdir -p $(OBJS_DIR)
-	@mkdir -p $(OBJS_DIR)/parser
-	@mkdir -p $(OBJS_DIR)/lexer
+	@mkdir -p $(DIRS)
 
 $(NAME): $(OBJS)
 	@echo "$(GREEN) - Building $(NAME)...$(RESET)"
@@ -75,19 +85,19 @@ $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
 #                        LIBFT
 # ---------------------------------------------------------
 $(LIBFT):
-	@make -C libft
+	@$(MAKE) -C libft
 
 # ---------------------------------------------------------
 #                      CLEAN RULES
 # ---------------------------------------------------------
 clean:
 	@rm -rf $(OBJS_DIR)
-	@make -C libft clean
+	@$(MAKE) -C libft clean
 	@echo "$(RED) - Objects cleaned$(RESET)"
 
 fclean: clean
 	@rm -f $(NAME)
-	@rm -f $(LIBFT)
+	@$(MAKE) -C libft fclean
 	@echo "$(RED) - Full clean done$(RESET)"
 
 re: fclean all

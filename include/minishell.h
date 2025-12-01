@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmarques <jmarques@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/26 12:39:10 by jmarques          #+#    #+#             */
+/*   Updated: 2025/11/26 12:39:16 by jmarques         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -22,8 +34,7 @@
 # define COLOR_CYAN    "\x1b[36m"
 # define COLOR_WHITE   "\x1b[37m"
 
-
-#define MINISHELL_BANNER COLOR_GOLD "\n\
+# define MINISHELL_BANNER COLOR_GOLD "\n\
                  \\__|          \\__| $$$$$$\\  $$ |                $$ |$$ |\n\
    $$$$$$\\$$$$\\  $$\\ $$$$$$$\\  $$\\ $$  __$$\\ $$$$$$$\\   $$$$$$\\  $$ |$$ |\n\
    $$  _$$  _$$\\ $$ |$$  __$$\\ $$ |$$ /  \\__|$$  __$$\\ $$  __$$\\ $$ |$$ |\n\
@@ -35,10 +46,24 @@
 \n" COLOR_RESET
 
 /*----STRUCTS----
- * ESTE ES UN ENUM PARA SELECCIONAR EL TIPO DE TOKEN QUE ES PARA EVITAR TENER MUCHOS IF COMPARANDO QUE ES.
+ * ESTE ES UN ENUM PARA SELECCIONAR EL TIPO DE TOKEN QUE ES PARA 
+ * EVITAR TENER MUCHOS IF COMPARANDO QUE ES.
  * FUNCION EN PROGRESO.
  * */
-typedef enum	s_type
+typedef enum e_type
+{
+	T_STRING, /*---0---*/
+	T_SIMPLE_QUOTED, /*---1---*/
+	T_DOUBLE_QUOTED, /*---2---*/
+	T_APPEND, /*---3---*/
+	T_COMMAND, /*---4---*/
+	T_HEREDOC, /*---5---*/
+	T_PIPE, /*---6---*/
+	T_FLOW_OPERATOR, /*---7---*/
+	
+}	t_type;
+
+typedef enum e_node_type
 {
 				T_STRING, /*---0---*/
 				T_SIMPLE_QUOTED, /*---1---*/
@@ -52,7 +77,7 @@ typedef enum	s_type
 				T_REDI_IN, /*---9---*/
 }				t_type;
 
-typedef struct	s_flags
+typedef struct s_flags
 {
 	int			flag_simple_quot;
 	int			flag_double_quot;
@@ -60,26 +85,38 @@ typedef struct	s_flags
 }				t_flags;
 
 /*ESTA ES LA STRUCT PARA GUARDAR LOS TOKENS*/
-typedef struct	s_token
+typedef struct s_token
 {
-	char		*data;
-	t_type		type_tok;
-	struct 		s_token *next;
-}				t_token;
+	char			*data;
+	t_type			type_tok;
+	struct s_token	*next;
+}	t_token;
+
+typedef struct s_ast
+{
+	t_node_type		type;
+	char			**args;
+	char			*file;
+	struct s_ast	*left;
+	struct s_ast	*right;
+}	t_ast;
 
 /*STRUCT BASE, TIPICA STRUCT PARA PASAR VARIABLES GENERALES*/
-typedef struct	s_base
+typedef struct s_shell
 {
 	char	**envp;
 	char	**commands;
 	int		exit_status; //probable futuro manejo de exit
-}			t_base;
+	t_token	*tokens;
+	t_ast	*ast;
+	t_flags	flags;
+}	t_shell;
 
 /*----FUNCTIONS----*/
 
 void	free2d(char **arr);
 char	**envp_dup(char **ae);
-void	clear_and_leave(t_base *base, char **args);
+void	clear_and_leave(t_shell *base, char **args);
 
 /*Tokenizer & Parser*/
 int		is_heredoc(char *str, t_flags *flags);
@@ -96,12 +133,13 @@ int		is_double_quoted(char *str, t_flags *flags);
 int		is_pipe(char *str, t_flags *flags);
 int		is_or_operator(char *str, t_flags *flags);
 void	init_flags(t_flags *flags);
-void	init_base(char **ae,t_base *base, t_token *tokens);
+void	init_base(char **ae, t_shell *base, t_token *tokens);
 
-/**BUILTINS**/
-int		ft_pwd();
-int		ft_echo(char **args);
-int		ft_env(t_base *base);
-void	ft_exit(t_base *base, char **args, int is_child);
+/*Parser*/
 
+int		parser(t_token *token, t_ast *ast);
+int		init_ast(t_ast *ast);
+int		create_ast(t_token *token, t_ast *ast);
+int		redirection(t_token *token, t_ast *ast);
+int		pipe_operator(t_token *token, t_ast *ast);
 #endif

@@ -65,37 +65,42 @@ static int ft_command(char *str, t_base *base, t_token *tokens) FUNCION DE PRUEB
 //	base->commands[i] = NULL;
 //}
 
-void	init_base(char **ae,t_base *base, t_token *tokens)
+void	init_base(char **envp, t_shell *base, t_token *tokens)
 {
 	(void)tokens;
-	base->envp = envp_dup(ae);
+	base->envp = envp_dup(envp);
 	base->exit_status = 0;
 //	fill_commands(base, tokens);
 }
 
-int	main(int ac, char **av, char **ae)
+
+int	main(int ac, char **av, char **envp)
 {
 	char *str;
-	t_token *tokens;
-	t_flags flags;
-	t_base	*base;
+	t_shell	*shell;
 
-	(void)ac;
-	(void)av;
+	if (ac > 1 && av[1])
+		return (0);
 	printf(MINISHELL_BANNER);
-	base = malloc(sizeof(t_base));
-	init_flags(&flags);
+	shell = malloc(sizeof(t_shell));
+	if (!shell)
+		return (1);
+	init_flags(&shell->flags);
+	shell->ast = malloc(sizeof(t_ast));
+	if (!shell->ast)
+		return (1);
 	while(1)
 	{
-		tokens = NULL;
+		shell->tokens = NULL;
 		str = readline(COLOR_GOLD "[🐚" COLOR_MAGENTA "MiniConcha$" COLOR_GOLD "🐚>]" COLOR_RESET);
 		add_history(str);
-		if (lexer(&tokens, str, ae, &flags))
-			break;
-		init_base(ae, base, tokens);
+		if (lexer(&shell->tokens, str, envp, &shell->flags) == -1)
+			break ;
+		if (parser(shell->tokens, shell->ast) == -1)
+			break ;
+		init_base(envp, shell, shell->tokens);
 		//ft_command(str, base, tokens);
-//		free(base);
-//		free(tokens);
+		free(str);
 	}
 	return (0);
 }
