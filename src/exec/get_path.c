@@ -1,26 +1,33 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_path.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmarques <jmarques@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/02 10:38:12 by jmarques          #+#    #+#             */
+/*   Updated: 2025/12/02 10:38:14 by jmarques         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
-
-char	*my_getenv(char *name, char **env)
-{
-	int		i;
-	int		len;
-
-	i = 0;
-	len = ft_strlen(name);
-	while (env[i])
-	{
-		if (ft_strncmp(env[i], name, len) == 0 && env[i][len] == '=')
-			return (env[i] + len + 1);
-		i++;
-	}
-	return (NULL);
-}
 
 static char	**get_path_dirs(char **env)
 {
-	char	*env_path;
+	const char	*name = "PATH";
+	char		*env_path;
+	int			i;	
+	size_t		len;
 
-	env_path = my_getenv("PATH", env);
+	len = ft_strlen(name);
+	i = 0;
+	env_path = NULL;
+	while (env[i])
+	{
+		if (ft_strncmp(env[i], name, len) == 0 && env[i][len] == '=')
+			env_path = (env[i] + len + 1);
+		i++;
+	}
 	if (!env_path)
 		return (NULL);
 	return (ft_split(env_path, ':'));
@@ -31,6 +38,8 @@ static char	*join_path_and_cmd(const char *dir, const char *cmd)
 	char	*with_slash;
 	char	*full;
 
+	if (*dir == '\0')
+		return (ft_strdup(cmd));
 	with_slash = ft_strjoin(dir, "/");
 	if (!with_slash)
 		return (NULL);
@@ -61,7 +70,7 @@ static char	*find_executable(char *cmd, char **paths)
 
 	if (!cmd)
 		return (NULL);
-	if (access(cmd, F_OK | X_OK) == 0)
+	if (access(cmd, X_OK) == 0)
 		return (ft_strdup(cmd));
 	if (!paths)
 		return (NULL);
@@ -74,7 +83,7 @@ static char	*find_executable(char *cmd, char **paths)
 			i++;
 			continue ;
 		}
-		if (candidate && access(candidate, F_OK | X_OK) == 0)
+		if (access(candidate, X_OK) == 0)
 			return (candidate);
 		free(candidate);
 		i++;
@@ -88,7 +97,14 @@ char	*get_path(char *cmd, char **env)
 	char	*full;
 
 	paths = get_path_dirs(env);
-	full = find_executable(cmd, paths);
+	full = NULL;
+	if (ft_strchr(cmd, '/'))
+	{
+		if (access(cmd, X_OK) == 0)
+			full = ft_strdup(cmd);
+	}
+	else
+		full = find_executable(cmd, paths);
 	ft_free_tab(paths);
 	return (full);
 }

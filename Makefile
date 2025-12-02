@@ -42,6 +42,11 @@ LEXER_SRCS = \
 		$(SRCS_DIR)/lexer/list.c \
 		$(SRCS_DIR)/lexer/utils.c
 
+# execute sources
+EXECUTE_SRCS = \
+		$(SRCS_DIR)/exec/executor.c \
+		$(SRCS_DIR)/exec/get_path.c
+
 # Builtin sources
 BUILTIN_SRCS = \
 		$(SRCS_DIR)/builtins/ft_pwd.c
@@ -50,7 +55,8 @@ BUILTIN_SRCS = \
 SRCS =	$(MAIN) \
 		$(PARSER_SRCS) \
 		$(LEXER_SRCS) \
-		$(BUILTIN_SRCS)
+		$(BUILTIN_SRCS) \
+		$(EXECUTE_SRCS)
 
 # Object files
 OBJS = $(SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
