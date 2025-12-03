@@ -120,10 +120,10 @@ int		lexer(t_token **l_tokens, char *str, char **envp, t_flags *flags);
 char	**ft_split(char const *s, char c);
 char	*asignar_palabra(const char *s, int len);
 void	print_list(t_token **l_tokens);
-void	init_list(t_token **tokens, char *str, char **envp, t_flags *flags);
+void	init_list(t_token **tokens, char *str, t_flags *flags);
 int		ft_count_word(char const *s, char c);
 int		contador_letras_comis(char const *s, char c);
-int		getype(char *str, char **enp, t_flags *flags);
+int		getype(char *str, t_flags *flags);
 int		is_simple_quoted(char *str, t_flags *flags);
 int		is_double_quoted(char *str, t_flags *flags);
 int		is_pipe(char *str, t_flags *flags);
@@ -138,5 +138,10 @@ int		init_ast(t_ast *ast);
 int		create_ast(t_token *token, t_ast *ast);
 int		redirection(t_token *token, t_ast *ast);
 int		pipe_operator(t_token *token, t_ast *ast);
+
+/*Builtins*/
+
+void	ft_cd(char *next_path, char **env);
+void	ft_pwd(t_shell *shell);
 #endif
 

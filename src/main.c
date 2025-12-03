@@ -73,6 +73,17 @@ void	init_base(char **envp, t_shell *base, t_token *tokens)
 //	fill_commands(base, tokens);
 }
 
+void	print_envp(char **envp)
+{
+	int	i;
+
+	i = 0;
+	while (envp[i])
+	{
+		printf("[%s]\n", envp[i]);
+		i++;
+	}
+}
 
 int	main(int ac, char **av, char **envp)
 {
@@ -99,7 +110,12 @@ int	main(int ac, char **av, char **envp)
 		if (parser(shell->tokens, shell->ast) == -1)
 			break ;
 		init_base(envp, shell, shell->tokens);
+		if (ft_strncmp(shell->tokens->data, "cd", 2))
+			ft_cd("/home", envp);
+		if (ft_strncmp(shell->tokens->data, "pwd", 3))
+			ft_pwd(shell);
 		//ft_command(str, base, tokens);
+		free(shell);
 		free(str);
 	}
 	return (0);
