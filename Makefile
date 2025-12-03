@@ -45,7 +45,9 @@ LEXER_SRCS = \
 # execute sources
 EXECUTE_SRCS = \
 		$(SRCS_DIR)/exec/executor.c \
-		$(SRCS_DIR)/exec/get_path.c
+		$(SRCS_DIR)/exec/get_path.c \
+		$(SRCS_DIR)/exec/exec_redirection.c \
+		$(SRCS_DIR)/exec/exec_pipe.c
 
 # Builtin sources
 BUILTIN_SRCS = \

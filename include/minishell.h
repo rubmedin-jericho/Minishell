@@ -112,7 +112,17 @@ typedef struct s_shell
 	t_token	*tokens;
 	t_ast	*ast;
 	t_flags	flags;
+	int		in_pipeline;
 }	t_shell;
+
+typedef struct s_pipe
+{
+	t_ast	*node;
+	t_shell	*sh;
+	int		input_fd;
+	int		pipe_fd[2];
+	pid_t	pid;
+}	t_pipe;
 
 /*----FUNCTIONS----*/
 
@@ -150,5 +160,7 @@ void	ft_free_tab(char **tab);
 char	*get_path(char *cmd, char **env);
 void	exec_node(t_ast *node, t_shell *sh);
 void	execute_redirection(t_ast *node, t_shell *sh);
+void	execute_pipe(t_ast *node, t_shell *sh);
+void	execute_pipe_recursive(t_ast *node, t_shell *sh, int input_fd);
+void	exec_node_no_fork(t_ast *node, t_shell *sh);
 #endif
-

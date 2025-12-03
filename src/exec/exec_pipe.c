@@ -12,69 +12,82 @@
 
 #include "minishell.h"
 
-void	child(t_ast *node, t_shell *sh, int input_fd, int *fd)
+static void	child(t_pipe *p)
 {
-	close(fd[0]);
-	if (input_fd != STDIN_FILENO)
+	close(p->pipe_fd[0]);
+	if (p->input_fd != STDIN_FILENO)
 	{
-		dup2(input_fd, STDIN_FILENO);
-		close(input_fd);
+		dup2(p->input_fd, STDIN_FILENO);
+		close(p->input_fd);
 	}
-	dup2(fd[1], STDOUT_FILENO);
-	close(fd[1]);
-	exec_node(node->left, sh);
+	dup2(p->pipe_fd[1], STDOUT_FILENO);
+	close(p->pipe_fd[1]);
+	exec_node_no_fork(p->node->left, p->sh);
 	exit(EXIT_FAILURE);
 }
 
-int	pipe(t_ast *node, t_shell *sh, int input_fd, int *fd)
+static void	parent(t_pipe *p)
 {
-	pid_t	pid;
-	int		status;
+	close(p->pipe_fd[1]);
+	if (p->input_fd != STDIN_FILENO)
+		close(p->input_fd);
+	execute_pipe_recursive(p->node->right, p->sh, p->pipe_fd[0]);
+	waitpid(p->pid, NULL, 0);
+}
 
-	pid = fork();
-	if (pid < 0)
+static void	run_pipe(t_ast *node, t_shell *sh, int input_fd)
+{
+	t_pipe	p;
+
+	p.node = node;
+	p.sh = sh;
+	p.input_fd = input_fd;
+	if (pipe(p.pipe_fd) < 0)
+	{
+		perror("pipe");
+		return ;
+	}
+	p.pid = fork();
+	if (p.pid < 0)
 	{
 		perror("fork");
-		return (-1);
+		return ;
 	}
-	if (pid == 0)
-		child(node, sh, input_fd, fd);
+	if (p.pid == 0)
+		child(&p);
 	else
-	{
-		close(fd[1]);
-		if (input_fd != STDIN_FILENO)
-			close(input_fd);
-		execute_pipe_recursive(node->right, sh, fd[0]);
-		waitpid(pid, &status, 0);
-	}
-	return (0);
+		parent(&p);
 }
 
 void	execute_pipe_recursive(t_ast *node, t_shell *sh, int input_fd)
 {
-	int	fd[2];
+	pid_t	pid;
 
 	if (!node)
 		return ;
 	if (node->type != PIPE)
 	{
-		if (input_fd != STDIN_FILENO)
+		pid = fork();
+		if (pid == 0)
 		{
-			dup2(input_fd, STDIN_FILENO);
-			close(input_fd);
+			if (input_fd != STDIN_FILENO)
+			{
+				dup2(input_fd, STDIN_FILENO);
+				close(input_fd);
+			}
+			exec_node_no_fork(node, sh);
+			exit(EXIT_FAILURE);
 		}
-		exec_node(node, sh);
-		exit(EXIT_FAILURE);
-	}
-	if (pipe(fd) == -1)
-	{
-		perror("pipe");
+		close(input_fd);
+		waitpid(pid, NULL, 0);
 		return ;
 	}
-	pipe(*node, *sh, input_fd, fd);
+	run_pipe(node, sh, input_fd);
 }
 
 void	execute_pipe(t_ast *node, t_shell *sh)
 {
+	sh->in_pipeline = 1;
 	execute_pipe_recursive(node, sh, STDIN_FILENO);
+	sh->in_pipeline = 0;
 }
