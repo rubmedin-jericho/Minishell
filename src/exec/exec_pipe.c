@@ -32,6 +32,7 @@ static void	parent(t_pipe *p)
 	if (p->input_fd != STDIN_FILENO)
 		close(p->input_fd);
 	execute_pipe_recursive(p->node->right, p->sh, p->pipe_fd[0]);
+	close(p->pipe_fd[0]);
 	waitpid(p->pid, NULL, 0);
 }
 
@@ -45,12 +46,14 @@ static void	run_pipe(t_ast *node, t_shell *sh, int input_fd)
 	if (pipe(p.pipe_fd) < 0)
 	{
 		perror("pipe");
+		close(input_fd);
 		return ;
 	}
 	p.pid = fork();
 	if (p.pid < 0)
 	{
 		perror("fork");
+		close(input_fd);
 		return ;
 	}
 	if (p.pid == 0)

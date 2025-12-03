@@ -19,17 +19,20 @@ void	execute_simple(t_ast *node, t_shell *sh)
 	path = get_path(node->args[0], sh->envp);
 	if (!path)
 	{
-		fprintf(stderr, "%s: command not found\n", node->args[0]);
+		printf("%s: command not found\n", node->args[0]);
 		exit(127);
 	}
 	execve(path, node->args, sh->envp);
+	free(path);
 	perror(node->args[0]);
 	exit(1);
 }
 
 void	exec_node_no_fork(t_ast *node, t_shell *sh)
 {
-	if (node->type == CMD)
+	if (node->type == PIPE)
+		execute_pipe(node, sh);
+	else if (node->type == CMD)
 		execute_simple(node, sh);
 	else if (node->type == REDIR_IN
 		|| node->type == REDIR_OUT
@@ -37,7 +40,8 @@ void	exec_node_no_fork(t_ast *node, t_shell *sh)
 		execute_redirection(node, sh);
 	else
 	{
-		fprintf(stderr, "Error: PIPE cannot "
+		sh->exit_status = 1;
+		printf("Error: PIPE cannot "
 			"be executed without fork.\n");
 		exit(1);
 	}
@@ -51,16 +55,19 @@ void	exec_node(t_ast *node, t_shell *sh)
 	if (sh->in_pipeline)
 	{
 		exec_node_no_fork(node, sh);
-		exit(1);
+		exit(sh->exit_status);
 	}
 	pid = fork();
+	if (pid < 0)
+	{
+		perror("fork");
+		sh->exit_status = 1;
+		return ;
+	}
 	if (pid == 0)
 	{
-		if (node->type == PIPE)
-			execute_pipe(node, sh);
-		else
-			exec_node_no_fork(node, sh);
-		exit(1);
+		exec_node_no_fork(node, sh);
+		exit(sh->exit_status);
 	}
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
@@ -73,10 +80,5 @@ void	execute_ast(t_shell *sh)
 {
 	if (!sh->ast)
 		return ;
-	/*if (node_is_builtin(sh->ast))
-	{
-		execute_builtin(sh->ast, sh);
-		return ;
-	}*/
 	exec_node(sh->ast, sh);
 }
