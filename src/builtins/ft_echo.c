@@ -1,36 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_pwd.c                                           :+:      :+:    :+:   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmarques <jmarques@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rubmedin <rubmedin@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/27 13:47:08 by jmarques          #+#    #+#             */
-/*   Updated: 2025/11/27 13:56:32 by jmarques         ###   ########.fr       */
+/*   Created: 2025/12/04 15:45:31 by rubmedin          #+#    #+#             */
+/*   Updated: 2025/12/04 15:46:00 by rubmedin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
 
-void	ft_pwd(t_shell *shell)
+void	ft_echo(char *str)
 {
-	char	*pwd;
-
-	pwd = getcwd(NULL, 0);
-	if (!pwd)
+	int	i;
+	
+	i = 0;
+	while (str[i])
 	{
-		perror("pwd");
-		shell->exit_status = 1;
-		return ;
+		write(1, &str[i], 1);
+		i++;
 	}
-	ft_putendl_fd(pwd, 1);
-	free(pwd);
-	shell->exit_status = 0;
 }
 
-/*
-void	ft_export()
-void	ft_unset()
-void	ft_env()
-void	exit()
-*/

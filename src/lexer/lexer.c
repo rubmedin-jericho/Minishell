@@ -47,9 +47,9 @@ int	getype(char *str, t_flags *flags)
 }
 
 /*Lexer se encarga de tokenizar, categorizar y mirar la sintaxys este bien escrita.*/
-int	lexer(t_token **l_tokens, char *str, char **envp, t_flags *flags)
+int	lexer(t_token **l_tokens, char *str, t_flags *flags)
 {
-	init_list(l_tokens, str, envp, flags);
+	init_list(l_tokens, str, flags);
 	print_list(l_tokens);
 	return (0);
 }

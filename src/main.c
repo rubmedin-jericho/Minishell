@@ -85,10 +85,31 @@ void	print_envp(char **envp)
 	}
 }
 
+ 
+
+char	*search_envp(char *s, char **envp)
+{
+	int	i;
+	int	lenght_str;
+	int	lenght_envp;
+
+	i = 0;
+	lenght_str = ft_strlen(s);
+	while (envp[i])
+	{
+		lenght_envp = ft_strlen(envp[i]);
+		if(ft_strncmp(s, envp[i], lenght_str) == 0)
+			return (envp[i]);
+		i++;
+	}
+	return (envp[i]);
+}
+
 int	main(int ac, char **av, char **envp)
 {
 	char *str;
 	t_shell	*shell;
+	char *path_readline;
 
 	if (ac > 1 && av[1])
 		return (0);
@@ -102,17 +123,25 @@ int	main(int ac, char **av, char **envp)
 		return (1);
 	while(1)
 	{
+		path_readline = search_envp("PWD=", envp);
 		shell->tokens = NULL;
-		str = readline(COLOR_GOLD "[🐚" COLOR_MAGENTA "MiniConcha$" COLOR_GOLD "🐚>]" COLOR_RESET);
+		printf(COLOR_GOLD "[🐚" COLOR_MAGENTA "MiniConcha$/%s" COLOR_GOLD "🐚>]" COLOR_RESET, path_readline);
+		readline(str);
 		add_history(str);
-		if (lexer(&shell->tokens, str, envp, &shell->flags) == -1)
+		if (lexer(&shell->tokens, str, &shell->flags) == -1)
 			break ;
 		if (parser(shell->tokens, shell->ast) == -1)
 			break ;
 		init_base(envp, shell, shell->tokens);
-		if (ft_strncmp(shell->tokens->data, "cd", 2))
+		if (ft_strncmp(shell->tokens->data, "cd", 2) == 0)
+		{
 			ft_cd("/home", envp);
-		if (ft_strncmp(shell->tokens->data, "pwd", 3))
+
+			//	**** This 2 lines is for test the cd, cd go to the /home/ and after withc ls print the directory.
+			//	char *args[] = {NULL};
+			//	execve("/bin/ls", args, envp);
+		}
+		if (ft_strncmp(shell->tokens->data, "pwd", 3) == 0)
 			ft_pwd(shell);
 		//ft_command(str, base, tokens);
 		free(shell);

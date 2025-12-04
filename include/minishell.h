@@ -116,7 +116,7 @@ void	clear_and_leave(t_shell *base, char **args);
 
 /*Tokenizer & Parser*/
 int		is_heredoc(char *str, t_flags *flags);
-int		lexer(t_token **l_tokens, char *str, char **envp, t_flags *flags);
+int		lexer(t_token **l_tokens, char *str, t_flags *flags);
 char	**ft_split(char const *s, char c);
 char	*asignar_palabra(const char *s, int len);
 void	print_list(t_token **l_tokens);
@@ -143,5 +143,7 @@ int		pipe_operator(t_token *token, t_ast *ast);
 
 void	ft_cd(char *next_path, char **env);
 void	ft_pwd(t_shell *shell);
+void	ft_echo(char *str);
+void	ft_exit(t_shell *shell);
 #endif
 
