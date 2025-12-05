@@ -12,65 +12,12 @@
 
 #include "minishell.h"
 
-/*
-static int ft_command(char *str, t_base *base, t_token *tokens) FUNCION DE PRUEBA - para poner las funciones
-{
-	if(ft_strncmp(str, "pwd", ft_strlen(str)) == 0)
-		ft_pwd();
-	if(ft_strncmp(str, "env", ft_strlen(str)) == 0)
-		ft_env(base);
-	if (ft_strncmp(str, "exit", ft_strlen(str)) == 0)
-	{
-		free(tokens);
-		ft_exit(base, ft_split(str, ' '), 0);
-	}
-	return (0);
-}
-*/
-//static int	count_commands(t_token *tokens)
-//{
-//	int	i;
-//
-//	i = 0;
-//	while(tokens)
-//	{
-//		if(tokens->type_tok == 4)
-//			i++;
-//		tokens = tokens->next;
-//	}
-//	return (i);
-//}
-
-//static void	fill_commands(t_base *base, t_token *tokens)
-//{
-//	int	i;
-//	int	lenght_commands;
-//	t_token *iter_tmp;
-//
-//	i = 0;
-//	iter_tmp = tokens;
-//	lenght_commands = count_commands(tokens);
-//	base->commands = malloc(sizeof(char *) * (lenght_commands + 1));
-//	if(!base->commands)
-//		return ;
-//	while (iter_tmp)
-//	{
-//		if (iter_tmp->type_tok == 4)
-//		{
-//			base->commands[i] = ft_strdup(iter_tmp->data);
-//			i++;
-//		}
-//		iter_tmp = iter_tmp->next;
-//	}
-//	base->commands[i] = NULL;
-//}
 
 void	init_base(char **envp, t_shell *base, t_token *tokens)
 {
 	(void)tokens;
 	base->envp = envp_dup(envp);
 	base->exit_status = 0;
-//	fill_commands(base, tokens);
 }
 
 void	print_envp(char **envp)
@@ -85,31 +32,99 @@ void	print_envp(char **envp)
 	}
 }
 
- 
+int	count_char(char *str, char pattern)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	while(str[i])
+	{
+		if(str[i] == pattern)
+			j++;
+		i++;
+	}
+	return (j);
+}
+
+char	*cut_path(char *path, char	*usr_env, char pattern)
+{
+	char	**split;
+	char	**usr;
+	int		lenght_max;
+	int		lenght_usr;
+	char	*str_ret;
+	int		i;
+
+	i = 1;
+	str_ret = "";
+	lenght_max = count_char(path, pattern);
+	split = ft_split(path, pattern);
+	usr = ft_split(usr_env, '=');
+	lenght_usr = ft_strlen(usr[1]);
+	if(!split[0] && path[4] == '/')
+		str_ret = "/";
+	while(split[i] && i <= lenght_max)
+	{
+		if(ft_strncmp(split[i], usr[1], lenght_usr) == 0 && 
+		ft_strncmp(split[i - 1], "home", 4) == 0)
+		{
+			free(str_ret);
+			str_ret = "";
+			str_ret = ft_strjoin(str_ret, "~");
+		}
+		else
+		{
+			str_ret = ft_strjoin(str_ret, "/");
+			str_ret = ft_strjoin(str_ret, split[i]);
+			i++;
+		}
+	}
+	return (str_ret);
+}
 
 char	*search_envp(char *s, char **envp)
 {
 	int	i;
+	char *path_readline;
 	int	lenght_str;
 	int	lenght_envp;
 
 	i = 0;
 	lenght_str = ft_strlen(s);
+	path_readline = "\0";
 	while (envp[i])
 	{
 		lenght_envp = ft_strlen(envp[i]);
 		if(ft_strncmp(s, envp[i], lenght_str) == 0)
-			return (envp[i]);
+		{
+			path_readline = cut_path(envp[i], envp[43], '/');
+			return (path_readline);
+		}
 		i++;
 	}
 	return (envp[i]);
+}
+
+char	*make_prompt(char **envp)
+{
+	char	*path_readline;
+	char	*str_ret;
+
+	path_readline = search_envp("PWD=", envp);
+	str_ret = COLOR_GOLD "[🐚" COLOR_MAGENTA "MiniConcha$🐚:";
+	str_ret = ft_strjoin(str_ret, path_readline);
+	str_ret = ft_strjoin(str_ret,	">$" COLOR_GOLD"]"COLOR_RESET);
+	return (str_ret);
 }
 
 int	main(int ac, char **av, char **envp)
 {
 	char *str;
 	t_shell	*shell;
-	char *path_readline;
+//	char *path_readline;
+	char *prompt;
 
 	if (ac > 1 && av[1])
 		return (0);
@@ -123,10 +138,9 @@ int	main(int ac, char **av, char **envp)
 		return (1);
 	while(1)
 	{
-		path_readline = search_envp("PWD=", envp);
 		shell->tokens = NULL;
-		printf(COLOR_GOLD "[🐚" COLOR_MAGENTA "MiniConcha$/%s" COLOR_GOLD "🐚>]" COLOR_RESET, path_readline);
-		readline(str);
+		prompt = make_prompt(envp);
+		str = readline(prompt);
 		add_history(str);
 		if (lexer(&shell->tokens, str, &shell->flags) == -1)
 			break ;
@@ -144,6 +158,7 @@ int	main(int ac, char **av, char **envp)
 		if (ft_strncmp(shell->tokens->data, "pwd", 3) == 0)
 			ft_pwd(shell);
 		//ft_command(str, base, tokens);
+		free(prompt);
 		free(shell);
 		free(str);
 	}
@@ -162,4 +177,5 @@ int	main(int ac, char **av, char **envp)
  *	-------------------
  *	El add_history sirve para el tema de agregar un mini historial de comandos.
  *
+ * 
  * */

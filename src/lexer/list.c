@@ -74,7 +74,7 @@ void print_list(t_token **l_tokens)
 	buff_token = *l_tokens;
 	while(buff_token)
 	{
-		printf(" data: %s\n type_tok: %i\n", buff_token->data, buff_token->type_tok);
+		printf("\ndata: %s\n type_tok: %i\n", buff_token->data, buff_token->type_tok);
 		buff_token = buff_token->next;
 	}
 }
