@@ -89,14 +89,12 @@ char	*search_envp(char *s, char **envp)
 	int	i;
 	char *path_readline;
 	int	lenght_str;
-	int	lenght_envp;
 
 	i = 0;
 	lenght_str = ft_strlen(s);
 	path_readline = "\0";
 	while (envp[i])
 	{
-		lenght_envp = ft_strlen(envp[i]);
 		if(ft_strncmp(s, envp[i], lenght_str) == 0)
 		{
 			path_readline = cut_path(envp[i], envp[43], '/');
@@ -150,7 +148,6 @@ int	main(int ac, char **av, char **envp)
 		if (ft_strncmp(shell->tokens->data, "cd", 2) == 0)
 		{
 			ft_cd("/home", envp);
-
 			//	**** This 2 lines is for test the cd, cd go to the /home/ and after withc ls print the directory.
 			//	char *args[] = {NULL};
 			//	execve("/bin/ls", args, envp);

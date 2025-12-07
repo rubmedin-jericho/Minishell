@@ -1,39 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_cd.c                                            :+:      :+:    :+:   */
+/*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rubmedin <rubmedin@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/04 15:46:14 by rubmedin          #+#    #+#             */
-/*   Updated: 2025/12/04 15:46:48 by rubmedin         ###   ########.fr       */
+/*   Created: 2025/12/07 20:45:50 by rubmedin          #+#    #+#             */
+/*   Updated: 2025/12/07 20:59:42 by rubmedin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
 
-void	ft_cd(char *next_path, char **env)
+int	ft_lenght_env(char **env)
 {
-	int i;
-	char *current_path;
+	int	i;
 
 	i = 0;
-	current_path = getcwd(NULL, 0);
-	if(!current_path)
-		return ;
-	if(chdir(next_path) == -1)
-	{
-		perror("cd");
-		free(current_path);
-		return ;
-	}
-	while (env[i])
-	{
-		if (ft_strncmp(env[i], "PWD=", 4) == 0)
-			env[i] = ft_strjoin("PWD=", next_path);
-		else if(ft_strncmp(env[i], "OLDPWD=", 7) == 0)
-			env[i] = ft_strjoin("OLDPWD=", current_path);
+	while(env[i])
 		i++;
-	}
-	free(current_path);
+	return (0);
+}
+
+void	ft_export(char *str, char **env)
+{
+	char	**cpy_env;
+	int		lenght_env;
+	
+	lenght_env = ft_lenght_env(env);
+	cpy_env = env;
+	env = malloc(sizeof(char *) * lenght_env + 2);	
+
+	
 }
