@@ -141,7 +141,7 @@ int		pipe_operator(t_token *token, t_ast *ast);
 
 /*Builtins*/
 
-void	ft_cd(char *next_path, char **env);
+void	ft_cd(char *next_path, t_shell **shell);
 void	ft_pwd(t_shell *shell);
 void	ft_echo(char *str);
 void	ft_exit(t_shell *shell);

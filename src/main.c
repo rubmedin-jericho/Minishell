@@ -58,7 +58,7 @@ char	*cut_path(char *path, char	*usr_env, char pattern)
 	int		i;
 
 	i = 1;
-	str_ret = "";
+	str_ret = ft_strdup("");
 	lenght_max = count_char(path, pattern);
 	split = ft_split(path, pattern);
 	usr = ft_split(usr_env, '=');
@@ -105,29 +105,56 @@ char	*search_envp(char *s, char **envp)
 	return (envp[i]);
 }
 
-char	*make_prompt(char **envp)
+char	*make_prompt(t_shell **shell)
 {
 	char	*path_readline;
 	char	*str_ret;
 
-	path_readline = search_envp("PWD=", envp);
+	path_readline = search_envp("PWD=", (*shell)->envp);
 	str_ret = COLOR_GOLD "[🐚" COLOR_MAGENTA "MiniConcha$🐚:";
 	str_ret = ft_strjoin(str_ret, path_readline);
 	str_ret = ft_strjoin(str_ret,	">$" COLOR_GOLD"]"COLOR_RESET);
 	return (str_ret);
 }
 
+int	lenght_envp(char **envp)
+{
+	int	lenght;
+
+	lenght = 0;
+	while(envp[lenght])
+		lenght++;
+	return (lenght);
+}
+
+void init_envp(t_shell **shell, char **envp)
+{
+	int	lenght_e;
+	int	i;
+
+	i = 0;
+	lenght_e = lenght_envp(envp);
+	(*shell)->envp = malloc(sizeof(char *) * (lenght_e + 1));
+	if(!(*shell)->envp)
+		return ;
+	while(envp[i])
+	{
+		(*shell)->envp[i] = ft_strdup(envp[i]);
+		i++;
+	}
+}
+
 int	main(int ac, char **av, char **envp)
 {
 	char *str;
 	t_shell	*shell;
-//	char *path_readline;
 	char *prompt;
 
 	if (ac > 1 && av[1])
 		return (0);
 	printf(MINISHELL_BANNER);
 	shell = malloc(sizeof(t_shell));
+	init_envp(&shell, envp);
 	if (!shell)
 		return (1);
 	init_flags(&shell->flags);
@@ -137,7 +164,7 @@ int	main(int ac, char **av, char **envp)
 	while(1)
 	{
 		shell->tokens = NULL;
-		prompt = make_prompt(envp);
+		prompt = make_prompt(&shell);
 		str = readline(prompt);
 		add_history(str);
 		if (lexer(&shell->tokens, str, &shell->flags) == -1)
@@ -147,7 +174,7 @@ int	main(int ac, char **av, char **envp)
 		init_base(envp, shell, shell->tokens);
 		if (ft_strncmp(shell->tokens->data, "cd", 2) == 0)
 		{
-			ft_cd("/home", envp);
+			ft_cd("/home", &shell);
 			//	**** This 2 lines is for test the cd, cd go to the /home/ and after withc ls print the directory.
 			//	char *args[] = {NULL};
 			//	execve("/bin/ls", args, envp);

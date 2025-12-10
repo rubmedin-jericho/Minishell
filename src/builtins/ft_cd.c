@@ -12,7 +12,7 @@
 
 #include <minishell.h>
 
-void	ft_cd(char *next_path, char **env)
+void	ft_cd(char *next_path, t_shell **shell)
 {
 	int i;
 	char *current_path;
@@ -27,12 +27,18 @@ void	ft_cd(char *next_path, char **env)
 		free(current_path);
 		return ;
 	}
-	while (env[i])
+	while ((*shell)->envp[i])
 	{
-		if (ft_strncmp(env[i], "PWD=", 4) == 0)
-			env[i] = ft_strjoin("PWD=", next_path);
-		else if(ft_strncmp(env[i], "OLDPWD=", 7) == 0)
-			env[i] = ft_strjoin("OLDPWD=", current_path);
+		if (ft_strncmp((*shell)->envp[i], "PWD=", 4) == 0)
+		{
+			free((*shell)->envp[i]);
+			(*shell)->envp[i] = ft_strjoin("PWD=", getcwd(NULL, 0));
+		}
+		else if(ft_strncmp((*shell)->envp[i], "OLDPWD=", 7) == 0)
+		{
+			free((*shell)->envp[i]);
+			(*shell)->envp[i] = ft_strjoin("OLDPWD=", current_path);
+		}
 		i++;
 	}
 	free(current_path);
