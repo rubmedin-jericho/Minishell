@@ -169,4 +169,5 @@ int		execute_pipe_recursive(t_ast *node, t_shell *sh, int input_fd);
 void	exec_node_no_fork(t_ast *node, t_shell *sh);
 void	free_ast(t_ast *node);
 void	fatal(const char *msg);
+t_pipe	init_pipe(t_ast *node, t_shell *sh);
 #endif

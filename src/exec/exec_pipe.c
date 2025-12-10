@@ -77,23 +77,6 @@ void	pipe_nodes(t_pipe *pip)
 	pip->node = current;
 }
 
-t_pipe	init_pipe(t_ast *node, t_shell *sh)
-{
-	t_pipe	pip;
-
-	pip.node = node;
-	pip.sh = sh;
-	pip.input_fd = STDIN_FILENO;
-	pip.count = 0;
-	pip.capacity = 17;
-	pip.pipe_fd[0] = -1;
-	pip.pipe_fd[1] = -1;
-	pip.pids = malloc(sizeof(pid_t) * pip.capacity);
-	if (!pip.pids)
-		fatal("malloc");
-	return (pip);
-}
-
 void	execute_pipe(t_ast *node, t_shell *sh)
 {
 	t_pipe	pip;

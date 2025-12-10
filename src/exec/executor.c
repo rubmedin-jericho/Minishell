@@ -28,24 +28,6 @@ void	execute_simple(t_ast *node, t_shell *sh)
 	exit(1);
 }
 
-void	free_ast(t_ast *node)
-{
-	int	i;
-
-	i = 0;
-	if (!node)
-		return ;
-	if (node->type == CMD && node->args)
-	{
-		while (node->args[i])
-			free(node->args[i++]);
-		free(node->args);
-	}
-	free_ast(node->left);
-	free_ast(node->right);
-	free(node);
-}
-
 void	exec_node_no_fork(t_ast *node, t_shell *sh)
 {
 	if (node->type == PIPE)
