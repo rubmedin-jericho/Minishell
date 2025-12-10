@@ -147,7 +147,6 @@ char **split_args(char *cmd) {
 t_ast *parse_pipeline(char *line) {
     char *saveptr = NULL;
     char *part = strtok_r(line, "|", &saveptr);
-    t_ast *left = NULL;
     t_ast *root = NULL;
 
     while (part) {
@@ -156,12 +155,10 @@ t_ast *parse_pipeline(char *line) {
         free(cmd);
 
         t_ast *node = new_cmd_node(args);
-        if (!left) {
-            left = node;
-            root = node;
+        if (!root) {
+            root = node; // first command
         } else {
-            root = new_pipe_node(left, node);
-            left = root;
+            root = new_pipe_node(root, node); // attach new cmd to the **right**
         }
 
         part = strtok_r(NULL, "|", &saveptr);

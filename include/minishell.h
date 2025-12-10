@@ -108,13 +108,11 @@ typedef struct s_shell
 {
 	char	**envp;
 	char	**commands;
-
 	int		exit_status; //probable futuro manejo de exit
 	t_token	*tokens;
 	t_ast	*ast;
 	t_flags	flags;
 	int		in_pipeline;
-
 }	t_shell;
 
 typedef struct s_pipe
@@ -124,6 +122,10 @@ typedef struct s_pipe
 	int		input_fd;
 	int		pipe_fd[2];
 	pid_t	pid;
+	pid_t	*pids;
+	size_t	count;
+	size_t	capacity;
+
 }	t_pipe;
 
 /*----FUNCTIONS----*/
@@ -166,4 +168,5 @@ void	execute_pipe(t_ast *node, t_shell *sh);
 int		execute_pipe_recursive(t_ast *node, t_shell *sh, int input_fd);
 void	exec_node_no_fork(t_ast *node, t_shell *sh);
 void	free_ast(t_ast *node);
+void	fatal(const char *msg);
 #endif
