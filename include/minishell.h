@@ -25,7 +25,7 @@
 # include <sys/wait.h>
 # include <sys/types.h>
 # include <sys/stat.h>
-# include <fcntl.h>  
+# include <fcntl.h>
 
 /* ─── COLORES DE TEXTO ────────────────────────────────*/
 # define COLOR_GOLD "\x1b[38;5;220m"
@@ -51,7 +51,7 @@
 \n" COLOR_RESET
 
 /*----STRUCTS----
- * ESTE ES UN ENUM PARA SELECCIONAR EL TIPO DE TOKEN QUE ES PARA 
+ * ESTE ES UN ENUM PARA SELECCIONAR EL TIPO DE TOKEN QUE ES PARA
  * EVITAR TENER MUCHOS IF COMPARANDO QUE ES.
  * FUNCION EN PROGRESO.
  * */
@@ -108,11 +108,13 @@ typedef struct s_shell
 {
 	char	**envp;
 	char	**commands;
+
 	int		exit_status; //probable futuro manejo de exit
 	t_token	*tokens;
 	t_ast	*ast;
 	t_flags	flags;
 	int		in_pipeline;
+
 }	t_shell;
 
 typedef struct s_pipe
@@ -161,6 +163,7 @@ char	*get_path(char *cmd, char **env);
 void	exec_node(t_ast *node, t_shell *sh);
 void	execute_redirection(t_ast *node, t_shell *sh);
 void	execute_pipe(t_ast *node, t_shell *sh);
-void	execute_pipe_recursive(t_ast *node, t_shell *sh, int input_fd);
+int		execute_pipe_recursive(t_ast *node, t_shell *sh, int input_fd);
 void	exec_node_no_fork(t_ast *node, t_shell *sh);
+void	free_ast(t_ast *node);
 #endif

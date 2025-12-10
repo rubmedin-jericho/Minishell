@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <readline/history.h>
 
 /*
 static int ft_command(char *str, t_base *base, t_token *tokens) FUNCION DE PRUEBA - para poner las funciones
@@ -73,7 +74,7 @@ void	init_base(char **envp, t_shell *base, t_token *tokens)
 //	fill_commands(base, tokens);
 }
 
-
+/*
 int	main(int ac, char **av, char **envp)
 {
 	char *str;
@@ -104,13 +105,119 @@ int	main(int ac, char **av, char **envp)
 	}
 	return (0);
 }
+*/
+t_ast *new_cmd_node(char **args) {
+    t_ast *node = malloc(sizeof(t_ast));
+    node->type = CMD;
+    node->args = args;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
 
+t_ast *new_pipe_node(t_ast *left, t_ast *right) {
+    t_ast *node = malloc(sizeof(t_ast));
+    node->type = PIPE;
+    node->left = left;
+    node->right = right;
+    node->args = NULL;
+    return node;
+}
+
+// ----------------- Simple parser -----------------
+// Split command line into arguments
+char **split_args(char *cmd) {
+    int bufsize = 64;
+    int i = 0;
+    char **tokens = malloc(bufsize * sizeof(char*));
+    char *token = strtok(cmd, " \t\n");
+    while (token) {
+        tokens[i++] = strdup(token);
+        if (i >= bufsize) {
+            bufsize *= 2;
+            tokens = realloc(tokens, bufsize * sizeof(char*));
+        }
+        token = strtok(NULL, " \t\n");
+    }
+    tokens[i] = NULL;
+    return tokens;
+}
+
+// Parse a simple pipeline: cmd1 | cmd2 | cmd3
+t_ast *parse_pipeline(char *line) {
+    char *saveptr = NULL;
+    char *part = strtok_r(line, "|", &saveptr);
+    t_ast *left = NULL;
+    t_ast *root = NULL;
+
+    while (part) {
+        char *cmd = strdup(part);
+        char **args = split_args(cmd);
+        free(cmd);
+
+        t_ast *node = new_cmd_node(args);
+        if (!left) {
+            left = node;
+            root = node;
+        } else {
+            root = new_pipe_node(left, node);
+            left = root;
+        }
+
+        part = strtok_r(NULL, "|", &saveptr);
+    }
+    return root;
+}
+
+// ----------------- Free AST -----------------
+
+void free_env(char **env)
+{
+    int i = 0;
+
+    if (!env)
+        return;
+
+    while (env[i])
+    {
+        free(env[i]);
+        i++;
+    }
+    free(env);
+}
+// ----------------- Main -----------------
+
+int main(int argc, char **argv, char **envp) {
+    t_shell sh = {0};
+    (void)argc;
+    (void)argv;
+    sh.envp = envp;
+    sh.in_pipeline = 0;
+    sh.exit_status = 0;
+
+    char *line = readline("MiniShell> ");
+
+	while (line) {
+    	if (*line)
+     	{
+	        t_ast *ast = parse_pipeline(line);
+	        sh.ast = ast;
+	        execute_ast(&sh);
+			free_ast(ast);
+      	}
+     	free(line);
+        line = readline("MiniShell> ");
+    }
+    free(line);
+    clear_history();
+    return sh.exit_status;
+}
 
 /*		readline()
  *	-------------------
  *	La funcion readline(const char *str) es la que te lee el stdin(salida estandar del input) y te lo guarda en str.
- *	Uso readline porque la otra opcion seria read y usar read seria poner mas trabajo porque read tiene 
- *	la limitacion de leer y readline tine ya incorporado como un historial de comandos y 
+ *	Uso readline porque la otra opcion seria read y usar read seria poner mas trabajo porque read tiene
+ *	la limitacion de leer y readline tine ya incorporado como un historial de comandos y
  *	no necesita buffer size si no que pilla todo el comando.
  *
  *		add_history()
