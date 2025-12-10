@@ -122,7 +122,7 @@ typedef struct s_pipe
 	int		input_fd;
 	int		pipe_fd[2];
 	pid_t	pid;
-	pid_t	pids[32];
+	pid_t	*pids;
 	size_t	count;
 	size_t	capacity;
 
