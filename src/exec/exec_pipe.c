@@ -38,6 +38,7 @@ static void	spawn_child(t_pipe *pip, int pipe_out)
 	{
 		child_setup(pip->input_fd, pipe_out);
 		exec_node_no_fork(pip->node, pip->sh);
+		//free(pip->pids);
 		exit(pip->sh->exit_status);
 	}
 	if (pipe_out != STDOUT_FILENO)
@@ -46,13 +47,15 @@ static void	spawn_child(t_pipe *pip, int pipe_out)
 
 static void	ensure_capacity(t_pipe *pip)
 {
+	(void)pip;
+	/*
 	if (pip->count >= pip->capacity)
 	{
 		pip->capacity *= 2;
 		pip->pids = realloc(pip->pids, sizeof(pid_t) * pip->capacity);
 		if (!pip->pids)
 			fatal("realloc");
-	}
+	}*/
 }
 
 void	pipe_nodes(t_pipe *pip)
@@ -60,9 +63,7 @@ void	pipe_nodes(t_pipe *pip)
 	t_ast	*current;
 
 	current = pip->node;
-	pip->pids = malloc(sizeof(pid_t) * pip->capacity);
-	if (!pip->pids)
-		fatal("malloc");
+
 	while (current && current->type == PIPE)
 	{
 		if (pipe(pip->pipe_fd) < 0)
@@ -87,10 +88,12 @@ t_pipe	init_pipe(t_ast *node, t_shell *sh)
 	pip.sh = sh;
 	pip.input_fd = STDIN_FILENO;
 	pip.count = 0;
-	pip.capacity = 16;
+	pip.capacity = 17;
 	pip.pipe_fd[0] = -1;
 	pip.pipe_fd[1] = -1;
-	pip.pids = NULL;
+	/*pip.pids = malloc(sizeof(pid_t) * pip.capacity);
+	if (!pip.pids)
+	fatal("malloc");*/
 	return (pip);
 }
 
@@ -111,7 +114,7 @@ void	execute_pipe(t_ast *node, t_shell *sh)
 	waitpid(pip.pids[last_index], &status, 0);
 	while (--last_index >= 0)
 		waitpid(pip.pids[last_index], NULL, 0);
-	free(pip.pids);
+	//free(pip.pids);
 	sh->in_pipeline = 0;
 	if (WIFEXITED(status))
 		sh->exit_status = WEXITSTATUS(status);
