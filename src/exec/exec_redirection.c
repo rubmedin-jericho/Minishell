@@ -12,70 +12,64 @@
 
 #include "minishell.h"
 
-static void	redirect_fd(int fd)
+static int	redirect_fd(int fd, int target)
 {
-	if (dup2(fd, STDIN_FILENO) < 0)
+	if (dup2(fd, target) < 0)
 	{
 		perror("dup2");
 		close(fd);
-		exit(EXIT_FAILURE);
+		return (-1);
 	}
 	close(fd);
+	return (0);
 }
 
-void	exec_input(t_ast *node, t_shell *sh)
+static int	open_redir_file(t_ast *node)
 {
 	int	fd;
 
-	fd = open(node->file, O_RDONLY);
+	fd = -1;
+	if (node->type == REDIR_IN)
+		fd = open(node->file, O_RDONLY);
+	else if (node->type == REDIR_OUT)
+		fd = open(node->file, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+	else if (node->type == REDIR_APPEND)
+		fd = open(node->file, O_WRONLY | O_CREAT | O_APPEND, 0666);
 	if (fd < 0)
-	{
 		perror(node->file);
-		exit(EXIT_FAILURE);
-	}
-	redirect_fd(fd);
-	exec_node(node->left, sh);
-	exit(EXIT_FAILURE);
+	return (fd);
 }
 
-void	exec_output(t_ast *node, t_shell *sh)
+int	apply_redirections(t_ast *redir)
 {
 	int	fd;
 
-	fd = open(node->file, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-	if (fd < 0)
+	while (redir && redir->type >= REDIR_IN && redir->type <= T_HEREDOC)
 	{
-		perror(node->file);
-		exit(EXIT_FAILURE);
+		fd = open_redir_file(redir);
+		if (fd < 0)
+			return (-1);
+		if (redir->type == REDIR_IN || redir->type == T_HEREDOC)
+		{
+			if (redirect_fd(fd, STDIN_FILENO) < 0)
+				return (-1);
+		}
+		else
+		{
+			if (redirect_fd(fd, STDOUT_FILENO) < 0)
+				return (-1);
+		}
+		redir = redir->left;
 	}
-	redirect_fd(fd);
-	exec_node(node->left, sh);
-	exit(EXIT_FAILURE);
-}
-
-void	exec_append(t_ast *node, t_shell *sh)
-{
-	int	fd;
-
-	fd = open(node->file, O_WRONLY | O_CREAT | O_APPEND, 0666);
-	if (fd < 0)
-	{
-		perror(node->file);
-		exit(EXIT_FAILURE);
-	}
-	redirect_fd(fd);
-	exec_node(node->left, sh);
-	exit(EXIT_FAILURE);
+	return (0);
 }
 
 void	execute_redirection(t_ast *node, t_shell *sh)
 {
 	if (!node)
 		return ;
-	if (node->type == REDIR_IN)
-		exec_input(node, sh);
-	else if (node->type == REDIR_OUT)
-		exec_output(node, sh);
-	else if (node->type == REDIR_APPEND)
-		exec_append(node, sh);
+	if (apply_redirections(node) == -1)
+		exit(1);
+	exec_node(node->left, sh);
+	exit(sh->exit_status);
 }

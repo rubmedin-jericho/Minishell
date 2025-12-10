@@ -195,13 +195,11 @@ int main(int argc, char **argv, char **envp) {
     char *line = readline("MiniShell> ");
 
 	while (line) {
-    	if (*line)
-     	{
-	        t_ast *ast = parse_pipeline(line);
-	        sh.ast = ast;
-	        execute_ast(&sh);
-			free_ast(ast);
-      	}
+        t_ast *ast = parse_pipeline(line);
+        sh.ast = ast;
+        execute_ast(&sh);
+		free_ast(ast);
+
      	free(line);
         line = readline("MiniShell> ");
     }

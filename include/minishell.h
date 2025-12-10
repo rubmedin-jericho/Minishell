@@ -163,11 +163,11 @@ void	execute_ast(t_shell *sh);
 void	ft_free_tab(char **tab);
 char	*get_path(char *cmd, char **env);
 void	exec_node(t_ast *node, t_shell *sh);
-void	execute_redirection(t_ast *node, t_shell *sh);
 void	execute_pipe(t_ast *node, t_shell *sh);
 int		execute_pipe_recursive(t_ast *node, t_shell *sh, int input_fd);
 void	exec_node_no_fork(t_ast *node, t_shell *sh);
 void	free_ast(t_ast *node);
 void	fatal(const char *msg);
+void	execute_redirection(t_ast *node, t_shell *sh);
 t_pipe	init_pipe(t_ast *node, t_shell *sh);
 #endif

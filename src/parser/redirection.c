@@ -14,36 +14,41 @@
 
 static t_token	*find_redirection(t_token *token, t_token **prev_to_redir)
 {
-	t_token	*buf;
+	t_token	*curr;
 	t_token	*prev;
+	t_token	*last;
+	t_token	*last_prev;
 
-	buf = token;
+	curr = token;
 	prev = NULL;
+	last_prev = NULL;
+	last = NULL;
 	*prev_to_redir = NULL;
-	while (buf)
+	while (curr)
 	{
-		if (buf->type_tok == T_HEREDOC)
+		if (curr->type_tok == REDIR_IN || curr->type_tok == REDIR_OUT
+			|| curr->type_tok == REDIR_APPEND || curr->type_tok == T_HEREDOC)
 		{
-			*prev_to_redir = prev;
-			return (buf);
+			last = curr;
+			last_prev = prev;
 		}
-		prev = buf;
-		buf = buf->next;
+		prev = curr;
+		curr = curr->next;
 	}
-	return (NULL);
+	*prev_to_redir = last_prev;
+	return (last);
 }
 
-// need to change the returns
 static int	get_redir_type(t_token *redir)
 {
-	if (ft_strncmp(redir->data, ">", 2) == 0)
+	if (redir->data[0] == '>' && redir->data[1] == '>')
+		return (REDIR_APPEND);
+	else if (redir->data[0] == '>')
+		return (REDIR_OUT);
+	else if (redir->data[0] == '<' && redir->data[1] == '<')
 		return (T_HEREDOC);
-	else if (ft_strncmp(redir->data, ">>", 3) == 0)
-		return (T_HEREDOC);
-	else if (ft_strncmp(redir->data, "<", 2) == 0)
-		return (T_HEREDOC);
-	else if (ft_strncmp(redir->data, "<<", 3) == 0)
-		return (T_HEREDOC);
+	else if (redir->data[0] == '<')
+		return (REDIR_IN);
 	return (-1);
 }
 
@@ -58,19 +63,21 @@ static int	allocate_left_ast(t_ast *ast)
 
 int	redirection(t_token *token, t_ast *ast)
 {
-	t_token	*prev_to_redir;
+	t_token	*prev;
 	t_token	*redir;
 
-	prev_to_redir = NULL;
-	redir = find_redirection(token, &prev_to_redir);
+	prev = NULL;
+	redir = find_redirection(token, &prev);
 	if (!redir || !redir->next)
 		return (0);
-	if (prev_to_redir)
-		prev_to_redir->next = NULL;
 	ast->type = get_redir_type(redir);
 	ast->file = ft_strdup(redir->next->data);
 	if (!ast->file)
 		return (-1);
+	if (prev)
+		prev->next = redir->next->next;
+	else
+		token = redir->next->next;
 	if (allocate_left_ast(ast) < 0)
 		return (-1);
 	if (create_ast(token, ast->left) < 0)
