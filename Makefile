@@ -33,7 +33,7 @@ PARSER_SRCS = \
 		$(SRCS_DIR)/parser/ast.c \
 		$(SRCS_DIR)/parser/pipe.c \
 		$(SRCS_DIR)/parser/redirection.c \
-		
+
 
 # Lexer sources
 LEXER_SRCS = \
@@ -47,7 +47,8 @@ EXECUTE_SRCS = \
 		$(SRCS_DIR)/exec/executor.c \
 		$(SRCS_DIR)/exec/get_path.c \
 		$(SRCS_DIR)/exec/exec_redirection.c \
-		$(SRCS_DIR)/exec/exec_pipe.c
+		$(SRCS_DIR)/exec/exec_pipe.c \
+		$(SRCS_DIR)/exec/utils.c
 
 # Builtin sources
 BUILTIN_SRCS = \

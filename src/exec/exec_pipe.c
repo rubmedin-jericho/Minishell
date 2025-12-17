@@ -11,152 +11,91 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-/*
-static void	child(t_pipe *p)
+#include <sys/types.h>
+
+static void	child_setup(int input_fd, int pipe_out)
 {
-	printf("child\n\n");
-	close(p->pipe_fd[0]);
-	if (p->input_fd != STDIN_FILENO)
+	if (input_fd != STDIN_FILENO)
 	{
-		dup2(p->input_fd, STDIN_FILENO);
-		close(p->input_fd);
+		if (dup2(input_fd, STDIN_FILENO) < 0)
+			fatal("dup2 input");
+		close(input_fd);
 	}
-	dup2(p->pipe_fd[1], STDOUT_FILENO);
-	close(p->pipe_fd[1]);
-	exec_node_no_fork(p->node->left, p->sh);
-	exit(EXIT_FAILURE);
+	if (pipe_out != STDOUT_FILENO)
+	{
+		if (dup2(pipe_out, STDOUT_FILENO) < 0)
+			fatal("dup2 output");
+		close(pipe_out);
+	}
 }
 
-static void	parent(t_pipe *p)
+static void	spawn_child(t_pipe *pip, int pipe_out)
 {
-	printf("parent\n\n");
-	close(p->pipe_fd[1]);
-	if (p->input_fd != STDIN_FILENO)
-		close(p->input_fd);
-	execute_pipe_recursive(p->node->right, p->sh, p->pipe_fd[0]);
-	close(p->pipe_fd[0]);
-	waitpid(p->pid, NULL, 0);
+	pip->pid = fork();
+	if (pip->pid < 0)
+		fatal("fork");
+	if (pip->pid == 0)
+	{
+		child_setup(pip->input_fd, pipe_out);
+		free(pip->pids);
+		exec_node_no_fork(pip->node, pip->sh);
+		exit(pip->sh->exit_status);
+	}
+	if (pipe_out != STDOUT_FILENO)
+		close(pipe_out);
 }
 
-static void	run_pipe(t_ast *node, t_shell *sh, int input_fd)
+static void	ensure_capacity(t_pipe *pip)
 {
-	t_pipe	p;
-
-	p.node = node;
-	p.sh = sh;
-	p.input_fd = input_fd;
-	if (pipe(p.pipe_fd) < 0)
+	if (pip->count >= pip->capacity)
 	{
-		perror("pipe");
-		close(input_fd);
-		return ;
+		pip->capacity *= 2;
+		pip->pids = realloc(pip->pids, sizeof(pid_t) * pip->capacity);
+		if (!pip->pids)
+			fatal("realloc");
 	}
-	p.pid = fork();
-	if (p.pid < 0)
-	{
-		perror("fork");
-		close(input_fd);
-		return ;
-	}
-	if (p.pid == 0)
-		child(&p);
-	else
-		parent(&p);
-}
-*/
-
-int	exec_last_cmd(t_ast *node, t_shell *sh, int input_fd)
-{
-	pid_t	pid;
-
-	pid = fork();
-	if (pid < 0)
-	{
-		perror("fork");
-		close(input_fd);
-		return (-1);
-	}
-	if (pid == 0)
-	{
-		if (input_fd != STDIN_FILENO)
-		{
-			dup2(input_fd, STDIN_FILENO);
-			close(input_fd);
-		}
-		exec_node_no_fork(node, sh);
-		exit(sh->exit_status);
-	}
-	close(input_fd);
-	return (pid);
 }
 
-int	execute_pipe_recursive(t_ast *node, t_shell *sh, int input_fd)
+void	pipe_nodes(t_pipe *pip)
 {
-	pid_t	pid;
-	int		pipe_fd[2];
+	t_ast	*current;
 
-	if (node->type != PIPE)
-		return (exec_last_cmd(node, sh, input_fd));
-	if (pipe(pipe_fd) < 0)
+	current = pip->node;
+	while (current && current->type == PIPE)
 	{
-		perror("pipe");
-		close(input_fd);
-		return (-1);
+		if (pipe(pip->pipe_fd) < 0)
+			fatal("pipe");
+		pip->node = current->left;
+		spawn_child(pip, pip->pipe_fd[1]);
+		pip->pids[pip->count++] = pip->pid;
+		if (pip->input_fd != STDIN_FILENO)
+			close(pip->input_fd);
+		pip->input_fd = pip->pipe_fd[0];
+		current = current->right;
+		ensure_capacity(pip);
 	}
-	pid = fork();
-	if (pid < 0)
-	{
-		perror("fork");
-		close(input_fd);
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		return (-1);
-	}
-	if (pid == 0)
-	{
-		close(pipe_fd[0]);
-		if (input_fd != STDIN_FILENO)
-		{
-			dup2(input_fd, STDIN_FILENO);
-			close(input_fd);
-		}
-		dup2(pipe_fd[1], STDOUT_FILENO);
-		close(pipe_fd[1]);
-		exec_node_no_fork(node->left, sh);
-		exit(sh->exit_status);
-	}
-	close(pipe_fd[1]);
-	close(input_fd);
-	return (execute_pipe_recursive(node->right, sh, pipe_fd[0]));
-}
-
-void free_commands(char **cmds)
-{
-    int i = 0;
-    perror("cmd\n\n");
-    if (!cmds)
-        return ;
-    while (cmds[i])
-    {
-        free(cmds[i]);
-        cmds[i] = NULL;
-        i++;
-    }
-
-    free(cmds);
-    cmds = NULL;
+	pip->node = current;
 }
 
 void	execute_pipe(t_ast *node, t_shell *sh)
 {
-	int	status;
-	int	last_pid;
+	t_pipe	pip;
+	int		status;
+	int		last_index;
 
 	sh->in_pipeline = 1;
-	last_pid = execute_pipe_recursive(node, sh, STDIN_FILENO);
+	pip = init_pipe(node, sh);
+	pipe_nodes(&pip);
+	spawn_child(&pip, STDOUT_FILENO);
+	pip.pids[pip.count++] = pip.pid;
+	if (pip.input_fd != STDIN_FILENO)
+		close(pip.input_fd);
+	last_index = pip.count - 1;
+	waitpid(pip.pids[last_index], &status, 0);
+	while (--last_index >= 0)
+		waitpid(pip.pids[last_index], NULL, 0);
+	free(pip.pids);
 	sh->in_pipeline = 0;
-	waitpid(last_pid, &status, 0);
-	while (wait(NULL) > 0);
 	if (WIFEXITED(status))
 		sh->exit_status = WEXITSTATUS(status);
 	else
