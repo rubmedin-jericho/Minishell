@@ -129,7 +129,7 @@ int		is_double_quoted(char *str, t_flags *flags);
 int		is_pipe(char *str, t_flags *flags);
 int		is_or_operator(char *str, t_flags *flags);
 void	init_flags(t_flags *flags);
-void	init_base(char **ae, t_shell *base, t_token *tokens);
+void	init_base(char **ae, t_shell *base);
 
 /*Parser*/
 

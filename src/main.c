@@ -13,9 +13,8 @@
 #include "minishell.h"
 
 
-void	init_base(char **envp, t_shell *base, t_token *tokens)
+void	init_base(char **envp, t_shell *base)
 {
-	(void)tokens;
 	base->envp = envp_dup(envp);
 	base->exit_status = 0;
 }
@@ -144,11 +143,24 @@ void init_envp(t_shell **shell, char **envp)
 	}
 }
 
+char	*print_prompt(t_shell **shell)
+{
+	char *prompt;
+	char *str;
+
+	prompt = make_prompt(shell);
+	str = readline(prompt);
+	add_history(str);
+	free(prompt);
+	return (str);
+}
+
 int	main(int ac, char **av, char **envp)
 {
 	char *str;
 	t_shell	*shell;
-	char *prompt;
+	int	count;
+	//char *prompt;
 
 	if (ac > 1 && av[1])
 		return (0);
@@ -161,17 +173,19 @@ int	main(int ac, char **av, char **envp)
 	shell->ast = malloc(sizeof(t_ast));
 	if (!shell->ast)
 		return (1);
+	init_base(envp, shell);
+	count = 0;
 	while(1)
 	{
 		shell->tokens = NULL;
-		prompt = make_prompt(&shell);
-		str = readline(prompt);
-		add_history(str);
+		str = print_prompt(&shell);
+		if(count == 0)
+			write(1, "\n", 1);
+		count++;
 		if (lexer(&shell->tokens, str, &shell->flags) == -1)
 			break ;
 		if (parser(shell->tokens, shell->ast) == -1)
 			break ;
-		init_base(envp, shell, shell->tokens);
 		if (ft_strncmp(shell->tokens->data, "cd", 2) == 0)
 		{
 			ft_cd("/home", &shell);
@@ -182,10 +196,9 @@ int	main(int ac, char **av, char **envp)
 		if (ft_strncmp(shell->tokens->data, "pwd", 3) == 0)
 			ft_pwd(shell);
 		//ft_command(str, base, tokens);
-		free(prompt);
-		free(shell);
 		free(str);
 	}
+	free(shell);
 	return (0);
 }
 
