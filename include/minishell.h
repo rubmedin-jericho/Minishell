@@ -21,6 +21,11 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "libft.h"
+# include <sys/types.h>
+# include <sys/wait.h>
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <fcntl.h>
 
 /* ─── COLORES DE TEXTO ────────────────────────────────*/
 # define COLOR_GOLD "\x1b[38;5;220m"
@@ -46,7 +51,7 @@
 \n" COLOR_RESET
 
 /*----STRUCTS----
- * ESTE ES UN ENUM PARA SELECCIONAR EL TIPO DE TOKEN QUE ES PARA 
+ * ESTE ES UN ENUM PARA SELECCIONAR EL TIPO DE TOKEN QUE ES PARA
  * EVITAR TENER MUCHOS IF COMPARANDO QUE ES.
  * FUNCION EN PROGRESO.
  * */
@@ -57,6 +62,7 @@ typedef enum e_node_type
 	PIPE,
 	REDIR_OUT,
 	REDIR_IN,
+	REDIR_APPEND
 }	t_node_type;
 
 typedef enum e_type
@@ -69,8 +75,8 @@ typedef enum e_type
 	T_HEREDOC, /*---5---*/
 	T_PIPE, /*---6---*/
 	T_FLOW_OPERATOR, /*---7---*/
-	T_REDI_OUT, /*---8---*/
-	T_REDI_IN, /*---9---*/
+	T_REDIR_OUT, /*---8---*/
+	T_REDIR_IN, /*---9---*/
 }	t_type;
 
 typedef struct s_flags
@@ -106,7 +112,21 @@ typedef struct s_shell
 	t_token	*tokens;
 	t_ast	*ast;
 	t_flags	flags;
+	int		in_pipeline;
 }	t_shell;
+
+typedef struct s_pipe
+{
+	t_ast	*node;
+	t_shell	*sh;
+	int		input_fd;
+	int		pipe_fd[2];
+	pid_t	pid;
+	pid_t	*pids;
+	size_t	count;
+	size_t	capacity;
+
+}	t_pipe;
 
 /*----FUNCTIONS----*/
 
@@ -132,7 +152,6 @@ void	init_flags(t_flags *flags);
 void	init_base(char **ae, t_shell *base);
 
 /*Parser*/
-
 int		parser(t_token *token, t_ast *ast);
 int		init_ast(t_ast *ast);
 int		create_ast(t_token *token, t_ast *ast);
@@ -145,5 +164,17 @@ void	ft_cd(char *next_path, t_shell **shell);
 void	ft_pwd(t_shell *shell);
 void	ft_echo(char *str);
 void	ft_exit(t_shell *shell);
-#endif
 
+/* execute*/
+void	execute_ast(t_shell *sh);
+void	ft_free_tab(char **tab);
+char	*get_path(char *cmd, char **env);
+void	exec_node(t_ast *node, t_shell *sh);
+void	execute_pipe(t_ast *node, t_shell *sh);
+int		execute_pipe_recursive(t_ast *node, t_shell *sh, int input_fd);
+void	exec_node_no_fork(t_ast *node, t_shell *sh);
+void	free_ast(t_ast *node);
+void	fatal(const char *msg);
+void	execute_redirection(t_ast *node, t_shell *sh);
+t_pipe	init_pipe(t_ast *node, t_shell *sh);
+#endif
