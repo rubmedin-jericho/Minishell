@@ -38,30 +38,64 @@ static t_token	*find_last_pipe(t_token *token, t_token **prev_to_pipe)
 static int	allocate_ast_children(t_ast *ast)
 {
 	ast->left = malloc(sizeof(t_ast));
-	ast->right = malloc(sizeof(t_ast));
-	if (!ast->left || !ast->right)
+	if (!ast->left)
 		return (-1);
+	ast->right = malloc(sizeof(t_ast));
+	if (!ast->right)
+	{
+		free(ast->left);
+		ast->left = NULL;
+		return (-1);
+	}
 	ft_memset(ast->left, 0, sizeof(t_ast));
 	ft_memset(ast->right, 0, sizeof(t_ast));
 	return (0);
 }
 
+static t_token	*split_on_pipe(t_token *token, t_token **prev, 
+	t_token **saved_next)
+{
+	t_token	*pipe;
+
+	*saved_next = NULL;
+	if (!token || token->type_tok == T_PIPE)
+		return (NULL);
+	pipe = find_last_pipe(token, prev);
+	if (!pipe)
+		return (NULL);
+	if (!pipe->next || pipe->next->type_tok == T_PIPE)
+		return (NULL);
+	if (*prev)
+	{
+		*saved_next = (*prev)->next;
+		(*prev)->next = NULL;
+	}
+	return (pipe);
+}
+
 int	pipe_operator(t_token *token, t_ast *ast)
 {
-	t_token	*prev_to_last_pipe;
-	t_token	*op_token;
+	t_token	*prev;
+	t_token	*pipe;
+	t_token	*saved_next;
+	int		ret;
 
-	op_token = find_last_pipe(token, &prev_to_last_pipe);
-	if (prev_to_last_pipe)
-		prev_to_last_pipe->next = NULL;
-	if (!op_token || !op_token->next)
+	pipe = split_on_pipe(token, &prev, &saved_next);
+	if (!pipe)
 		return (0);
-	ast->type = PIPE;
+	ast->type = T_PIPE;
 	if (allocate_ast_children(ast) < 0)
+	{
+		if (prev)
+			prev->next = saved_next;
 		return (-1);
-	if (create_ast(token, ast->left) < 0)
-		return (-1);
-	if (create_ast(op_token->next, ast->right) < 0)
+	}
+	ret = create_ast(token, ast->left);
+	if (ret >= 0)
+		ret = create_ast(pipe->next, ast->right);
+	if (prev)
+		prev->next = saved_next;
+	if (ret < 0)
 		return (-1);
 	return (1);
 }

@@ -55,16 +55,17 @@
  * EVITAR TENER MUCHOS IF COMPARANDO QUE ES.
  * FUNCION EN PROGRESO.
  * */
-
+/*
 typedef enum e_node_type
 {
 	CMD,
 	PIPE,
 	REDIR_OUT,
 	REDIR_IN,
-	REDIR_APPEND
+	REDIR_APPEND,
+	HEREDOC
 }	t_node_type;
-
+*/
 typedef enum e_type
 {
 	T_STRING, /*---0---*/
@@ -72,11 +73,12 @@ typedef enum e_type
 	T_DOUBLE_QUOTED, /*---2---*/
 	T_APPEND, /*---3---*/
 	T_COMMAND, /*---4---*/
-	T_HEREDOC, /*---5---*/
 	T_PIPE, /*---6---*/
 	T_FLOW_OPERATOR, /*---7---*/
 	T_REDIR_OUT, /*---8---*/
 	T_REDIR_IN, /*---9---*/
+	T_REDIR_APPEND,
+	T_HEREDOC
 }	t_type;
 
 typedef struct s_flags
@@ -96,7 +98,7 @@ typedef struct s_token
 
 typedef struct s_ast
 {
-	t_node_type		type;
+	t_type			type;
 	char			**args;
 	char			*file;
 	struct s_ast	*left;
@@ -136,14 +138,14 @@ void	clear_and_leave(t_shell *base, char **args);
 
 /*Tokenizer & Parser*/
 int		is_heredoc(char *str, t_flags *flags);
-int		lexer(t_token **l_tokens, char *str, char **envp, t_flags *flags);
+int		lexer(t_token **l_tokens, char *str, t_flags *flags);
 char	**ft_split(char const *s, char c);
 char	*asignar_palabra(const char *s, int len);
 void	print_list(t_token **l_tokens);
-void	init_list(t_token **tokens, char *str, char **envp, t_flags *flags);
+void	init_list(t_token **tokens, char *str, t_flags *flags);
 int		ft_count_word(char const *s, char c);
 int		contador_letras_comis(char const *s, char c);
-int		getype(char *str, char **enp, t_flags *flags);
+int		getype(char *str, t_flags *flags);
 int		is_simple_quoted(char *str, t_flags *flags);
 int		is_double_quoted(char *str, t_flags *flags);
 int		is_pipe(char *str, t_flags *flags);

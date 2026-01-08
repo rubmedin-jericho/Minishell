@@ -38,7 +38,7 @@ static void	spawn_child(t_pipe *pip, int pipe_out)
 	{
 		child_setup(pip->input_fd, pipe_out);
 		free(pip->pids);
-		exec_node_no_fork(pip->node, pip->sh);
+		exec_node(pip->node, pip->sh);
 		exit(pip->sh->exit_status);
 	}
 	if (pipe_out != STDOUT_FILENO)
@@ -61,7 +61,7 @@ void	pipe_nodes(t_pipe *pip)
 	t_ast	*current;
 
 	current = pip->node;
-	while (current && current->type == PIPE)
+	while (current && current->type == T_PIPE)
 	{
 		if (pipe(pip->pipe_fd) < 0)
 			fatal("pipe");

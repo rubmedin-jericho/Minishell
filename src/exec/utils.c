@@ -25,7 +25,7 @@ void	free_ast(t_ast *node)
 	i = 0;
 	if (!node)
 		return ;
-	if (node->type == CMD && node->args)
+	if (node->type == T_STRING && node->args)
 	{
 		while (node->args[i])
 			free(node->args[i++]);

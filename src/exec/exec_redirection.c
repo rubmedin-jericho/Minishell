@@ -29,11 +29,11 @@ static int	open_redir_file(t_ast *node)
 	int	fd;
 
 	fd = -1;
-	if (node->type == REDIR_IN)
+	if (node->type == T_REDIR_IN)
 		fd = open(node->file, O_RDONLY);
-	else if (node->type == REDIR_OUT)
+	else if (node->type == T_REDIR_OUT)
 		fd = open(node->file, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-	else if (node->type == REDIR_APPEND)
+	else if (node->type == T_REDIR_APPEND)
 		fd = open(node->file, O_WRONLY | O_CREAT | O_APPEND, 0666);
 	if (fd < 0)
 		perror(node->file);
@@ -44,12 +44,12 @@ int	apply_redirections(t_ast *redir)
 {
 	int	fd;
 
-	while (redir && redir->type >= REDIR_IN && redir->type <= T_HEREDOC)
+	while (redir && redir->type >= T_REDIR_OUT && redir->type <= T_HEREDOC)
 	{
 		fd = open_redir_file(redir);
 		if (fd < 0)
 			return (-1);
-		if (redir->type == REDIR_IN || redir->type == T_HEREDOC)
+		if (redir->type == T_REDIR_IN || redir->type == T_HEREDOC)
 		{
 			if (redirect_fd(fd, STDIN_FILENO) < 0)
 				return (-1);

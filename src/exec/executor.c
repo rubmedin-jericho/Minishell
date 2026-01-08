@@ -30,21 +30,15 @@ void	execute_simple(t_ast *node, t_shell *sh)
 
 void	exec_node_no_fork(t_ast *node, t_shell *sh)
 {
-	if (node->type == PIPE)
+	if (node->type == T_PIPE)
 		execute_pipe(node, sh);
-	else if (node->type == CMD)
+	else if (node->type == T_STRING)
 		execute_simple(node, sh);
-	else if (node->type == REDIR_IN
-		|| node->type == REDIR_OUT
-		|| node->type == REDIR_APPEND)
+	else if (node->type == T_REDIR_IN
+		|| node->type == T_REDIR_OUT
+		|| node->type == T_REDIR_APPEND)
 		execute_redirection(node, sh);
-	else
-	{
-		sh->exit_status = 1;
-		printf("Error: PIPE cannot "
-			"be executed without fork.\n");
-		exit(1);
-	}
+	exit(sh->exit_status);
 }
 
 void	exec_node(t_ast *node, t_shell *sh)

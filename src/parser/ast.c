@@ -27,9 +27,9 @@ static int	fill_array(t_token *token, t_ast *ast)
 			ast->args[i] = ft_strdup(buf->data);
 			if (!ast->args[i])
 			{
-				j = 0;
-				while (j < i)
-					free(ast->args[j++]);
+				j = i;
+				while (j--)
+					free(ast->args[j]);
 				return (-1);
 			}
 			i++;
@@ -66,7 +66,7 @@ int	init_ast(t_ast *ast)
 {
 	if (!ast)
 		return (-1);
-	ast->type = CMD;
+	ast->type = T_STRING;
 	ast->left = NULL;
 	ast->right = NULL;
 	ast->file = NULL;
