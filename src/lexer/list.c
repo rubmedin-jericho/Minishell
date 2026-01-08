@@ -33,7 +33,6 @@ static t_token *create_token(char *str, t_flags *flags)
 {
 	t_token *buff_tmp;
 	(void)str;
-	(void)cpy;
 	buff_tmp = malloc(sizeof(t_token));
 	if(!buff_tmp)
 		return NULL;
