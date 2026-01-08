@@ -40,10 +40,9 @@ static t_token	*find_redirection(t_token *token, t_token **prev_to_redir)
 
 static int	allocate_left_ast(t_ast *ast)
 {
-	ast->left = malloc(sizeof(t_ast));
+	ast->left = ft_calloc(1, sizeof(t_ast));
 	if (!ast->left)
 		return (-1);
-	ft_memset(ast->left, 0, sizeof(t_ast));
 	return (0);
 }
 
@@ -79,6 +78,8 @@ static int	extract_redirection(t_token **token, t_ast *ast,
 int	error_redirect(t_token **token, t_ast *ast,
 					t_token **prev, t_token **saved_next)
 {
+	if (!ast)
+		return (-1);
 	if (*prev)
 		(*prev)->next = *saved_next;
 	else
@@ -98,10 +99,10 @@ int	redirection(t_token *token, t_ast *ast)
 	if (ret <= 0)
 		return (ret);
 	if (allocate_left_ast(ast) < 0)
-		return error_redirect(&token, ast, &prev, &saved_next);
+		return (error_redirect(&token, ast, &prev, &saved_next));
 	ret = create_ast(token, ast->left);
 	if (ret < 0)
-		return error_redirect(&token, ast, &prev, &saved_next);
+		return (error_redirect(&token, ast, &prev, &saved_next));
 	if (prev)
 		prev->next = saved_next;
 	else

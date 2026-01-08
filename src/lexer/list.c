@@ -18,7 +18,7 @@ static void adding_token(t_token **l_tokens, t_token *token)
 
 	if (!*l_tokens)
 	{
-		token->next = NULL; 
+		token->next = NULL;
 		*l_tokens = token;
 		return ;
 	}
@@ -32,13 +32,18 @@ static void adding_token(t_token **l_tokens, t_token *token)
 static t_token *create_token(char *str, t_flags *flags)
 {
 	t_token *buff_tmp;
-	(void)str;
 
 	buff_tmp = malloc(sizeof(t_token));
 	if(!buff_tmp)
-		return NULL;
+		return (NULL);
 	buff_tmp->data = ft_strdup(str);
+	if (!buff_tmp->data)
+	{
+		free(buff_tmp);
+		return (NULL);
+	}
 	buff_tmp->type_tok = getype(buff_tmp->data, flags); /*A MEDIO HACER*/
+	buff_tmp->next = NULL;
 	return (buff_tmp);
 }
 
@@ -58,6 +63,7 @@ void	init_list(t_token **tokens, char *str, t_flags *flags)
 		cpy_str = ft_substr(buff_str, 0, contador_letras_comis(buff_str, ' '));
 		buff_str = &buff_str[contador_letras_comis(buff_str, ' ') + 1];
 		buff_tmp = create_token(cpy_str, flags);
+		free(cpy_str);
 		if(!buff_tmp)
 			return ;
 		adding_token(tokens, buff_tmp);

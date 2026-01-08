@@ -151,7 +151,7 @@ int		is_double_quoted(char *str, t_flags *flags);
 int		is_pipe(char *str, t_flags *flags);
 int		is_or_operator(char *str, t_flags *flags);
 void	init_flags(t_flags *flags);
-void	init_base(char **ae, t_shell *base, t_token *tokens);
+void	init_base(char **ae, t_shell *base);
 
 /*Parser*/
 int		parser(t_token *token, t_ast *ast);
@@ -172,4 +172,6 @@ void	free_ast(t_ast *node);
 void	fatal(const char *msg);
 void	execute_redirection(t_ast *node, t_shell *sh);
 t_pipe	init_pipe(t_ast *node, t_shell *sh);
+
+void	free_tokens(t_shell *sh);
 #endif
