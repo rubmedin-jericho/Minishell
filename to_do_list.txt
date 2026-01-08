@@ -1,0 +1,23 @@
+modifications
+
+lexer:
+
+need to scan the string character by character, not split by spaces.
+Token boundaries are: 
+1 - Whitespace
+2 - Operators: |, <, >, <<, >>
+3 - Quotes (' and ")
+
+there are some leaks when using the fucnction init_list
+
+continue working on builtins 
+
+
+Juan
+
+
+handle edge cases 
+check leaks in exec and parser
+add some comments
+
+
