@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell_main.c                                   :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rubmedin <rubmedin@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 13:25:43 by rubmedin          #+#    #+#             */
-/*   Updated: 2025/10/07 19:36:20 by rubmedin         ###   ########.fr       */
+/*   Updated: 2026/01/09 17:04:45 by rubmedin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,23 +127,6 @@ int	lenght_envp(char **envp)
 	return (lenght);
 }
 
-void init_envp(t_shell **shell, char **envp)
-{
-	int	lenght_e;
-	int	i;
-
-	i = 0;
-	lenght_e = lenght_envp(envp);
-	(*shell)->envp = malloc(sizeof(char *) * (lenght_e + 1));
-	if(!(*shell)->envp)
-		return ;
-	while(envp[i])
-	{
-		(*shell)->envp[i] = ft_strdup(envp[i]);
-		i++;
-	}
-}
-
 char	*print_prompt(t_shell **shell)
 {
 	char *prompt;
@@ -156,22 +139,19 @@ char	*print_prompt(t_shell **shell)
 	return (str);
 }
 
-/*
 int	main(int ac, char **av, char **envp)
 {
 	char *str;
 	t_shell	*shell;
-	int	count;
-	//char *prompt;
+	long	count;
 
 	if (ac > 1 && av[1])
 		return (0);
 	printf(MINISHELL_BANNER);
-	shell = malloc(sizeof(t_shell));
-	init_envp(&shell, envp);
+  shell = malloc(sizeof(t_shell));
 	if (!shell)
 		return (1);
-	init_flags(&shell->flags);
+	//init_flags(&shell->flags);
 	shell->ast = malloc(sizeof(t_ast));
 	if (!shell->ast)
 		return (1);
@@ -179,12 +159,13 @@ int	main(int ac, char **av, char **envp)
 	count = 0;
 	while(1)
 	{
+	  init_flags(&shell->flags);
 		shell->tokens = NULL;
 		str = print_prompt(&shell);
-		if(count == 0)
-			write(1, "\n", 1);
+	//	if(count == 0)
+	//		write(1, "\n", 1);
 		count++;
-		if (lexer(&shell->tokens, str, &shell->flags) == -1)
+		if (lexer(&shell->tokens, str, &shell->flags, envp) == -1)
 			break ;
 		if (parser(shell->tokens, shell->ast) == -1)
 			break ;
@@ -197,13 +178,16 @@ int	main(int ac, char **av, char **envp)
 		}
 		if (ft_strncmp(shell->tokens->data, "pwd", 3) == 0)
 			ft_pwd(shell);
-		//ft_command(str, base, tokens);
 		free(str);
+    //Falta crear funcion  reset flags;
+    shell->flags.flag_simple_quot = 0;
+    shell->flags.flag_double_quot = 0;
+    shell->flags.flag_heredoc = 0;
 	}
 	free(shell);
 	return (0);
 }
-*/
+
 t_ast *new_cmd_node(char **args) {
     t_ast *node = malloc(sizeof(t_ast));
     node->type = CMD;
@@ -281,7 +265,7 @@ void free_env(char **env)
     free(env);
 }
 // ----------------- Main -----------------
-
+/*
 int main(int argc, char **argv, char **envp) {
     t_shell sh = {0};
     (void)argc;
@@ -305,7 +289,7 @@ int main(int argc, char **argv, char **envp) {
     clear_history();
     return sh.exit_status;
 }
-
+*/
 /*		readline()
  *	-------------------
  *	La funcion readline(const char *str) es la que te lee el stdin(salida estandar del input) y te lo guarda en str.

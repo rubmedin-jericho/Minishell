@@ -6,7 +6,7 @@
 /*   By: jmarques <jmarques@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/26 12:39:10 by jmarques          #+#    #+#             */
-/*   Updated: 2025/11/26 12:39:16 by jmarques         ###   ########.fr       */
+/*   Updated: 2026/01/09 17:12:53 by rubmedin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ typedef struct s_flags
 typedef struct s_token
 {
 	char			*data;
+  char      *path;
 	t_type			type_tok;
 	struct s_token	*next;
 }	t_token;
@@ -136,14 +137,14 @@ void	clear_and_leave(t_shell *base, char **args);
 
 /*Tokenizer & Parser*/
 int		is_heredoc(char *str, t_flags *flags);
-int		lexer(t_token **l_tokens, char *str, t_flags *flags);
+int		lexer(t_token **l_tokens, char *str, t_flags *flags, char **envp);
 char	**ft_split(char const *s, char c);
 char	*asignar_palabra(const char *s, int len);
 void	print_list(t_token **l_tokens);
-void	init_list(t_token **tokens, char *str, t_flags *flags);
+void	init_list(t_token **tokens, char *str, t_flags *flags, char **envp);
 int		ft_count_word(char const *s, char c);
 int		contador_letras_comis(char const *s, char c);
-int		getype(char *str, t_flags *flags);
+int		getype(char *str, t_flags *flags, t_token *token_v, char **envp);
 int		is_simple_quoted(char *str, t_flags *flags);
 int		is_double_quoted(char *str, t_flags *flags);
 int		is_pipe(char *str, t_flags *flags);

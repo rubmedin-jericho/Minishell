@@ -87,6 +87,7 @@ int	contador_letras_comis(char const *s, char c)
 			break ;
 		letras++;
 	}
+
 	return (letras);
 }
 

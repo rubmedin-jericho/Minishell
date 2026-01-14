@@ -56,7 +56,7 @@ int	is_simple_quoted(char *str, t_flags *flags)
 		if (str[iter] == '\'' && flags->flag_simple_quot == 0)
 		{
 			flags->flag_simple_quot = 1;
-			return (1);
+      break ;
 		}
 		else if (str[iter] == '\'' && flags->flag_simple_quot == 1)
 		{
