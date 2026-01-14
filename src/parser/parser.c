@@ -12,9 +12,9 @@
 
 #include "minishell.h"
 
-int	parser(t_token *token, t_ast *ast)
+int	parser(t_shell *sh)
 {
-	if (create_ast(token, ast))
+	if (create_ast(sh->tokens, sh->ast))
 	{
 		return (0);
 	}

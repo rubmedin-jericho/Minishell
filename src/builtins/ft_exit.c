@@ -1,13 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor.c                                         :+:      :+:    :+:   */
+/*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmarques <jmarques@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rubmedin <rubmedin@student.42barcelona.co  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/27 14:19:54 by jmarques          #+#    #+#             */
-/*   Updated: 2025/11/27 14:19:56 by jmarques         ###   ########.fr       */
+/*   Created: 2025/12/04 15:39:21 by rubmedin          #+#    #+#             */
+/*   Updated: 2025/12/04 15:39:32 by rubmedin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "minishell.h"
 
+void	ft_exit(t_shell *shell)
+{
+	exit(shell->exit_status);
+}

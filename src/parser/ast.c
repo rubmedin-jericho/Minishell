@@ -12,11 +12,13 @@
 
 #include "minishell.h"
 
+/*
+ * fill the array with the values of the input
+ */
 static int	fill_array(t_token *token, t_ast *ast)
 {
 	t_token	*buf;
 	int		i;
-	int		j;
 
 	buf = token;
 	i = 0;
@@ -27,9 +29,9 @@ static int	fill_array(t_token *token, t_ast *ast)
 			ast->args[i] = ft_strdup(buf->data);
 			if (!ast->args[i])
 			{
-				j = 0;
-				while (j < i)
-					free(ast->args[j++]);
+				while (i-- >= 0)
+					free(ast->args[i]);
+				ast->args = NULL;
 				return (-1);
 			}
 			i++;
@@ -37,9 +39,12 @@ static int	fill_array(t_token *token, t_ast *ast)
 		buf = buf->next;
 	}
 	ast->args[i] = NULL;
-	return (1);
+	return (0);
 }
 
+/*
+ * create a new array of string to put the value
+ */
 static int	allocate_array(t_token *token, t_ast *ast)
 {
 	int		count;
@@ -55,23 +60,42 @@ static int	allocate_array(t_token *token, t_ast *ast)
 	}
 	if (count == 0)
 		return (0);
-	ast->args = malloc(sizeof(char *) * (count + 1));
+	ast->args = ft_calloc(count + 1, sizeof(char *));
 	if (!ast->args)
 		return (-1);
-	ft_memset(ast->args, 0, sizeof(char *) * (count + 1));
-	return (fill_array(token, ast));
+	if (fill_array(token, ast) < 0)
+	{
+		free(ast->args);
+		ast->args = NULL;
+		return (-1);
+	}
+	return (0);
 }
 
-int	init_ast(t_ast *ast)
+static void	init_ast(t_ast *ast)
 {
 	if (!ast)
-		return (-1);
-	ast->type = CMD;
+		return ;
+	ast->type = T_STRING;
 	ast->left = NULL;
 	ast->right = NULL;
 	ast->file = NULL;
 	ast->args = NULL;
-	return (0);
+}
+
+/*
+ * check what type of return received
+ * ret = 0 nothing is created
+ * ret = 1 created
+ * ret = -1 error
+ */
+static int	check_ret(int ret)
+{
+	if (ret == -1)
+		return (-1);
+	if (ret == 1)
+		return (0);
+	return (1);
 }
 
 int	create_ast(t_token *token, t_ast *ast)
@@ -82,18 +106,12 @@ int	create_ast(t_token *token, t_ast *ast)
 		return (-1);
 	init_ast(ast);
 	ret = pipe_operator(token, ast);
-	if (ret != 0)
-	{
-		if (ret == 1)
-			return (0);
-		return (-1);
-	}
+	ret = check_ret(ret);
+	if (ret != 1)
+		return (ret);
 	ret = redirection(token, ast);
-	if (ret != 0)
-	{
-		if (ret == 1)
-			return (0);
-		return (-1);
-	}
+	ret = check_ret(ret);
+	if (ret != 1)
+		return (ret);
 	return (allocate_array(token, ast));
 }

@@ -21,6 +21,11 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "libft.h"
+# include <sys/types.h>
+# include <sys/wait.h>
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <fcntl.h>
 
 /* ─── COLORES DE TEXTO ────────────────────────────────*/
 # define COLOR_GOLD "\x1b[38;5;220m"
@@ -46,10 +51,21 @@
 \n" COLOR_RESET
 
 /*----STRUCTS----
- * ESTE ES UN ENUM PARA SELECCIONAR EL TIPO DE TOKEN QUE ES PARA 
+ * ESTE ES UN ENUM PARA SELECCIONAR EL TIPO DE TOKEN QUE ES PARA
  * EVITAR TENER MUCHOS IF COMPARANDO QUE ES.
  * FUNCION EN PROGRESO.
  * */
+/*
+typedef enum e_node_type
+{
+	CMD,
+	PIPE,
+	REDIR_OUT,
+	REDIR_IN,
+	REDIR_APPEND,
+	HEREDOC
+}	t_node_type;
+*/
 typedef enum e_type
 {
 	T_STRING, /*---0---*/
@@ -57,25 +73,20 @@ typedef enum e_type
 	T_DOUBLE_QUOTED, /*---2---*/
 	T_APPEND, /*---3---*/
 	T_COMMAND, /*---4---*/
-	T_HEREDOC, /*---5---*/
 	T_PIPE, /*---6---*/
 	T_FLOW_OPERATOR, /*---7---*/
-	
+	T_REDIR_OUT, /*---8---*/
+	T_REDIR_IN, /*---9---*/
+	T_REDIR_APPEND,
+	T_HEREDOC
 }	t_type;
-
-typedef enum e_node_type
-{
-	CMD,
-	PIPE,
-	REDIR_OUT,
-	REDIR_IN,
-}	t_node_type;
 
 typedef struct s_flags
 {
-	int	flag_simple_quot;
-	int	flag_double_quot;
-}	t_flags;
+	int			flag_simple_quot;
+	int			flag_double_quot;
+	int			flag_heredoc;
+}				t_flags;
 
 /*ESTA ES LA STRUCT PARA GUARDAR LOS TOKENS*/
 typedef struct s_token
@@ -87,7 +98,7 @@ typedef struct s_token
 
 typedef struct s_ast
 {
-	t_node_type		type;
+	t_type			type;
 	char			**args;
 	char			*file;
 	struct s_ast	*left;
@@ -97,13 +108,27 @@ typedef struct s_ast
 /*STRUCT BASE, TIPICA STRUCT PARA PASAR VARIABLES GENERALES*/
 typedef struct s_shell
 {
+	char	*str;
 	char	**envp;
-	char	**commands;
 	int		exit_status; //probable futuro manejo de exit
 	t_token	*tokens;
 	t_ast	*ast;
 	t_flags	flags;
+	int		in_pipeline;
 }	t_shell;
+
+typedef struct s_pipe
+{
+	t_ast	*node;
+	t_shell	*sh;
+	int		input_fd;
+	int		pipe_fd[2];
+	pid_t	pid;
+	pid_t	*pids;
+	size_t	count;
+	size_t	capacity;
+
+}	t_pipe;
 
 /*----FUNCTIONS----*/
 
@@ -112,26 +137,45 @@ char	**envp_dup(char **ae);
 void	clear_and_leave(t_shell *base, char **args);
 
 /*Tokenizer & Parser*/
-int		lexer(t_token **l_tokens, char *str, char **envp, t_flags *flags);
+int		is_heredoc(char *str, t_flags *flags);
+int		lexer(t_shell *sh);
+
 char	**ft_split(char const *s, char c);
 char	*asignar_palabra(const char *s, int len);
 void	print_list(t_token **l_tokens);
-void	init_list(t_token **tokens, char *str, char **envp, t_flags *flags);
+void	init_list(t_token **tokens, char *str, t_flags *flags);
 int		ft_count_word(char const *s, char c);
 int		contador_letras_comis(char const *s, char c);
-int		getype(char *str, char **enp, t_flags *flags);
+int		getype(char *str, t_flags *flags);
 int		is_simple_quoted(char *str, t_flags *flags);
 int		is_double_quoted(char *str, t_flags *flags);
 int		is_pipe(char *str, t_flags *flags);
 int		is_or_operator(char *str, t_flags *flags);
 void	init_flags(t_flags *flags);
-void	init_base(char **ae, t_shell *base, t_token *tokens);
+void	init_base(char **ae, t_shell *base);
 
 /*Parser*/
-
-int		parser(t_token *token, t_ast *ast);
-int		init_ast(t_ast *ast);
+int		parser(t_shell *sh);
 int		create_ast(t_token *token, t_ast *ast);
 int		redirection(t_token *token, t_ast *ast);
 int		pipe_operator(t_token *token, t_ast *ast);
+
+/* execute*/
+void	execute_ast(t_shell *sh);
+void	ft_free_tab(char **tab);
+char	*get_path(char *cmd, char **env);
+void	exec_node(t_ast *node, t_shell *sh);
+void	execute_pipe(t_ast *node, t_shell *sh);
+int		execute_pipe_recursive(t_ast *node, t_shell *sh, int input_fd);
+void	exec_node_no_fork(t_ast *node, t_shell *sh);
+void	free_ast(t_ast *node);
+void	fatal(const char *msg);
+void	execute_redirection(t_ast *node, t_shell *sh);
+t_pipe	init_pipe(t_ast *node, t_shell *sh);
+
+void	free_tokens(t_shell *sh);
+
+/* signal */
+void	signals_init(void);
+
 #endif

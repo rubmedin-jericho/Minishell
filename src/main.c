@@ -11,110 +11,99 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <readline/history.h>
 
-/*
-static int ft_command(char *str, t_base *base, t_token *tokens) FUNCION DE PRUEBA - para poner las funciones
+int	g_signal = 0;
+
+void	free_env(char **env)
 {
-	if(ft_strncmp(str, "pwd", ft_strlen(str)) == 0)
-		ft_pwd();
-	if(ft_strncmp(str, "env", ft_strlen(str)) == 0)
-		ft_env(base);
-	if (ft_strncmp(str, "exit", ft_strlen(str)) == 0)
+	int	i;
+
+	i = 0;
+	if (!env)
+		return ;
+	while (env[i])
 	{
-		free(tokens);
-		ft_exit(base, ft_split(str, ' '), 0);
+		free(env[i]);
+		i++;
 	}
-	return (0);
+	free(env);
 }
-*/
-//static int	count_commands(t_token *tokens)
-//{
-//	int	i;
-//
-//	i = 0;
-//	while(tokens)
-//	{
-//		if(tokens->type_tok == 4)
-//			i++;
-//		tokens = tokens->next;
-//	}
-//	return (i);
-//}
 
-//static void	fill_commands(t_base *base, t_token *tokens)
-//{
-//	int	i;
-//	int	lenght_commands;
-//	t_token *iter_tmp;
-//
-//	i = 0;
-//	iter_tmp = tokens;
-//	lenght_commands = count_commands(tokens);
-//	base->commands = malloc(sizeof(char *) * (lenght_commands + 1));
-//	if(!base->commands)
-//		return ;
-//	while (iter_tmp)
-//	{
-//		if (iter_tmp->type_tok == 4)
-//		{
-//			base->commands[i] = ft_strdup(iter_tmp->data);
-//			i++;
-//		}
-//		iter_tmp = iter_tmp->next;
-//	}
-//	base->commands[i] = NULL;
-//}
-
-void	init_base(char **envp, t_shell *base, t_token *tokens)
+t_shell	init_shell(char **envp)
 {
-	(void)tokens;
-	base->envp = envp_dup(envp);
-	base->exit_status = 0;
-//	fill_commands(base, tokens);
+	t_shell	sh;
+
+	init_flags(&sh.flags);
+	sh.ast = malloc(sizeof(t_ast));
+	if (!sh.ast)
+		exit(1);
+	sh.exit_status = 0;
+	sh.in_pipeline = 0;
+	sh.tokens = NULL;
+	sh.envp = envp_dup(envp);
+	signals_init();
+	return (sh);
 }
 
+void	free_shell_loop(t_shell *sh)
+{
+	if (sh->tokens)
+		free_tokens(sh);
+	sh->tokens = NULL;
+	free(sh->str);
+}
+
+void	shell_loop(t_shell *sh)
+{
+	while (1)
+	{
+		sh->str = readline("minishell> ");
+		if (sh->str == NULL)
+		{
+			printf("exit\n");
+			break ;
+		}
+		if (sh->str[0] == '\0')
+		{
+			free(sh->str);
+			continue ;
+		}
+		add_history(sh->str);
+		lexer(sh);
+		parser(sh);
+		execute_ast(sh);
+		free_shell_loop(sh);
+		g_signal = 0;
+	}
+}
 
 int	main(int ac, char **av, char **envp)
 {
-	char *str;
-	t_shell	*shell;
+	t_shell	shell;
 
 	if (ac > 1 && av[1])
 		return (0);
-	printf(MINISHELL_BANNER);
-	shell = malloc(sizeof(t_shell));
-	if (!shell)
-		return (1);
-	init_flags(&shell->flags);
-	shell->ast = malloc(sizeof(t_ast));
-	if (!shell->ast)
-		return (1);
-	while(1)
-	{
-		shell->tokens = NULL;
-		str = readline(COLOR_GOLD "[🐚" COLOR_MAGENTA "MiniConcha$" COLOR_GOLD "🐚>]" COLOR_RESET);
-		add_history(str);
-		if (lexer(&shell->tokens, str, envp, &shell->flags) == -1)
-			break ;
-		if (parser(shell->tokens, shell->ast) == -1)
-			break ;
-		init_base(envp, shell, shell->tokens);
-		//ft_command(str, base, tokens);
-		free(str);
-	}
-	return (0);
+	shell = init_shell(envp);
+	shell_loop(&shell);
+	free_shell_loop(&shell);
+	free_env(shell.envp);
+	rl_clear_history();
+	return (g_signal);
 }
-
-
 /*		readline()
  *	-------------------
- *	La funcion readline(const char *str) es la que te lee el stdin(salida estandar del input) y te lo guarda en str.
- *	Uso readline porque la otra opcion seria read y usar read seria poner mas trabajo porque read tiene 
- *	la limitacion de leer y readline tine ya incorporado como un historial de comandos y 
+ *	La funcion readline(const char *str) es la que te lee
+ *  el stdin(salida estandar del input) y te lo guarda en str.
+ *	Uso readline porque la otra opcion seria read y usar
+ *  read seria poner mas trabajo porque read tiene
+ *	la limitacion de leer y readline tine ya incorporado
+ *  como un historial de comandos y
  *	no necesita buffer size si no que pilla todo el comando.
  *
  *		add_history()
  *	-------------------
- *	El add_history sirve para el tema de agregar un mini historial de comandos.
+ *	El add_history sirve para el tema de agregar un mini
+ *  historial de comandos.
  *
  * */

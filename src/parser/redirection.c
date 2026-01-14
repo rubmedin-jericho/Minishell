@@ -14,66 +14,98 @@
 
 static t_token	*find_redirection(t_token *token, t_token **prev_to_redir)
 {
-	t_token	*buf;
+	t_token	*curr;
 	t_token	*prev;
+	t_token	*last;
+	t_token	*last_prev;
 
-	buf = token;
+	curr = token;
 	prev = NULL;
+	last_prev = NULL;
+	last = NULL;
 	*prev_to_redir = NULL;
-	while (buf)
+	while (curr)
 	{
-		if (buf->type_tok == T_HEREDOC)
+		if (curr->type_tok >= T_REDIR_OUT && curr->type_tok <= T_HEREDOC)
 		{
-			*prev_to_redir = prev;
-			return (buf);
+			last = curr;
+			last_prev = prev;
 		}
-		prev = buf;
-		buf = buf->next;
+		prev = curr;
+		curr = curr->next;
 	}
-	return (NULL);
-}
-
-// need to change the returns
-static int	get_redir_type(t_token *redir)
-{
-	if (ft_strncmp(redir->data, ">", 2) == 0)
-		return (T_HEREDOC);
-	else if (ft_strncmp(redir->data, ">>", 3) == 0)
-		return (T_HEREDOC);
-	else if (ft_strncmp(redir->data, "<", 2) == 0)
-		return (T_HEREDOC);
-	else if (ft_strncmp(redir->data, "<<", 3) == 0)
-		return (T_HEREDOC);
-	return (-1);
+	*prev_to_redir = last_prev;
+	return (last);
 }
 
 static int	allocate_left_ast(t_ast *ast)
 {
-	ast->left = malloc(sizeof(t_ast));
+	ast->left = ft_calloc(1, sizeof(t_ast));
 	if (!ast->left)
 		return (-1);
-	ft_memset(ast->left, 0, sizeof(t_ast));
 	return (0);
+}
+
+static int	extract_redirection(t_token **token, t_ast *ast,
+								t_token **prev, t_token **saved_next)
+{
+	t_token	*redir;
+
+	*prev = NULL;
+	*saved_next = NULL;
+	redir = find_redirection(*token, prev);
+	if (!redir)
+		return (0);
+	if (!redir->next || redir->next->type_tok != T_STRING)
+		return (-1);
+	ast->type = redir->type_tok;
+	ast->file = ft_strdup(redir->next->data);
+	if (!ast->file)
+		return (-1);
+	if (*prev)
+	{
+		*saved_next = (*prev)->next;
+		(*prev)->next = redir->next->next;
+	}
+	else
+	{
+		*saved_next = *token;
+		*token = redir->next->next;
+	}
+	return (1);
+}
+
+int	error_redirect(t_token **token, t_ast *ast,
+					t_token **prev, t_token **saved_next)
+{
+	if (!ast)
+		return (-1);
+	if (*prev)
+		(*prev)->next = *saved_next;
+	else
+		*token = *saved_next;
+	free(ast->file);
+	ast->file = NULL;
+	return (-1);
 }
 
 int	redirection(t_token *token, t_ast *ast)
 {
-	t_token	*prev_to_redir;
-	t_token	*redir;
+	t_token	*prev;
+	t_token	*saved_next;
+	int		ret;
 
-	prev_to_redir = NULL;
-	redir = find_redirection(token, &prev_to_redir);
-	if (!redir || !redir->next)
-		return (0);
-	if (prev_to_redir)
-		prev_to_redir->next = NULL;
-	ast->type = get_redir_type(redir);
-	ast->file = ft_strdup(redir->next->data);
-	if (!ast->file)
-		return (-1);
+	ret = extract_redirection(&token, ast, &prev, &saved_next);
+	if (ret <= 0)
+		return (ret);
 	if (allocate_left_ast(ast) < 0)
-		return (-1);
-	if (create_ast(token, ast->left) < 0)
-		return (-1);
+		return (error_redirect(&token, ast, &prev, &saved_next));
+	ret = create_ast(token, ast->left);
+	if (ret < 0)
+		return (error_redirect(&token, ast, &prev, &saved_next));
+	if (prev)
+		prev->next = saved_next;
+	else
+		token = saved_next;
 	return (1);
 }

@@ -33,7 +33,7 @@ PARSER_SRCS = \
 		$(SRCS_DIR)/parser/ast.c \
 		$(SRCS_DIR)/parser/pipe.c \
 		$(SRCS_DIR)/parser/redirection.c \
-		
+
 
 # Lexer sources
 LEXER_SRCS = \
@@ -42,15 +42,32 @@ LEXER_SRCS = \
 		$(SRCS_DIR)/lexer/list.c \
 		$(SRCS_DIR)/lexer/utils.c
 
+# execute sources
+EXECUTE_SRCS = \
+		$(SRCS_DIR)/exec/executor.c \
+		$(SRCS_DIR)/exec/get_path.c \
+		$(SRCS_DIR)/exec/exec_redirection.c \
+		$(SRCS_DIR)/exec/exec_pipe.c \
+		$(SRCS_DIR)/exec/utils.c
+
+SIGNALS_SRCS = \
+		$(SRCS_DIR)/signal/signals.c
+
 # Builtin sources
 BUILTIN_SRCS = \
-		$(SRCS_DIR)/builtins/ft_pwd.c
+		$(SRCS_DIR)/builtins/ft_pwd.c \
+		$(SRCS_DIR)/builtins/ft_echo.c \
+		$(SRCS_DIR)/builtins/ft_cd.c \
+		$(SRCS_DIR)/builtins/ft_exit.c \
+		$(SRCS_DIR)/builtins/ft_export.c
 
 # Combine all sources
 SRCS =	$(MAIN) \
 		$(PARSER_SRCS) \
 		$(LEXER_SRCS) \
-		$(BUILTIN_SRCS)
+		$(BUILTIN_SRCS) \
+		$(EXECUTE_SRCS) \
+		$(SIGNALS_SRCS)
 
 # Object files
 OBJS = $(SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
