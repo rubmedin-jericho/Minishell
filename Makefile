@@ -1,6 +1,6 @@
 # Compiler and flags
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -fsanitize=leak
+CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -fsanitize=leak
 READLINE = -lreadline -lncurses
 
 MAKEFLAGS += --no-print-directory
@@ -55,7 +55,11 @@ SIGNALS_SRCS = \
 
 # Builtin sources
 BUILTIN_SRCS = \
-		$(SRCS_DIR)/builtins/ft_pwd.c
+		$(SRCS_DIR)/builtins/ft_pwd.c \
+		$(SRCS_DIR)/builtins/ft_echo.c \
+		$(SRCS_DIR)/builtins/ft_cd.c \
+		$(SRCS_DIR)/builtins/ft_exit.c \
+		$(SRCS_DIR)/builtins/ft_export.c
 
 # Combine all sources
 SRCS =	$(MAIN) \

@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+
 void	free_array(char **arr, int size)
 {
 	int	i;
@@ -43,6 +44,7 @@ int	is_redir(char *str, t_flags *flags)
 		return (T_REDIR_OUT);
 	return (T_STRING);
 }
+
 int	getype(char *str, t_flags *flags)
 {
 	if (is_simple_quoted(str, flags) && !flags->flag_double_quot)

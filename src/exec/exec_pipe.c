@@ -29,6 +29,10 @@ static void	child_setup(int input_fd, int pipe_out)
 	}
 }
 
+/*
+ * creates a new child process and sets
+ * up the appropriate file descriptors for input/output redirection.
+ */
 static void	spawn_child(t_pipe *pip, int pipe_out)
 {
 	pip->pid = fork();
@@ -45,17 +49,25 @@ static void	spawn_child(t_pipe *pip, int pipe_out)
 		close(pipe_out);
 }
 
+/*
+ * Ensures that the pids array has enough space
+ * to store the process IDs (pids) of all child processes.
+ */
 static void	ensure_capacity(t_pipe *pip)
 {
 	if (pip->count >= pip->capacity)
 	{
-		pip->capacity *= 2;
+		pip->capacity += 10;
 		pip->pids = realloc(pip->pids, sizeof(pid_t) * pip->capacity);
 		if (!pip->pids)
 			fatal("realloc");
 	}
 }
 
+/*
+ * handles the creation of a pipeline of processes,
+ * ensuring each child is connected properly via pipes.
+ */
 void	pipe_nodes(t_pipe *pip)
 {
 	t_ast	*current;
@@ -77,6 +89,11 @@ void	pipe_nodes(t_pipe *pip)
 	pip->node = current;
 }
 
+/*
+ * manages the execution of the entire pipeline,
+ * from initializing the pipeline structure to handling
+ * process execution and waiting for all child processes.
+ */
 void	execute_pipe(t_ast *node, t_shell *sh)
 {
 	t_pipe	pip;

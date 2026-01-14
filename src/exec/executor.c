@@ -12,6 +12,9 @@
 
 #include "minishell.h"
 
+/*
+ * execute a simple command
+ */
 void	execute_simple(t_ast *node, t_shell *sh)
 {
 	char	*path;
@@ -88,5 +91,7 @@ void	execute_ast(t_shell *sh)
 {
 	if (!sh->ast)
 		return ;
+//	if (is_builtin(sh))
+//		return ;
 	exec_node(sh->ast, sh);
 }

@@ -13,9 +13,10 @@
 #include "minishell.h"
 #include <signal.h>
 
-static void	handle_sigint(int sig)
+static void	handle_signal(int sig)
 {
-	(void)sig;
+	if (sig == SIGQUIT)
+		return ;
 	write(1, "\n", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);
@@ -31,6 +32,11 @@ void	handle_sigint_heredoc(int sig)
 
 void	signals_init(void)
 {
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGINT, handle_sigint);
+	struct sigaction	sa;
+	sa.sa_handler = handle_signal;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	sigaction(SIGINT, &sa, NULL);
+	sa.sa_handler = SIG_IGN;
+	sigaction(SIGQUIT, &sa, NULL);
 }

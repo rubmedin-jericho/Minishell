@@ -52,7 +52,6 @@ void	free_shell_loop(t_shell *sh)
 		free_tokens(sh);
 	sh->tokens = NULL;
 	free(sh->str);
-	sh->str = NULL;
 }
 
 void	shell_loop(t_shell *sh)
