@@ -51,11 +51,13 @@ void	init_list(t_token **tokens, char *str, t_flags *flags, char **envp)
 
 	i = 0;
 	buff_str = ft_strdup(str);
-	count = ft_count_word(str, ' ');
+	count = ft_count_word(str, '|');
 	while(i < count)
 	{
-		cpy_str = ft_substr(buff_str, 0, contador_letras_comis(buff_str, ' '));
-		buff_str = &buff_str[contador_letras_comis(buff_str, ' ') + 1];
+		cpy_str = ft_substr(buff_str, 0, contador_letras_comis(buff_str, '|'));
+		printf("[cpy_str] : [%s]\n", cpy_str);
+		buff_str = &buff_str[contador_letras_comis(buff_str, '|') + 1];
+		printf("[buff_str] : [%s]\n", buff_str);
 		buff_tmp = create_token(cpy_str, flags, envp);
 		if(!buff_tmp)
 			return ;
