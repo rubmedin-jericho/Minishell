@@ -1,6 +1,6 @@
 # Compiler and flags
 CC = cc
-CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -fsanitize=leak
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -fsanitize=leak
 READLINE = -lreadline -lncurses
 
 MAKEFLAGS += --no-print-directory
@@ -50,6 +50,9 @@ EXECUTE_SRCS = \
 		$(SRCS_DIR)/exec/exec_pipe.c \
 		$(SRCS_DIR)/exec/utils.c
 
+SIGNALS_SRCS = \
+		$(SRCS_DIR)/signal/signals.c
+
 # Builtin sources
 BUILTIN_SRCS = \
 		$(SRCS_DIR)/builtins/ft_pwd.c
@@ -59,7 +62,8 @@ SRCS =	$(MAIN) \
 		$(PARSER_SRCS) \
 		$(LEXER_SRCS) \
 		$(BUILTIN_SRCS) \
-		$(EXECUTE_SRCS)
+		$(EXECUTE_SRCS) \
+		$(SIGNALS_SRCS)
 
 # Object files
 OBJS = $(SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)

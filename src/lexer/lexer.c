@@ -14,7 +14,7 @@
 void	free_array(char **arr, int size)
 {
 	int	i;
-	
+
 	i = 0;
 	if (!arr)
 		return ;
@@ -59,9 +59,9 @@ int	getype(char *str, t_flags *flags)
 }
 
 /*Lexer se encarga de tokenizar, categorizar y mirar la sintaxys este bien escrita.*/
-int	lexer(t_token **l_tokens, char *str, t_flags *flags)
+int	lexer(t_shell *sh)
 {
-	init_list(l_tokens, str, flags);
+	init_list(&sh->tokens, sh->str, &sh->flags);
 	//print_list(l_tokens);
 	return (0);
 }

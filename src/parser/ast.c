@@ -83,7 +83,7 @@ static void	init_ast(t_ast *ast)
 	ast->args = NULL;
 }
 
-/* 
+/*
  * check what type of return received
  * ret = 0 nothing is created
  * ret = 1 created

@@ -89,9 +89,4 @@ void	execute_ast(t_shell *sh)
 	if (!sh->ast)
 		return ;
 	exec_node(sh->ast, sh);
-	free_tokens(sh);
-	free_ast(sh->ast);
-	sh->ast = malloc(sizeof(t_ast));
-	if (!sh->ast)
-		exit(1);
 }

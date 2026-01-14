@@ -108,8 +108,8 @@ typedef struct s_ast
 /*STRUCT BASE, TIPICA STRUCT PARA PASAR VARIABLES GENERALES*/
 typedef struct s_shell
 {
+	char	*str;
 	char	**envp;
-	char	**commands;
 	int		exit_status; //probable futuro manejo de exit
 	t_token	*tokens;
 	t_ast	*ast;
@@ -138,7 +138,8 @@ void	clear_and_leave(t_shell *base, char **args);
 
 /*Tokenizer & Parser*/
 int		is_heredoc(char *str, t_flags *flags);
-int		lexer(t_token **l_tokens, char *str, t_flags *flags);
+int		lexer(t_shell *sh);
+
 char	**ft_split(char const *s, char c);
 char	*asignar_palabra(const char *s, int len);
 void	print_list(t_token **l_tokens);
@@ -154,7 +155,7 @@ void	init_flags(t_flags *flags);
 void	init_base(char **ae, t_shell *base);
 
 /*Parser*/
-int		parser(t_token *token, t_ast *ast);
+int		parser(t_shell *sh);
 int		create_ast(t_token *token, t_ast *ast);
 int		redirection(t_token *token, t_ast *ast);
 int		pipe_operator(t_token *token, t_ast *ast);
@@ -173,4 +174,8 @@ void	execute_redirection(t_ast *node, t_shell *sh);
 t_pipe	init_pipe(t_ast *node, t_shell *sh);
 
 void	free_tokens(t_shell *sh);
+
+/* signal */
+void	signals_init(void);
+
 #endif

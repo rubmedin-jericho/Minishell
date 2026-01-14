@@ -13,7 +13,8 @@
 #include "minishell.h"
 #include <readline/history.h>
 
-// ----------------- Free AST -----------------
+int	g_signal = 0;
+
 void	free_env(char **env)
 {
 	int	i;
@@ -29,85 +30,67 @@ void	free_env(char **env)
 	free(env);
 }
 
-void	init_base(char **envp, t_shell *base)
+t_shell	init_shell(char **envp)
 {
-	base->envp = envp_dup(envp);
-	base->exit_status = 0;
-}
+	t_shell	sh;
 
-char	*make_prompt(void)
-{
-	char	*str_ret;
-
-	str_ret = COLOR_GOLD "[🐚" COLOR_MAGENTA "MiniConcha$🐚:";
-	str_ret = ft_strjoin(str_ret, ">$" COLOR_GOLD"]"COLOR_RESET);
-	return (str_ret);
-}
-
-void	init_envp(t_shell **shell, char **envp)
-{
-	int	lenght_e;
-	int	i;
-
-	i = 0;
-	lenght_e = 0;
-	while (envp[lenght_e])
-		lenght_e++;
-	(*shell)->envp = malloc(sizeof(char *) * (lenght_e + 1));
-	if (!(*shell)->envp)
+	init_flags(&sh.flags);
+	sh.ast = malloc(sizeof(t_ast));
+	if (!sh.ast)
 		exit(1);
-	while (envp[i])
-	{
-		(*shell)->envp[i] = ft_strdup(envp[i]);
-		i++;
-	}
+	sh.exit_status = 0;
+	sh.in_pipeline = 0;
+	sh.tokens = NULL;
+	sh.envp = envp_dup(envp);
+	signals_init();
+	return (sh);
 }
 
-void	init_shell(t_shell *sh, char **envp)
+void	free_shell_loop(t_shell *sh)
 {
-	init_flags(&sh->flags);
-	sh->ast = malloc(sizeof(t_ast));
-	if (!sh->ast)
-		exit(1);
-	sh->exit_status = 0;
-	sh->in_pipeline = 0;
+	if (sh->tokens)
+		free_tokens(sh);
 	sh->tokens = NULL;
-	init_base(envp, sh);
+	free(sh->str);
+	sh->str = NULL;
+}
+
+void	shell_loop(t_shell *sh)
+{
+	while (1)
+	{
+		sh->str = readline("minishell> ");
+		if (sh->str == NULL)
+		{
+			printf("exit\n");
+			break ;
+		}
+		if (sh->str[0] == '\0')
+		{
+			free(sh->str);
+			continue ;
+		}
+		add_history(sh->str);
+		lexer(sh);
+		parser(sh);
+		execute_ast(sh);
+		free_shell_loop(sh);
+		g_signal = 0;
+	}
 }
 
 int	main(int ac, char **av, char **envp)
 {
-	char	*str;
-	t_shell	*shell;
-	char	*prompt;
+	t_shell	shell;
 
 	if (ac > 1 && av[1])
 		return (0);
-	shell = malloc(sizeof(t_shell));
-	if (!shell)
-		exit(1);
-	printf(MINISHELL_BANNER);
-	init_shell(shell, envp);
-	while (1)
-	{
-		prompt = make_prompt();
-		str = readline(prompt);
-		free(prompt);
-		add_history(str);
-		if (lexer(&shell->tokens, str, &shell->flags) == -1)
-			break ;
-		if (parser(shell->tokens, shell->ast) == -1)
-		{
-			free_tokens(shell);
-			break ;
-		}
-		execute_ast(shell);
-		free(str);
-	}
-	free_env(shell->envp);
-	free(shell);
+	shell = init_shell(envp);
+	shell_loop(&shell);
+	free_shell_loop(&shell);
+	free_env(shell.envp);
 	rl_clear_history();
-	return (0);
+	return (g_signal);
 }
 /*		readline()
  *	-------------------
