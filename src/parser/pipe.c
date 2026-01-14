@@ -13,7 +13,7 @@
 #include "minishell.h"
 
 /*
- * get the last command if have more pipes
+ * get the last pipe
  */
 static t_token	*find_last_pipe(t_token *token, t_token **prev_to_pipe)
 {
@@ -75,8 +75,14 @@ static t_token	*split_on_pipe(t_token *token, t_token **prev,
 	return (pipe);
 }
 
+/*
+ * create a new Abstract Syntax Tree (AST)
+ * ret = 0 no ast created
+ * ret = 1 ast created
+ * ret = -1 error creating the ast
+ */
 int	create_ast_safe(t_token *token, t_ast *child,
-						t_token *prev, t_token *saved_next)
+						t_token *prev, t_token *saved_link)
 {
 	int	ret;
 
@@ -85,7 +91,7 @@ int	create_ast_safe(t_token *token, t_ast *child,
 	{
 		free_ast(child);
 		if (prev)
-			prev->next = saved_next;
+			prev->next = saved_link;
 		return (-1);
 	}
 	return (ret);
@@ -125,5 +131,10 @@ int	pipe_operator(t_token *token, t_ast *ast)
 		return (-1);
 	}
 	ret = create_ast_safe(pipe->next, ast->right, prev, saved_next);
-	return (ret);
+	if (ret < 0)
+	{
+		free_ast(ast->left);
+		return (-1);
+	}
+	return (1);
 }

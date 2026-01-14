@@ -12,6 +12,9 @@
 
 #include "minishell.h"
 
+/*
+ * fill the array with the values of the input
+ */
 static int	fill_array(t_token *token, t_ast *ast)
 {
 	t_token	*buf;
@@ -26,7 +29,7 @@ static int	fill_array(t_token *token, t_ast *ast)
 			ast->args[i] = ft_strdup(buf->data);
 			if (!ast->args[i])
 			{
-				while (i--)
+				while (i-- >= 0)
 					free(ast->args[i]);
 				ast->args = NULL;
 				return (-1);
@@ -39,6 +42,9 @@ static int	fill_array(t_token *token, t_ast *ast)
 	return (0);
 }
 
+/*
+ * create a new array of string to put the value
+ */
 static int	allocate_array(t_token *token, t_ast *ast)
 {
 	int		count;
@@ -66,24 +72,29 @@ static int	allocate_array(t_token *token, t_ast *ast)
 	return (0);
 }
 
-int	init_ast(t_ast *ast)
+static void	init_ast(t_ast *ast)
 {
 	if (!ast)
-		return (-1);
+		return ;
 	ast->type = T_STRING;
 	ast->left = NULL;
 	ast->right = NULL;
 	ast->file = NULL;
 	ast->args = NULL;
-	return (0);
 }
 
-static int	check_ast_ret(int ret)
+/* 
+ * check what type of return received
+ * ret = 0 nothing is created
+ * ret = 1 created
+ * ret = -1 error
+ */
+static int	check_ret(int ret)
 {
-	if (ret == 1)
-		return (0);
 	if (ret == -1)
 		return (-1);
+	if (ret == 1)
+		return (0);
 	return (1);
 }
 
@@ -95,11 +106,11 @@ int	create_ast(t_token *token, t_ast *ast)
 		return (-1);
 	init_ast(ast);
 	ret = pipe_operator(token, ast);
-	ret = check_ast_ret(ret);
+	ret = check_ret(ret);
 	if (ret != 1)
 		return (ret);
 	ret = redirection(token, ast);
-	ret = check_ast_ret(ret);
+	ret = check_ret(ret);
 	if (ret != 1)
 		return (ret);
 	return (allocate_array(token, ast));
