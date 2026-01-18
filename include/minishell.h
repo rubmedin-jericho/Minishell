@@ -182,7 +182,11 @@ void	signals_init(void);
 
 int		is_builtin(char *str);
 void	builtin(t_ast *ast, t_shell *sh, char *str);
+
 void	ft_cd(t_ast *ast, t_shell *shell);
-void	ft_echo(char *args[]);
+
+void	ft_echo(char *args[], t_shell *shell);
+
+void	ft_pwd(t_shell *shell);
 
 #endif

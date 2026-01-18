@@ -25,5 +25,6 @@ void	ft_pwd(t_shell *shell)
 	}
 	ft_putendl_fd(pwd, 1);
 	free(pwd);
+	pwd = NULL;
 	shell->exit_status = 0;
 }
