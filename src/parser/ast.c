@@ -72,7 +72,7 @@ static int	allocate_array(t_token *token, t_ast *ast)
 	return (0);
 }
 
-static void	init_ast(t_ast *ast)
+void	init_ast(t_ast *ast)
 {
 	if (!ast)
 		return ;

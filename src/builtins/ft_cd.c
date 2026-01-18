@@ -12,34 +12,89 @@
 
 #include "minishell.h"
 
-void	ft_cd(char *next_path, t_shell **shell)
+void	update_pwd(char *old_pwd, t_shell *shell)
 {
-	int i;
-	char *current_path;
+	int		i;
+	char	*new_pwd;
 
-	i = 0;
-	current_path = getcwd(NULL, 0);
-	if(!current_path)
-		return ;
-	if(chdir(next_path) == -1)
+	new_pwd = getcwd(NULL, 0);
+	if (!new_pwd)
 	{
-		perror("cd");
-		free(current_path);
+		free(old_pwd);
 		return ;
 	}
-	while ((*shell)->envp[i])
+	i = 0;
+	while (shell->envp[i])
 	{
-		if (ft_strncmp((*shell)->envp[i], "PWD=", 4) == 0)
+		if (ft_strncmp(shell->envp[i], "PWD=", 4) == 0)
 		{
-			free((*shell)->envp[i]);
-			(*shell)->envp[i] = ft_strjoin("PWD=", getcwd(NULL, 0));
+			free(shell->envp[i]);
+			shell->envp[i] = ft_strjoin("PWD=", new_pwd);
 		}
-		else if(ft_strncmp((*shell)->envp[i], "OLDPWD=", 7) == 0)
+		else if(ft_strncmp(shell->envp[i], "OLDPWD=", 7) == 0)
 		{
-			free((*shell)->envp[i]);
-			(*shell)->envp[i] = ft_strjoin("OLDPWD=", current_path);
+			free(shell->envp[i]);
+			shell->envp[i] = ft_strjoin("OLDPWD=", old_pwd);
 		}
 		i++;
 	}
-	free(current_path);
+	free(new_pwd);
+}
+
+char *get_env_value(char **envp, char *key)
+{
+    int	len;
+
+	len = ft_strlen(key);
+    while (*envp)
+    {
+        if (ft_strncmp(*envp, key, len) == 0 && (*envp)[len] == '=')
+            return (*envp + len + 1);
+        envp++;
+    }
+    return (NULL);
+}
+
+static char	*get_cd_path(t_ast *ast, t_shell *shell)
+{
+	char	*home;
+
+	if (!ast->args[1])
+	{
+		home = get_env_value(shell->envp, "HOME");
+		if (!home)
+		{
+			ft_putendl_fd("cd: HOME not set", 2);
+			shell->exit_status = 1;
+			return (NULL);
+		}
+		return (home);
+	}
+	return (ast->args[1]);
+}
+
+void	ft_cd(t_ast *ast, t_shell *shell)
+{
+	char	*old_pwd;
+	char	*next_path;
+
+	old_pwd = getcwd(NULL, 0);
+	if (!old_pwd)
+		return ;
+	next_path = get_cd_path(ast, shell);
+	if (!next_path)
+	{
+		free(old_pwd);
+		return ;
+	}
+	if(chdir(next_path) == -1)
+	{
+		perror("cd");
+		shell->exit_status = 1;
+		free(old_pwd);
+		return ;
+	}
+	update_pwd(old_pwd, shell);
+	free(old_pwd);
+	shell->exit_status = 0;
 }

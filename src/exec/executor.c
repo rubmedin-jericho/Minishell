@@ -19,6 +19,15 @@ void	execute_simple(t_ast *node, t_shell *sh)
 {
 	char	*path;
 
+	if (!node->args || !node->args[0])
+		return ;
+	if (is_builtin(node->args[0]))
+	{
+		builtin(node, sh, node->args[0]);
+		if (sh->in_pipeline)
+			exit(sh->exit_status);
+		return ;
+	}
 	path = get_path(node->args[0], sh->envp);
 	if (!path)
 	{
@@ -29,6 +38,7 @@ void	execute_simple(t_ast *node, t_shell *sh)
 	free(path);
 	perror(node->args[0]);
 	exit(1);
+	
 }
 
 void	exec_node_no_fork(t_ast *node, t_shell *sh)
@@ -87,11 +97,16 @@ void	free_tokens(t_shell *sh)
 	sh->tokens = NULL;
 }
 
-void	execute_ast(t_shell *sh)
+void	execute_ast(t_ast *ast, t_shell *sh)
 {
-	if (!sh->ast)
+	if (!sh || !ast)
 		return ;
-//	if (is_builtin(sh))
-//		return ;
-	exec_node(sh->ast, sh);
+	
+	if (ast->type == T_STRING && is_builtin(ast->args[0]) 
+		&& !sh->in_pipeline)
+    {
+        builtin(ast, sh, ast->args[0]);
+        return ;
+    }
+	exec_node(ast, sh);
 }

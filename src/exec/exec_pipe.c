@@ -42,7 +42,7 @@ static void	spawn_child(t_pipe *pip, int pipe_out)
 	{
 		child_setup(pip->input_fd, pipe_out);
 		free(pip->pids);
-		exec_node(pip->node, pip->sh);
+		execute_ast(pip->node, pip->sh);
 		exit(pip->sh->exit_status);
 	}
 	if (pipe_out != STDOUT_FILENO)

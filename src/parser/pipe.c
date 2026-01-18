@@ -13,7 +13,7 @@
 #include "minishell.h"
 
 /*
- * get the last pipe
+ * get the last pipe token 
  */
 static t_token	*find_last_pipe(t_token *token, t_token **prev_to_pipe)
 {

@@ -12,14 +12,26 @@
 
 #include "minishell.h"
 
-void	ft_echo(char *str)
+void	ft_echo(char *args[])
 {
 	int	i;
+	int	j;
 
-	i = 0;
-	while (str[i])
+	i = 1;
+	if (args[1] && !ft_strncmp(args[1], "-n", 3))
+		i++;
+	while (args[i])
 	{
-		write(1, &str[i], 1);
+		j = 0;
+		while (args[i][j])
+		{		
+			ft_putchar_fd(args[i][j], 1);
+			if (!args[i][j + 1])
+				ft_putchar_fd(32, 1);
+			j++;
+		}
 		i++;
 	}
+	if (!(args[1] && !ft_strncmp(args[1], "-n", 3)))
+		ft_putchar_fd(10, 1);
 }

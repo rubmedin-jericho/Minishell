@@ -72,7 +72,7 @@ void	shell_loop(t_shell *sh)
 		add_history(sh->str);
 		lexer(sh);
 		parser(sh);
-		execute_ast(sh);
+		execute_ast(sh->ast, sh);
 		free_shell_loop(sh);
 		g_signal = 0;
 	}

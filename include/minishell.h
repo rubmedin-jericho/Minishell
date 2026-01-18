@@ -127,7 +127,6 @@ typedef struct s_pipe
 	pid_t	*pids;
 	size_t	count;
 	size_t	capacity;
-
 }	t_pipe;
 
 /*----FUNCTIONS----*/
@@ -159,9 +158,10 @@ int		parser(t_shell *sh);
 int		create_ast(t_token *token, t_ast *ast);
 int		redirection(t_token *token, t_ast *ast);
 int		pipe_operator(t_token *token, t_ast *ast);
+void	init_ast(t_ast *ast);
 
 /* execute*/
-void	execute_ast(t_shell *sh);
+void	execute_ast(t_ast *ast, t_shell *sh);
 void	ft_free_tab(char **tab);
 char	*get_path(char *cmd, char **env);
 void	exec_node(t_ast *node, t_shell *sh);
@@ -177,5 +177,12 @@ void	free_tokens(t_shell *sh);
 
 /* signal */
 void	signals_init(void);
+
+/* Builtins*/
+
+int		is_builtin(char *str);
+void	builtin(t_ast *ast, t_shell *sh, char *str);
+void	ft_cd(t_ast *ast, t_shell *shell);
+void	ft_echo(char *args[]);
 
 #endif

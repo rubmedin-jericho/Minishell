@@ -70,6 +70,6 @@ void	execute_redirection(t_ast *node, t_shell *sh)
 		return ;
 	if (apply_redirections(node) == -1)
 		exit(1);
-	exec_node(node->left, sh);
+	execute_ast(node->left, sh);
 	exit(sh->exit_status);
 }
