@@ -47,7 +47,7 @@ static t_token *create_token(char *str, t_flags *flags)
 	return (buff_tmp);
 }
 
-void	init_list(t_token **tokens, char *str, t_flags *flags)
+/*void	init_list(t_token **tokens, char *str, t_flags *flags)
 {
 	t_token *buff_tmp;
 	int		i;
@@ -70,7 +70,42 @@ void	init_list(t_token **tokens, char *str, t_flags *flags)
 		i++;
 	}
 }
+*/
+int	ft_count_letters(char *str, char sep)
+{
+	int	i;
 
+	i = 0;
+	while(str[i] && str[i] != sep)
+	{
+		i++;
+	}
+	return (i);
+}
+
+char	*cut_str(char *str, char sep, t_flags *flags)
+{
+	int cnt;
+	int lenght;
+	char *str_buff;
+
+	cnt = 0;
+	lenght = ft_count_letters(str, sep);
+	str_buff = malloc(sizeof(char) * lenght * 1);
+	while(str[cnt] && str[cnt++ != sep] && (flags->flag_simple_quot
+		|| flags->flag_double_quot) != 1)
+	{
+		str_buff[cnt] = str[cnt];
+	}
+	str_buff[cnt] = '\0';
+	return (str_buff);
+}
+
+/*void	init_list(t_token **tokens, char *str, t_flags *flags)
+{
+	
+}
+*/
 void print_list(t_token **l_tokens)
 {
 	t_token *buff_token;

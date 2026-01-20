@@ -178,4 +178,6 @@ void	free_tokens(t_shell *sh);
 /* signal */
 void	signals_init(void);
 
+/*prueba*/
+char	*cut_str(char *str, char sep, t_flags *flags);
 #endif

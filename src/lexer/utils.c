@@ -101,8 +101,6 @@ void	free2d(char **arr)
 	while (arr[i])
 	{
 		if (arr[i])
-			free(arr[i++]);
-	}
 	if (arr)
 		free(arr);
 }

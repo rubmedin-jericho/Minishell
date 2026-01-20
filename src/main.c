@@ -78,7 +78,7 @@ void	shell_loop(t_shell *sh)
 	}
 }
 
-int	main(int ac, char **av, char **envp)
+/*int	main(int ac, char **av, char **envp)
 {
 	t_shell	shell;
 
@@ -90,6 +90,19 @@ int	main(int ac, char **av, char **envp)
 	free_env(shell.envp);
 	rl_clear_history();
 	return (g_signal);
+}
+*/
+int	main(int ac, char **av)
+{
+	char *str;
+	t_flags *flags;
+
+	flags = NULL;
+	(void)ac;
+
+	str = cut_str(av[1], (char)av[2], flags);
+	printf("[str]:[%s]\n", str);
+	return (0);
 }
 /*		readline()
  *	-------------------
