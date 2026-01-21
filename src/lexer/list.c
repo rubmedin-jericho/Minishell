@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-
+/*
 static void adding_token(t_token **l_tokens, t_token *token)
 {
 	t_token *buff_token;
@@ -42,12 +42,13 @@ static t_token *create_token(char *str, t_flags *flags)
 		free(buff_tmp);
 		return (NULL);
 	}
-	buff_tmp->type_tok = getype(buff_tmp->data, flags); /*A MEDIO HACER*/
+	buff_tmp->type_tok = getype(buff_tmp->data, flags);
 	buff_tmp->next = NULL;
 	return (buff_tmp);
 }
-
-/*void	init_list(t_token **tokens, char *str, t_flags *flags)
+*/
+/*
+void	init_list(t_token **tokens, char *str, t_flags *flags)
 {
 	t_token *buff_tmp;
 	int		i;
@@ -91,21 +92,46 @@ char	*cut_str(char *str, char sep, t_flags *flags)
 
 	cnt = 0;
 	lenght = ft_count_letters(str, sep);
-	str_buff = malloc(sizeof(char) * lenght * 1);
-	while(str[cnt] && str[cnt++ != sep] && (flags->flag_simple_quot
+	str_buff = malloc(sizeof(char) * lenght + 1);
+	while(str[cnt] || str[cnt] && (flags->flag_simple_quot
 		|| flags->flag_double_quot) != 1)
 	{
-		str_buff[cnt] = str[cnt];
+		if(str[cnt] != sep)
+			str_buff[cnt] = str[cnt];
+		cnt++;
 	}
 	str_buff[cnt] = '\0';
 	return (str_buff);
 }
 
-/*void	init_list(t_token **tokens, char *str, t_flags *flags)
+void	init_list(t_token **tokens, char *str, t_flags *flags)
 {
-	
+	(void)tokens;	
+	(void)str;
+	(void)flags;
+	int	cnt;
+	char *cpy_str ;
+	char *b_str;
+
+	cnt = 0;
+	b_str = NULL;
+	cpy_str = cut_str(str, '|', flags);
+	while(cpy_str[cnt])
+	{
+		if(!ft_isalnum(cpy_str[cnt]))
+		{
+			b_str = malloc(sizof(char) * (ft_count_letters(str, cpy_str[cnt]) + 1);
+			b_str = cut_str(cpy_str, cpy_str[cnt], flags);
+			*cpy_str = &cpy_str[cnt];
+			cpy_str[0] = &cpy_str[cnt]
+			//INICIAR LISTA Y GUARDAR EN STRUCT
+			cnt = -1;
+	 	}
+		cnt++;
+	}
+
 }
-*/
+
 void print_list(t_token **l_tokens)
 {
 	t_token *buff_token;

@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 #include <readline/history.h>
+int	ft_count_letters(char *str, char sep);
 
 int	g_signal = 0;
 
@@ -95,13 +96,22 @@ void	shell_loop(t_shell *sh)
 int	main(int ac, char **av)
 {
 	char *str;
+	int	lenght;
 	t_flags *flags;
 
 	flags = NULL;
-	(void)ac;
-
-	str = cut_str(av[1], (char)av[2], flags);
-	printf("[str]:[%s]\n", str);
+	lenght = ft_count_letters(av[1], av[2][0]);
+	str = malloc(sizeof(char) * lenght + 1);
+	if(ac != 4)
+	{
+		printf("ERROR\n");
+		return (1);
+	}
+	flags = calloc(1, sizeof(t_flags));
+	flags->flag_simple_quot = atoi(av[3]);
+	flags->flag_double_quot = 0;
+	flags->flag_heredoc = 0;
+	str = cut_str(av[1], av[2][0], flags);
 	return (0);
 }
 /*		readline()

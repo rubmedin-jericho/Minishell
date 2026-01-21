@@ -91,7 +91,7 @@ int	contador_letras_comis(char const *s, char c)
 }
 
 /**** Free de array de 2 dimensiones ****/
-void	free2d(char **arr)
+/*void	free2d(char **arr)
 {
 	int	i;
 	
@@ -102,9 +102,10 @@ void	free2d(char **arr)
 	{
 		if (arr[i])
 	if (arr)
+			}
 		free(arr);
-}
 
+*/
 /******Copia entorno******/
 
 char	**envp_dup(char **ae)
