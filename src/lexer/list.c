@@ -88,19 +88,23 @@ char	*cut_str(char *str, char sep, t_flags *flags)
 {
 	int cnt;
 	int lenght;
+	int	sub_cnt;
 	char *str_buff;
 
 	cnt = 0;
+	sub_cnt = 0;
 	lenght = ft_count_letters(str, sep);
 	str_buff = malloc(sizeof(char) * lenght + 1);
-	while(str[cnt] || str[cnt] && (flags->flag_simple_quot
-		|| flags->flag_double_quot) != 1)
+	while(str[cnt] && (!flags->flag_simple_quot || !flags->flag_double_quot))
 	{
 		if(str[cnt] != sep)
-			str_buff[cnt] = str[cnt];
+		{
+			str_buff[sub_cnt] = str[cnt];
+			sub_cnt++;
+		}
 		cnt++;
 	}
-	str_buff[cnt] = '\0';
+	str_buff[sub_cnt] = '\0';
 	return (str_buff);
 }
 
@@ -109,9 +113,12 @@ void	init_list(t_token **tokens, char *str, t_flags *flags)
 	(void)tokens;	
 	(void)str;
 	(void)flags;
+
 	int	cnt;
-	char *cpy_str ;
+	int	len;
+	char *cpy_str;
 	char *b_str;
+	char *buff_str;
 
 	cnt = 0;
 	b_str = NULL;
@@ -120,16 +127,19 @@ void	init_list(t_token **tokens, char *str, t_flags *flags)
 	{
 		if(!ft_isalnum(cpy_str[cnt]))
 		{
-			b_str = malloc(sizof(char) * (ft_count_letters(str, cpy_str[cnt]) + 1);
+			len = ft_count_letters(cpy_str, cpy_str[cnt]);
+			//b_str = malloc(sizeof(char) * len + 1);
 			b_str = cut_str(cpy_str, cpy_str[cnt], flags);
-			*cpy_str = &cpy_str[cnt];
-			cpy_str[0] = &cpy_str[cnt]
+			//buff_str = malloc(sizeof(char) * ft_strlen(&cpy_str[cnt]) + 1);
+			buff_str = &cpy_str[cnt];
+			free(cpy_str);
+			cpy_str = malloc(sizeof(char) * ft_strlen(buff_str) + 1);
+			cpy_str = buff_str;
 			//INICIAR LISTA Y GUARDAR EN STRUCT
 			cnt = -1;
 	 	}
 		cnt++;
 	}
-
 }
 
 void print_list(t_token **l_tokens)
