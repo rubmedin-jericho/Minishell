@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-/*
 static void adding_token(t_token **l_tokens, t_token *token)
 {
 	t_token *buff_token;
@@ -46,9 +45,8 @@ static t_token *create_token(char *str, t_flags *flags)
 	buff_tmp->next = NULL;
 	return (buff_tmp);
 }
-*/
-/*
-void	init_list(t_token **tokens, char *str, t_flags *flags)
+
+/*void	init_list(t_token **tokens, char *str, t_flags *flags)
 {
 	t_token *buff_tmp;
 	int		i;
@@ -102,43 +100,51 @@ char	*cut_str(char *str, char sep, t_flags *flags)
 			str_buff[sub_cnt] = str[cnt];
 			sub_cnt++;
 		}
+		else if (str[cnt] == sep)
+			break ;
 		cnt++;
 	}
 	str_buff[sub_cnt] = '\0';
 	return (str_buff);
 }
 
-void	init_list(t_token **tokens, char *str, t_flags *flags)
+static char	*update_pointer(char *str)
 {
-	(void)tokens;	
-	(void)str;
-	(void)flags;
+	char *buff_str = NULl;
 
+	buff_str = ft_strdup(str);
+	free(str);
+	str = ft_strdup(buff_str);
+	return (str);
+}
+
+void	prep_token_list(t_token **tokens, char *str, t_flags *flags)
+{
 	int	cnt;
-	int	len;
+	t_token b_tokens;
 	char *cpy_str;
-	char *b_str;
+	char *b_str = NULL;
 	char *buff_str;
 
 	cnt = 0;
-	b_str = NULL;
 	cpy_str = cut_str(str, '|', flags);
 	while(cpy_str[cnt])
 	{
-		if(!ft_isalnum(cpy_str[cnt]))
+		if(ft_isalnum(cpy_str[cnt]) && cpy_str[cnt + 1])
+			cnt++;
+		else if(!ft_isalnum(cpy_str[cnt]) || ft_isalnum(cpy_str[cnt]) && 
+				!cpy_str[cnt + 1]) //BY RUBEN FOR RUBEN :TENGO QUE EDITAR ESTE ELSE IF;
 		{
-			len = ft_count_letters(cpy_str, cpy_str[cnt]);
-			//b_str = malloc(sizeof(char) * len + 1);
 			b_str = cut_str(cpy_str, cpy_str[cnt], flags);
-			//buff_str = malloc(sizeof(char) * ft_strlen(&cpy_str[cnt]) + 1);
-			buff_str = &cpy_str[cnt];
-			free(cpy_str);
-			cpy_str = malloc(sizeof(char) * ft_strlen(buff_str) + 1);
-			cpy_str = buff_str;
-			//INICIAR LISTA Y GUARDAR EN STRUCT
+			if(cpy_str[cnt])
+				cpy_str = update_pointer(&cpy_str[cnt]);
+			//buff_str = ft_strdup(&cpy_str[cnt]);
+			//free(cpy_str);
+			//cpy_str = ft_strdup(buff_str);
+			tokens = create_token(b_str, flags);
+			adding_token(tokens, b_tokens);
 			cnt = -1;
 	 	}
-		cnt++;
 	}
 }
 

@@ -93,6 +93,7 @@ void	shell_loop(t_shell *sh)
 	return (g_signal);
 }
 */
+
 int	main(int ac, char **av)
 {
 	char *str;
