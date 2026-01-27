@@ -77,13 +77,12 @@ void	ft_export(t_shell *shell)
 	if (!shell || !shell->envp || !shell->ast
 		|| !shell->ast->args || !shell->ast->args[1])
 		return ;
-	i = 1;
-	while (shell->ast->args[i])
+	i = 0;
+	while (shell->ast->args[++i])
 	{
 		if (!valid_identifier(shell->ast->args[i]))
 		{
 			write(2, "export: not a valid identifier\n", 31);
-			i++;
 			continue ;
 		}
 		idx = find_env(shell->envp, shell->ast->args[i]);
@@ -91,10 +90,8 @@ void	ft_export(t_shell *shell)
 		{
 			free(shell->envp[idx]);
 			shell->envp[idx] = ft_strdup(shell->ast->args[i]);
-			i++;
 			continue ;
 		}
 		new_envp(shell, shell->ast->args[i]);
-		i++;
 	}
 }
