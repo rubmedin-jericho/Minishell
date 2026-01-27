@@ -12,48 +12,89 @@
 
 #include "minishell.h"
 
-int	name_val(char *str)
+static int	ft_length_env(char **env)
 {
 	int	i;
 
 	i = 0;
-	while (str[i] && str[i] != '=')
+	while (env[i])
 		i++;
 	return (i);
 }
 
-int	ft_lenght_env(char **env)
+static int	find_env(char **envp, char *name)
 {
-	int	i;
+	int		i;
+	int		len;
 
+	len = ft_strlen(name);
 	i = 0;
-	while (env[i])
+	while (envp[i])
+	{
+		if (!ft_strncmp(envp[i], name, len)
+			&& envp[i][len] == '=')
+			return (i);
 		i++;
-	return (0);
+	}
+	return (-1);
 }
 
-int	ft_export(char *str, char **env, t_shell *shell)
+static int	valid_identifier(char *s)
 {
-	char	**cpy_env;
-	int		lenght_env;
 	int		i;
 
-	(void)shell;
-	(void)str;
-	i = 0;
-	while (env[i])
+	if (!ft_isalpha(s[0]) && s[0] != '_')
+		return (0);
+	i = 1;
+	while (s[i] && s[i] != '=')
 	{
-		name_val(env[i]);
+		if (!ft_isalnum(s[i]) && s[i] != '_')
+			return (0);
 		i++;
 	}
-	lenght_env = ft_lenght_env(env);
-	cpy_env = env;
-	env = malloc(sizeof(char *) * lenght_env + 2);
-	i = 0;
-	while (cpy_env[i])
+	return (1);
+}
+
+static void	new_envp(t_shell *shell, char *arg)
+{
+	int		len;
+	char	**tmp;
+
+	len = ft_length_env(shell->envp);
+	tmp = realloc(shell->envp, sizeof(char *) * (len + 2));
+	if (!tmp)
+		return ;
+	shell->envp = tmp;
+	shell->envp[len] = ft_strdup(arg);
+	shell->envp[len + 1] = NULL;
+}
+
+void	ft_export(t_shell *shell)
+{
+	int		idx;
+	int		i;
+
+	if (!shell || !shell->envp || !shell->ast
+		|| !shell->ast->args || !shell->ast->args[1])
+		return ;
+	i = 1;
+	while (shell->ast->args[i])
 	{
-		env[i] = ft_strdup(cpy_env[i]);
+		if (!valid_identifier(shell->ast->args[i]))
+		{
+			write(2, "export: not a valid identifier\n", 31);
+			i++;
+			continue ;
+		}
+		idx = find_env(shell->envp, shell->ast->args[i]);
+		if (idx != -1)
+		{
+			free(shell->envp[idx]);
+			shell->envp[idx] = ft_strdup(shell->ast->args[i]);
+			i++;
+			continue ;
+		}
+		new_envp(shell, shell->ast->args[i]);
 		i++;
 	}
-	return (0);
 }
