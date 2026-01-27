@@ -17,7 +17,7 @@ int	name_val(char *str)
 	int	i;
 
 	i = 0;
-	while(str[i] && str[i] != '=')
+	while (str[i] && str[i] != '=')
 		i++;
 	return (i);
 }
@@ -27,7 +27,7 @@ int	ft_lenght_env(char **env)
 	int	i;
 
 	i = 0;
-	while(env[i])
+	while (env[i])
 		i++;
 	return (0);
 }
@@ -41,7 +41,7 @@ int	ft_export(char *str, char **env, t_shell *shell)
 	(void)shell;
 	(void)str;
 	i = 0;
-	while(env[i])
+	while (env[i])
 	{
 		name_val(env[i]);
 		i++;
@@ -50,7 +50,7 @@ int	ft_export(char *str, char **env, t_shell *shell)
 	cpy_env = env;
 	env = malloc(sizeof(char *) * lenght_env + 2);
 	i = 0;
-	while(cpy_env[i])
+	while (cpy_env[i])
 	{
 		env[i] = ft_strdup(cpy_env[i]);
 		i++;

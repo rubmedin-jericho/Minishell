@@ -31,7 +31,7 @@ void	update_pwd(char *old_pwd, t_shell *shell)
 			free(shell->envp[i]);
 			shell->envp[i] = ft_strjoin("PWD=", new_pwd);
 		}
-		else if(ft_strncmp(shell->envp[i], "OLDPWD=", 7) == 0)
+		else if (ft_strncmp(shell->envp[i], "OLDPWD=", 7) == 0)
 		{
 			free(shell->envp[i]);
 			shell->envp[i] = ft_strjoin("OLDPWD=", old_pwd);
@@ -41,18 +41,18 @@ void	update_pwd(char *old_pwd, t_shell *shell)
 	free(new_pwd);
 }
 
-char *get_env_value(char **envp, char *key)
+char	*get_env_value(char **envp, char *key)
 {
-    int	len;
+	int	len;
 
 	len = ft_strlen(key);
-    while (*envp)
-    {
-        if (ft_strncmp(*envp, key, len) == 0 && (*envp)[len] == '=')
-            return (*envp + len + 1);
-        envp++;
-    }
-    return (NULL);
+	while (*envp)
+	{
+		if (ft_strncmp(*envp, key, len) == 0 && (*envp)[len] == '=')
+			return (*envp + len + 1);
+		envp++;
+	}
+	return (NULL);
 }
 
 static char	*get_cd_path(t_ast *ast, t_shell *shell)
@@ -87,7 +87,7 @@ void	ft_cd(t_ast *ast, t_shell *shell)
 		free(old_pwd);
 		return ;
 	}
-	if(chdir(next_path) == -1)
+	if (chdir(next_path) == -1)
 	{
 		perror("cd");
 		shell->exit_status = 1;

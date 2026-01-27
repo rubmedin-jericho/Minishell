@@ -24,7 +24,7 @@ void	ft_echo(char *args[], t_shell *shell)
 	{
 		j = 0;
 		while (args[i][j])
-		{		
+		{
 			ft_putchar_fd(args[i][j], 1);
 			if (!args[i][j + 1])
 				ft_putchar_fd(32, 1);

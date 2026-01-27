@@ -189,4 +189,7 @@ void	ft_echo(char *args[], t_shell *shell);
 
 void	ft_pwd(t_shell *shell);
 
+void	ft_exit(t_shell *shell);
+void	ft_unset(t_shell *shell);
+void	free_env(char **env);
 #endif
