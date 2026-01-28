@@ -35,6 +35,7 @@ static void	child_setup(int input_fd, int pipe_out)
  */
 static void	spawn_child(t_pipe *pip, int pipe_out)
 {
+	set_signals_exec();
 	pip->pid = fork();
 	if (pip->pid < 0)
 		fatal("fork");

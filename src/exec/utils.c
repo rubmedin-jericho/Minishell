@@ -30,9 +30,12 @@ void	free_ast(t_ast *node)
 		while (node->args[i])
 			free(node->args[i++]);
 		free(node->args);
+		node->args = NULL;
 	}
-	free_ast(node->left);
-	free_ast(node->right);
+	if (node->left)
+		free_ast(node->left);
+	if (node->right)
+		free_ast(node->right);
 	free(node);
 }
 
@@ -47,8 +50,29 @@ t_pipe	init_pipe(t_ast *node, t_shell *sh)
 	pip.capacity = 17;
 	pip.pipe_fd[0] = -1;
 	pip.pipe_fd[1] = -1;
-	pip.pids = malloc(sizeof(pid_t) * pip.capacity);
+	pip.pids = ft_calloc(1, sizeof(pid_t) * pip.capacity);
 	if (!pip.pids)
 		fatal("malloc");
 	return (pip);
+}
+
+void	free_shell(t_shell *sh)
+{
+	if (!sh)
+		return ;
+	if (sh->str)
+    {
+        free(sh->str);
+        sh->str = NULL;
+    }
+    if (sh->tokens)
+    {
+        free_tokens(sh->tokens);
+        sh->tokens = NULL;
+    }
+    if (sh->ast)
+    {
+        free_ast(sh->ast);
+        sh->ast = NULL;
+    }
 }

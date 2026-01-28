@@ -80,12 +80,17 @@ int	error_redirect(t_token **token, t_ast *ast,
 {
 	if (!ast)
 		return (-1);
+	if (ast->left)
+	{
+		free_ast(ast->left);
+		ast->left = NULL;
+	}
+	free(ast->file);
+	ast->file = NULL;
 	if (*prev)
 		(*prev)->next = *saved_next;
 	else
 		*token = *saved_next;
-	free(ast->file);
-	ast->file = NULL;
 	return (-1);
 }
 

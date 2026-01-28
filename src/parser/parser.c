@@ -14,9 +14,10 @@
 
 int	parser(t_shell *sh)
 {
+	
 	if (create_ast(sh->tokens, sh->ast))
 	{
-		return (0);
+		return (-1);
 	}
 	return (1);
 }

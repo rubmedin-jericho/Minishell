@@ -29,9 +29,8 @@ static int	fill_array(t_token *token, t_ast *ast)
 			ast->args[i] = ft_strdup(buf->data);
 			if (!ast->args[i])
 			{
-				while (i-- >= 0)
-					free(ast->args[i]);
-				ast->args = NULL;
+				while (i > 0)
+					free(ast->args[--i]);
 				return (-1);
 			}
 			i++;
@@ -42,6 +41,7 @@ static int	fill_array(t_token *token, t_ast *ast)
 	return (0);
 }
 
+
 /*
  * create a new array of string to put the value
  */
@@ -49,6 +49,7 @@ static int	allocate_array(t_token *token, t_ast *ast)
 {
 	int		count;
 	t_token	*buf;
+	int		i;
 
 	buf = token;
 	count = 0;
@@ -65,6 +66,9 @@ static int	allocate_array(t_token *token, t_ast *ast)
 		return (-1);
 	if (fill_array(token, ast) < 0)
 	{
+		i = 0;
+		while (ast->args[i])
+			free(ast->args[i++]);
 		free(ast->args);
 		ast->args = NULL;
 		return (-1);
@@ -89,15 +93,6 @@ void	init_ast(t_ast *ast)
  * ret = 1 created
  * ret = -1 error
  */
-static int	check_ret(int ret)
-{
-	if (ret == -1)
-		return (-1);
-	if (ret == 1)
-		return (0);
-	return (1);
-}
-
 int	create_ast(t_token *token, t_ast *ast)
 {
 	int	ret;
@@ -106,12 +101,14 @@ int	create_ast(t_token *token, t_ast *ast)
 		return (-1);
 	init_ast(ast);
 	ret = pipe_operator(token, ast);
-	ret = check_ret(ret);
-	if (ret != 1)
-		return (ret);
+	if (ret == -1)
+		return (-1);
+	if (ret == 1)
+		return (0);
 	ret = redirection(token, ast);
-	ret = check_ret(ret);
-	if (ret != 1)
-		return (ret);
+	if (ret == -1)
+		return (-1);
+	if (ret == 1)
+		return (0);
 	return (allocate_array(token, ast));
 }

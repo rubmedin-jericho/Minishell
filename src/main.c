@@ -35,49 +35,58 @@ t_shell	init_shell(char **envp)
 	t_shell	sh;
 
 	init_flags(&sh.flags);
-	sh.ast = malloc(sizeof(t_ast));
-	if (!sh.ast)
-		exit(1);
 	sh.exit_status = 0;
 	sh.in_pipeline = 0;
 	sh.tokens = NULL;
 	sh.envp = envp_dup(envp);
-	signals_init();
 	return (sh);
 }
 
 void	free_shell_loop(t_shell *sh)
 {
-	if (sh->tokens)
-		free_tokens(sh);
-	sh->tokens = NULL;
-	free(sh->str);
+	if (sh->str)
+    {
+        free(sh->str);
+        sh->str = NULL;
+    }
+    if (sh->tokens)
+    {
+        free_tokens(sh->tokens);
+        sh->tokens = NULL;
+    }
+    if (sh->ast)
+    {
+        free_ast(sh->ast);
+        sh->ast = NULL;
+    }
 }
 
-void	shell_loop(t_shell *sh)
+int	shell_loop(t_shell *sh)
 {
-	while (1)
+	sh->tokens = NULL;
+    sh->ast = NULL;
+	set_signals_prompt();
+	sh->str = readline("minishell> ");
+	if (sh->str == NULL)
 	{
-		sh->str = readline("minishell> ");
-		if (sh->str == NULL)
-		{
-			printf("exit\n");
-			break ;
-		}
-		if (sh->str[0] == '\0')
-		{
-			free(sh->str);
-			continue ;
-		}
-		add_history(sh->str);
-		lexer(sh);
-		parser(sh);
-		execute_ast(sh->ast, sh);
-		free_shell_loop(sh);
-		g_signal = 0;
+		printf("exit\n");
+		return (0);
 	}
+	if (sh->str[0] == '\0')
+	{
+		free(sh->str);
+		sh->str = NULL;
+		return (1);
+	}
+	add_history(sh->str);
+	if (lexer(sh) == -1)
+		return (1);
+	else if (parser(sh) == 1)
+		execute_ast(sh->ast, sh);
+	g_signal = 0;
+	return (1);
 }
-
+/*
 int	main(int ac, char **av, char **envp)
 {
 	t_shell	shell;
@@ -85,12 +94,14 @@ int	main(int ac, char **av, char **envp)
 	if (ac > 1 && av[1])
 		return (0);
 	shell = init_shell(envp);
-	shell_loop(&shell);
+	while (shell_loop(&shell))
+		free_shell_loop(&shell);
 	free_shell_loop(&shell);
 	free_env(shell.envp);
+	//free_ast(shell.ast);
 	rl_clear_history();
 	return (g_signal);
-}
+}*/
 /*		readline()
  *	-------------------
  *	La funcion readline(const char *str) es la que te lee

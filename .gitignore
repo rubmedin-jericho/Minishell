@@ -1,0 +1,8 @@
+# Minishell binary
+minishell
+
+# Libft folder
+libft/
+
+# Object files folder
+objs/

@@ -97,6 +97,15 @@ int	create_ast_safe(t_token *token, t_ast *child,
 	return (ret);
 }
 
+static int cleanup_pipe_ast(t_ast *ast)
+{
+	free_ast(ast->left);
+	free_ast(ast->right);
+	ast->left = NULL;
+	ast->right = NULL;
+	return (-1);
+}
+
 /*
  * finds the first | token
  * prev points to the token before the |
@@ -126,15 +135,9 @@ int	pipe_operator(t_token *token, t_ast *ast)
 	}
 	ret = create_ast_safe(token, ast->left, prev, saved_next);
 	if (ret < 0)
-	{
-		free_ast(ast->right);
-		return (-1);
-	}
+		return cleanup_pipe_ast(ast);
 	ret = create_ast_safe(pipe->next, ast->right, prev, saved_next);
 	if (ret < 0)
-	{
-		free_ast(ast->left);
-		return (-1);
-	}
+		return cleanup_pipe_ast(ast);
 	return (1);
 }

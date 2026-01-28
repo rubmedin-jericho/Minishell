@@ -173,11 +173,14 @@ void	fatal(const char *msg);
 void	execute_redirection(t_ast *node, t_shell *sh);
 t_pipe	init_pipe(t_ast *node, t_shell *sh);
 
-void	free_tokens(t_shell *sh);
+void	free_tokens(t_token *token);
+
+void	free_shell(t_shell *sh);
 
 /* signal */
-void	signals_init(void);
-
+void	set_signals_prompt(void);
+void	set_signals_exec(void);
+void	set_signals_child(void);
 /* Builtins*/
 
 int		is_builtin(char *str);

@@ -31,14 +31,14 @@ void	execute_simple(t_ast *node, t_shell *sh)
 	path = get_path(node->args[0], sh->envp);
 	if (!path)
 	{
-		printf("%s: command not found\n", node->args[0]);
+		perror(node->args[0]);
 		exit(127);
 	}
+	set_signals_child();
 	execve(path, node->args, sh->envp);
 	free(path);
 	perror(node->args[0]);
 	exit(1);
-	
 }
 
 void	exec_node_no_fork(t_ast *node, t_shell *sh)
@@ -64,6 +64,7 @@ void	exec_node(t_ast *node, t_shell *sh)
 		exec_node_no_fork(node, sh);
 		exit(sh->exit_status);
 	}
+	set_signals_exec();
 	pid = fork();
 	if (pid < 0)
 	{
@@ -77,24 +78,29 @@ void	exec_node(t_ast *node, t_shell *sh)
 		exit(sh->exit_status);
 	}
 	waitpid(pid, &status, 0);
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+	{
+		write(1, "\n", 1);
+	//	g_signal = 130;
+	}
 	if (WIFEXITED(status))
 		sh->exit_status = WEXITSTATUS(status);
 	else
 		sh->exit_status = 1;
 }
 
-void	free_tokens(t_shell *sh)
+void	free_tokens(t_token *token)
 {
 	t_token	*tmp;
 
-	while (sh->tokens)
+	while (token)
 	{
-		tmp = sh->tokens->next;
-		free(sh->tokens->data);
-		free(sh->tokens);
-		sh->tokens = tmp;
+		tmp = token->next;
+		free(token->data);
+		free(token);
+		token = tmp;
 	}
-	sh->tokens = NULL;
+	token = NULL;
 }
 
 void	execute_ast(t_ast *ast, t_shell *sh)
