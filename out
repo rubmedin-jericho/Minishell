@@ -1,8 +1,0 @@
-Makefile
-include
-libft
-minishell
-objs
-out
-readline.supp
-src

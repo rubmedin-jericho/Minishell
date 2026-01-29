@@ -86,7 +86,7 @@ int	shell_loop(t_shell *sh)
 	g_signal = 0;
 	return (1);
 }
-/*
+
 int	main(int ac, char **av, char **envp)
 {
 	t_shell	shell;
@@ -101,7 +101,7 @@ int	main(int ac, char **av, char **envp)
 	//free_ast(shell.ast);
 	rl_clear_history();
 	return (g_signal);
-}*/
+}
 /*		readline()
  *	-------------------
  *	La funcion readline(const char *str) es la que te lee
