@@ -55,17 +55,18 @@ void	free_tokens(t_token *token)
 	token = NULL;
 }
 
-void	free_env(char **env)
+void	free_string_array(char **str)
 {
 	int	i;
 
 	i = 0;
-	if (!env)
+	if (!str)
 		return ;
-	while (env[i])
+	while (str[i])
 	{
-		free(env[i]);
+		free(str[i]);
 		i++;
 	}
-	free(env);
+	free(str);
+	str = NULL;
 }

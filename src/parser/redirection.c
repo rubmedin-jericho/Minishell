@@ -12,7 +12,8 @@
 
 #include "minishell.h"
 
-static t_token	*find_redirection(t_token *token, t_token **prev_to_redir)
+static t_token	*get_last_redirection_token(t_token *token,
+	t_token **prev_to_redir)
 {
 	t_token	*curr;
 	t_token	*prev;
@@ -38,14 +39,14 @@ static t_token	*find_redirection(t_token *token, t_token **prev_to_redir)
 	return (last);
 }
 
-static int	extract_redirection(t_token **token, t_ast *ast,
+static int	parse_redirection_target(t_token **token, t_ast *ast,
 								t_token **prev, t_token **saved_next)
 {
 	t_token	*redir;
 
 	*prev = NULL;
 	*saved_next = NULL;
-	redir = find_redirection(*token, prev);
+	redir = get_last_redirection_token(*token, prev);
 	if (!redir)
 		return (0);
 	if (!redir->next || redir->next->type_tok != T_STRING)
@@ -67,7 +68,7 @@ static int	extract_redirection(t_token **token, t_ast *ast,
 	return (1);
 }
 
-int	error_redirect(t_token **token, t_ast *ast,
+int	rollback_redirection(t_token **token, t_ast *ast,
 					t_token **prev, t_token **saved_next)
 {
 	if (!ast)
@@ -92,15 +93,15 @@ int	redirection(t_token **token, t_ast *ast)
 	t_token	*saved_next;
 	int		ret;
 
-	ret = extract_redirection(token, ast, &prev, &saved_next);
+	ret = parse_redirection_target(token, ast, &prev, &saved_next);
 	if (ret <= 0)
 		return (ret);
 	ast->left = init_ast();
 	if (!ast->left)
-		return (error_redirect(token, ast, &prev, &saved_next));
+		return (rollback_redirection(token, ast, &prev, &saved_next));
 	ret = create_ast(*token, ast->left);
 	if (ret < 0)
-		return (error_redirect(token, ast, &prev, &saved_next));
+		return (rollback_redirection(token, ast, &prev, &saved_next));
 	if (prev)
 		prev->next = saved_next;
 	else

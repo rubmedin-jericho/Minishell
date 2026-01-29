@@ -15,25 +15,6 @@
 
 int	g_signal = 0;
 
-void	free_shell_loop(t_shell *sh)
-{
-	if (sh->str)
-	{
-		free(sh->str);
-		sh->str = NULL;
-	}
-	if (sh->tokens)
-	{
-		free_tokens(sh->tokens);
-		sh->tokens = NULL;
-	}
-	if (sh->ast)
-	{
-		free_ast(sh->ast);
-		sh->ast = NULL;
-	}
-}
-
 int	shell_loop(t_shell *sh)
 {
 	sh->tokens = NULL;
@@ -68,9 +49,8 @@ int	main(int ac, char **av, char **envp)
 		return (0);
 	shell = init_shell(envp);
 	while (shell_loop(&shell))
-		free_shell_loop(&shell);
-	free_env(shell.envp);
-	//free_ast(shell.ast);
+		free_shell(&shell);
+	free_string_array(shell.envp);
 	rl_clear_history();
 	return (g_signal);
 }

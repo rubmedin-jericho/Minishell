@@ -22,7 +22,7 @@ void	ft_exit(t_shell *shell)
 	if (!shell->ast || !shell->ast->args[1])
 	{
 		free_ast(shell->ast);
-		free_env(shell->envp);
+		free_string_array(shell->envp);
 		free_tokens(shell->tokens);
 		free(shell->str);
 		exit(shell->exit_status);
@@ -41,7 +41,7 @@ void	ft_exit(t_shell *shell)
 	if (is_number == 1)
 		shell->exit_status = ft_atoi(shell->ast->args[1]);
 	free_ast(shell->ast);
-	free_env(shell->envp);
+	free_string_array(shell->envp);
 	free_tokens(shell->tokens);
 	free(shell->str);
 	exit(shell->exit_status);

@@ -48,7 +48,6 @@ static int	allocate_array(t_token *token, t_ast *ast)
 {
 	int		count;
 	t_token	*buf;
-	int		i;
 
 	buf = token;
 	count = 0;
@@ -65,10 +64,7 @@ static int	allocate_array(t_token *token, t_ast *ast)
 		return (-1);
 	if (fill_array(token, ast) < 0)
 	{
-		i = 0;
-		while (ast->args[i])
-			free(ast->args[i++]);
-		free(ast->args);
+		free_string_array(ast->args);
 		ast->args = NULL;
 		return (-1);
 	}
@@ -85,9 +81,7 @@ int	create_ast(t_token *token, t_ast *ast)
 {
 	if (!token || !ast)
 		return (-1);
-	if (!ast)
-		return (-1);
-	if (pipe_operator(token, ast))
+	if (parse_pipe(&token, ast))
 		return (1);
 	if (redirection(&token, ast))
 		return (1);

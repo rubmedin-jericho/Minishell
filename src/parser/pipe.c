@@ -12,43 +12,52 @@
 
 #include "minishell.h"
 
-/*
- * get the last pipe token
- */
-static t_token	*find_last_pipe(t_token *token, t_token **prev_to_pipe)
+static t_token	*get_first_pipe_token(t_token *token, t_token **prev_to_pipe)
 {
-	t_token	*buf;
+	t_token	*curr;
 	t_token	*prev;
-	t_token	*last_pipe;
 
-	*prev_to_pipe = NULL;
-	buf = token;
+	curr = token;
 	prev = NULL;
-	last_pipe = NULL;
-	while (buf)
+	*prev_to_pipe = NULL;
+	while (curr)
 	{
-		if (buf->type_tok == T_PIPE)
+		if (curr->type_tok == T_PIPE)
 		{
-			last_pipe = buf;
 			*prev_to_pipe = prev;
+			if (prev)
+				prev->next = NULL;
+			return (curr);
 		}
-		prev = buf;
-		buf = buf->next;
+		prev = curr;
+		curr = curr->next;
 	}
-	return (last_pipe);
+	return (NULL);
 }
 
 /*
  * set memory allocation for left and right side of the tree
  */
-static int	allocate_ast_children(t_ast *ast)
+static int	init_pipe_ast_children(t_ast *ast, t_token *pipe,
+	t_token *saved_next, t_token *prev)
 {
+	saved_next = pipe->next;
+	pipe->next = NULL;
+	ast->type = T_PIPE;
 	ast->left = init_ast();
 	if (!ast->left)
+	{
+		if (prev)
+			prev->next = pipe;
+		pipe->next = saved_next;
 		return (-1);
+	}
 	ast->right = init_ast();
 	if (!ast->right)
 	{
+		if (prev)
+			prev->next = pipe;
+		pipe->next = saved_next;
 		free_ast(ast->left);
 		ast->left = NULL;
 		return (-1);
@@ -56,32 +65,30 @@ static int	allocate_ast_children(t_ast *ast)
 	return (0);
 }
 
-static t_token	*split_on_pipe(t_token *token, t_token **prev,
-	t_token **saved_next)
-{
-	t_token	*pipe;
-
-	if (!token || token->type_tok == T_PIPE)
-		return (NULL);
-	*saved_next = NULL;
-	pipe = find_last_pipe(token, prev);
-	if (!pipe || !pipe->next || pipe->next->type_tok == T_PIPE)
-		return (NULL);
-	if (*prev)
-	{
-		*saved_next = (*prev)->next;
-		(*prev)->next = NULL;
-	}
-	return (pipe);
-}
-
-static int cleanup_pipe_ast(t_ast *ast)
+static int	free_pipe_ast(t_ast *ast)
 {
 	free_ast(ast->left);
 	free_ast(ast->right);
 	ast->left = NULL;
 	ast->right = NULL;
 	return (-1);
+}
+
+int	parse_pipe_right(t_token *saved_next,
+	t_ast *ast, t_token *pipe)
+{
+	int	ret;
+
+	pipe->next = NULL;
+	ret = create_ast(saved_next, ast->right);
+	if (ret < 0)
+	{
+		free_pipe_ast(ast);
+		pipe->next = saved_next;
+		return (-1);
+	}
+	pipe->next = saved_next;
+	return (1);
 }
 
 /*
@@ -94,30 +101,30 @@ static int cleanup_pipe_ast(t_ast *ast)
  * return = 1 -> pipe parsed successfully
  * return = -1 -> error
  */
-int	pipe_operator(t_token *token, t_ast *ast)
+int	parse_pipe(t_token **token, t_ast *ast)
 {
 	t_token	*prev;
 	t_token	*pipe;
 	t_token	*saved_next;
-	int		ret;
 
-	pipe = split_on_pipe(token, &prev, &saved_next);
-	if (!pipe)
+	if (!token || !*token || !ast)
+		return (-1);
+	pipe = get_first_pipe_token(*token, &prev);
+	if (!pipe || !pipe->next)
 		return (0);
-	ast->type = T_PIPE;
-	if (allocate_ast_children(ast) < 0)
+	saved_next = pipe->next;
+	if (init_pipe_ast_children(ast, pipe, saved_next, prev) < 0)
+		return (-1);
+	if (prev && create_ast(*token, ast->left) < 0)
 	{
-		if (prev)
-			prev->next = saved_next;
+		free_pipe_ast(ast);
+		pipe->next = saved_next;
 		return (-1);
 	}
-	ret = create_ast(token, ast->left);
-	if (prev)
-		prev->next = saved_next;
-	if (ret < 0)
-		return cleanup_pipe_ast(ast);
-	ret = create_ast(pipe->next, ast->right);
-	if (ret < 0)
-		return cleanup_pipe_ast(ast);
+	if (!prev)
+		ast->left = NULL;
+	if (parse_pipe_right(saved_next, ast, pipe) < 0)
+		return (-1);
+	*token = pipe;
 	return (1);
 }

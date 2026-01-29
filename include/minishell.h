@@ -157,7 +157,7 @@ void	init_base(char **ae, t_shell *base);
 int		parser(t_shell *sh);
 int		create_ast(t_token *token, t_ast *ast);
 int		redirection(t_token **token, t_ast *ast);
-int		pipe_operator(t_token *token, t_ast *ast);
+int		parse_pipe(t_token **token, t_ast *ast);
 //void	init_ast(t_ast *ast);
 
 /* execute*/
@@ -194,7 +194,7 @@ void	ft_pwd(t_shell *shell);
 
 void	ft_exit(t_shell *shell);
 void	ft_unset(t_shell *shell);
-void	free_env(char **env);
+void	free_string_array(char **str);
 void	ft_export(t_shell *sh);
 
 
