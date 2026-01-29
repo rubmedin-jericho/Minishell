@@ -67,15 +67,7 @@ int	lexer(t_shell *sh)
 	sh->ast = ft_calloc(1, sizeof(t_ast));
 	if (!sh->ast)
 		return (-1);
-	if (create_ast(sh->tokens, sh->ast) == -1)
-	{
-		free(sh->ast);
-		sh->ast = NULL;
-		free_tokens(sh);
-		sh->tokens = NULL;
-		return (-1);
-	}
-
 	//print_list(l_tokens);
 	return (0);
 }
+
