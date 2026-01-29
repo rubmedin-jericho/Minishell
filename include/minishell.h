@@ -156,9 +156,9 @@ void	init_base(char **ae, t_shell *base);
 /*Parser*/
 int		parser(t_shell *sh);
 int		create_ast(t_token *token, t_ast *ast);
-int		redirection(t_token *token, t_ast *ast);
+int		redirection(t_token **token, t_ast *ast);
 int		pipe_operator(t_token *token, t_ast *ast);
-void	init_ast(t_ast *ast);
+//void	init_ast(t_ast *ast);
 
 /* execute*/
 void	execute_ast(t_ast *ast, t_shell *sh);
@@ -196,4 +196,10 @@ void	ft_exit(t_shell *shell);
 void	ft_unset(t_shell *shell);
 void	free_env(char **env);
 void	ft_export(t_shell *sh);
+
+
+
+t_shell	init_shell(char **envp);
+t_pipe	init_pipe(t_ast *node, t_shell *sh);
+t_ast	*init_ast(void);
 #endif

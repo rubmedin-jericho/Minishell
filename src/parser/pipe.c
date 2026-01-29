@@ -13,7 +13,7 @@
 #include "minishell.h"
 
 /*
- * get the last pipe token 
+ * get the last pipe token
  */
 static t_token	*find_last_pipe(t_token *token, t_token **prev_to_pipe)
 {
@@ -43,13 +43,13 @@ static t_token	*find_last_pipe(t_token *token, t_token **prev_to_pipe)
  */
 static int	allocate_ast_children(t_ast *ast)
 {
-	ast->left = ft_calloc(1, sizeof(t_ast));
+	ast->left = init_ast();
 	if (!ast->left)
 		return (-1);
-	ast->right = ft_calloc(1, sizeof(t_ast));
+	ast->right = init_ast();
 	if (!ast->right)
 	{
-		free(ast->left);
+		free_ast(ast->left);
 		ast->left = NULL;
 		return (-1);
 	}
@@ -73,28 +73,6 @@ static t_token	*split_on_pipe(t_token *token, t_token **prev,
 		(*prev)->next = NULL;
 	}
 	return (pipe);
-}
-
-/*
- * create a new Abstract Syntax Tree (AST)
- * ret = 0 no ast created
- * ret = 1 ast created
- * ret = -1 error creating the ast
- */
-int	create_ast_safe(t_token *token, t_ast *child,
-						t_token *prev, t_token *saved_link)
-{
-	int	ret;
-
-	ret = create_ast(token, child);
-	if (ret < 0)
-	{
-		free_ast(child);
-		if (prev)
-			prev->next = saved_link;
-		return (-1);
-	}
-	return (ret);
 }
 
 static int cleanup_pipe_ast(t_ast *ast)
@@ -133,10 +111,12 @@ int	pipe_operator(t_token *token, t_ast *ast)
 			prev->next = saved_next;
 		return (-1);
 	}
-	ret = create_ast_safe(token, ast->left, prev, saved_next);
+	ret = create_ast(token, ast->left);
+	if (prev)
+		prev->next = saved_next;
 	if (ret < 0)
 		return cleanup_pipe_ast(ast);
-	ret = create_ast_safe(pipe->next, ast->right, prev, saved_next);
+	ret = create_ast(pipe->next, ast->right);
 	if (ret < 0)
 		return cleanup_pipe_ast(ast);
 	return (1);

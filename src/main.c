@@ -15,56 +15,29 @@
 
 int	g_signal = 0;
 
-void	free_env(char **env)
-{
-	int	i;
-
-	i = 0;
-	if (!env)
-		return ;
-	while (env[i])
-	{
-		free(env[i]);
-		i++;
-	}
-	free(env);
-}
-
-t_shell	init_shell(char **envp)
-{
-	t_shell	sh;
-
-	init_flags(&sh.flags);
-	sh.exit_status = 0;
-	sh.in_pipeline = 0;
-	sh.tokens = NULL;
-	sh.envp = envp_dup(envp);
-	return (sh);
-}
-
 void	free_shell_loop(t_shell *sh)
 {
 	if (sh->str)
-    {
-        free(sh->str);
-        sh->str = NULL;
-    }
-    if (sh->tokens)
-    {
-        free_tokens(sh->tokens);
-        sh->tokens = NULL;
-    }
-    if (sh->ast)
-    {
-        free_ast(sh->ast);
-        sh->ast = NULL;
-    }
+	{
+		free(sh->str);
+		sh->str = NULL;
+	}
+	if (sh->tokens)
+	{
+		free_tokens(sh->tokens);
+		sh->tokens = NULL;
+	}
+	if (sh->ast)
+	{
+		free_ast(sh->ast);
+		sh->ast = NULL;
+	}
 }
 
 int	shell_loop(t_shell *sh)
 {
 	sh->tokens = NULL;
-    sh->ast = NULL;
+	sh->ast = NULL;
 	set_signals_prompt();
 	sh->str = readline("minishell> ");
 	if (sh->str == NULL)
@@ -96,7 +69,6 @@ int	main(int ac, char **av, char **envp)
 	shell = init_shell(envp);
 	while (shell_loop(&shell))
 		free_shell_loop(&shell);
-	free_shell_loop(&shell);
 	free_env(shell.envp);
 	//free_ast(shell.ast);
 	rl_clear_history();

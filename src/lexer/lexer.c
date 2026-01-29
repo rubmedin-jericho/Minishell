@@ -64,10 +64,6 @@ int	getype(char *str, t_flags *flags)
 int	lexer(t_shell *sh)
 {
 	init_list(&sh->tokens, sh->str, &sh->flags);
-	sh->ast = ft_calloc(1, sizeof(t_ast));
-	if (!sh->ast)
-		return (-1);
 	//print_list(l_tokens);
 	return (0);
 }
-

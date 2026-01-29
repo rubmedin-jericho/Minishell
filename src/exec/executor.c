@@ -81,7 +81,6 @@ void	exec_node(t_ast *node, t_shell *sh)
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 	{
 		write(1, "\n", 1);
-	//	g_signal = 130;
 	}
 	if (WIFEXITED(status))
 		sh->exit_status = WEXITSTATUS(status);
@@ -89,30 +88,15 @@ void	exec_node(t_ast *node, t_shell *sh)
 		sh->exit_status = 1;
 }
 
-void	free_tokens(t_token *token)
-{
-	t_token	*tmp;
-
-	while (token)
-	{
-		tmp = token->next;
-		free(token->data);
-		free(token);
-		token = tmp;
-	}
-	token = NULL;
-}
-
 void	execute_ast(t_ast *ast, t_shell *sh)
 {
 	if (!sh || !ast)
 		return ;
-	
-	if (ast->type == T_STRING && is_builtin(ast->args[0]) 
+	if (ast->type == T_STRING && is_builtin(ast->args[0])
 		&& !sh->in_pipeline)
-    {
-        builtin(ast, sh, ast->args[0]);
-        return ;
-    }
+	{
+		builtin(ast, sh, ast->args[0]);
+		return ;
+	}
 	exec_node(ast, sh);
 }

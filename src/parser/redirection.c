@@ -38,14 +38,6 @@ static t_token	*find_redirection(t_token *token, t_token **prev_to_redir)
 	return (last);
 }
 
-static int	allocate_left_ast(t_ast *ast)
-{
-	ast->left = ft_calloc(1, sizeof(t_ast));
-	if (!ast->left)
-		return (-1);
-	return (0);
-}
-
 static int	extract_redirection(t_token **token, t_ast *ast,
 								t_token **prev, t_token **saved_next)
 {
@@ -94,23 +86,24 @@ int	error_redirect(t_token **token, t_ast *ast,
 	return (-1);
 }
 
-int	redirection(t_token *token, t_ast *ast)
+int	redirection(t_token **token, t_ast *ast)
 {
 	t_token	*prev;
 	t_token	*saved_next;
 	int		ret;
 
-	ret = extract_redirection(&token, ast, &prev, &saved_next);
+	ret = extract_redirection(token, ast, &prev, &saved_next);
 	if (ret <= 0)
 		return (ret);
-	if (allocate_left_ast(ast) < 0)
-		return (error_redirect(&token, ast, &prev, &saved_next));
-	ret = create_ast(token, ast->left);
+	ast->left = init_ast();
+	if (!ast->left)
+		return (error_redirect(token, ast, &prev, &saved_next));
+	ret = create_ast(*token, ast->left);
 	if (ret < 0)
-		return (error_redirect(&token, ast, &prev, &saved_next));
+		return (error_redirect(token, ast, &prev, &saved_next));
 	if (prev)
 		prev->next = saved_next;
 	else
-		token = saved_next;
+		*token = saved_next;
 	return (1);
 }

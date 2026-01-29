@@ -14,9 +14,13 @@
 
 int	parser(t_shell *sh)
 {
-	
-	if (create_ast(sh->tokens, sh->ast))
+	sh->ast = init_ast();
+	if (!sh->ast)
+		return (-1);
+	if (create_ast(sh->tokens, sh->ast) < 0)
 	{
+		free_ast(sh->ast);
+		sh->ast = NULL;
 		return (-1);
 	}
 	return (1);

@@ -41,7 +41,6 @@ static int	fill_array(t_token *token, t_ast *ast)
 	return (0);
 }
 
-
 /*
  * create a new array of string to put the value
  */
@@ -76,17 +75,6 @@ static int	allocate_array(t_token *token, t_ast *ast)
 	return (0);
 }
 
-void	init_ast(t_ast *ast)
-{
-	if (!ast)
-		return ;
-	ast->type = T_STRING;
-	ast->left = NULL;
-	ast->right = NULL;
-	ast->file = NULL;
-	ast->args = NULL;
-}
-
 /*
  * check what type of return received
  * ret = 0 nothing is created
@@ -95,20 +83,13 @@ void	init_ast(t_ast *ast)
  */
 int	create_ast(t_token *token, t_ast *ast)
 {
-	int	ret;
-
 	if (!token || !ast)
 		return (-1);
-	init_ast(ast);
-	ret = pipe_operator(token, ast);
-	if (ret == -1)
+	if (!ast)
 		return (-1);
-	if (ret == 1)
-		return (0);
-	ret = redirection(token, ast);
-	if (ret == -1)
-		return (-1);
-	if (ret == 1)
-		return (0);
+	if (pipe_operator(token, ast))
+		return (1);
+	if (redirection(&token, ast))
+		return (1);
 	return (allocate_array(token, ast));
 }

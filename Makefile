@@ -53,6 +53,11 @@ EXECUTE_SRCS = \
 SIGNALS_SRCS = \
 		$(SRCS_DIR)/signal/signals.c
 
+# Utility functions
+GLOBAL_UTILS = \
+		$(SRCS_DIR)/global_utils/free_utils.c \
+		$(SRCS_DIR)/global_utils/init.c
+
 # Builtin sources
 BUILTIN_SRCS = \
 		$(SRCS_DIR)/builtins/ft_pwd.c \
@@ -69,7 +74,8 @@ SRCS =	$(MAIN) \
 		$(LEXER_SRCS) \
 		$(BUILTIN_SRCS) \
 		$(EXECUTE_SRCS) \
-		$(SIGNALS_SRCS)
+		$(SIGNALS_SRCS) \
+		$(GLOBAL_UTILS)
 
 # Object files
 OBJS = $(SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
