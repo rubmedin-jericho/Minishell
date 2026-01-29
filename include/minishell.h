@@ -193,13 +193,16 @@ void	ft_echo(char *args[], t_shell *shell);
 void	ft_pwd(t_shell *shell);
 
 void	ft_exit(t_shell *shell);
+
 void	ft_unset(t_shell *shell);
-void	free_string_array(char **str);
+
 void	ft_export(t_shell *sh);
 
+void	ft_env(t_shell *sh);
 
 
 t_shell	init_shell(char **envp);
 t_pipe	init_pipe(t_ast *node, t_shell *sh);
 t_ast	*init_ast(void);
+void	free_string_array(char **str);
 #endif

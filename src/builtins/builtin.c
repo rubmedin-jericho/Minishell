@@ -47,4 +47,6 @@ void	builtin(t_ast *ast, t_shell *sh, char *str)
 		ft_unset(sh);
 	if (ft_strncmp(str, "export", 7) == 0)
 		ft_export(sh);
+	if (ft_strncmp(str, "env", 4) == 0)
+		ft_env(sh);
 }

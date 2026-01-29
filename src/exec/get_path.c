@@ -16,7 +16,7 @@ static char	**get_path_dirs(char **env)
 {
 	const char	*name = "PATH";
 	char		*env_path;
-	int			i;	
+	int			i;
 	size_t		len;
 
 	len = ft_strlen(name);
@@ -93,18 +93,18 @@ static char	*find_executable(char *cmd, char **paths)
 
 char	*get_path(char *cmd, char **env)
 {
-	char	**paths;
-	char	*full;
+	char	**path_dirs;
+	char	*resolved_path;
 
-	paths = get_path_dirs(env);
-	full = NULL;
+	path_dirs = get_path_dirs(env);
+	resolved_path = NULL;
 	if (ft_strchr(cmd, '/'))
 	{
 		if (access(cmd, X_OK) == 0)
-			full = ft_strdup(cmd);
+			resolved_path = ft_strdup(cmd);
 	}
 	else
-		full = find_executable(cmd, paths);
-	ft_free_tab(paths);
-	return (full);
+		resolved_path = find_executable(cmd, path_dirs);
+	ft_free_tab(path_dirs);
+	return (resolved_path);
 }

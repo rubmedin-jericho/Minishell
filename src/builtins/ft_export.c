@@ -12,17 +12,19 @@
 
 #include "minishell.h"
 
-static int	ft_length_env(char **env)
+static int	env_length(char **env)
 {
 	int	i;
 
+	if (!env)
+		return (0);
 	i = 0;
 	while (env[i])
 		i++;
 	return (i);
 }
 
-static int	find_env(char **envp, char *name)
+static int	get_env_index(char **envp, char *name)
 {
 	int		i;
 	int		len;
@@ -39,11 +41,11 @@ static int	find_env(char **envp, char *name)
 	return (-1);
 }
 
-static int	valid_identifier(char *s)
+static int	is_valid_env_name(char *s)
 {
 	int		i;
 
-	if (!ft_isalpha(s[0]) && s[0] != '_')
+	if (!s || (!ft_isalpha(s[0]) && s[0] != '_'))
 		return (0);
 	i = 1;
 	while (s[i] && s[i] != '=')
@@ -55,43 +57,96 @@ static int	valid_identifier(char *s)
 	return (1);
 }
 
-static void	new_envp(t_shell *shell, char *arg)
+char	*get_name(char *arg, int *has_equal)
+{
+	char	*eq;
+	char	*name;
+
+	eq = ft_strchr(arg, '=');
+	if (eq)
+	{
+		*has_equal = 1;
+		name = strndup(arg, eq - arg);
+	}
+	else
+	{
+		*has_equal = 0;
+		name = strdup(arg);
+	}
+	if (!name)
+		perror("strdup failed");
+	return (name);
+}
+
+static void	append_env_var(t_shell *shell, char *arg)
 {
 	int		len;
 	char	**tmp;
 
-	len = ft_length_env(shell->envp);
-	tmp = realloc(shell->envp, sizeof(char *) * (len + 2));
+	len = env_length(shell->envp);
+	tmp = (char **)realloc(shell->envp, sizeof(char *) * (len + 2));
 	if (!tmp)
+	{
+		perror("realloc failed");
 		return ;
+	}
 	shell->envp = tmp;
 	shell->envp[len] = ft_strdup(arg);
+	if (!shell->envp[len])
+	{
+		perror("strdup failed");
+		shell->envp[len] = NULL;
+		return ;
+	}
 	shell->envp[len + 1] = NULL;
+}
+
+void	handle_export_arg(t_shell *shell, char *name, int has_equal, char *arg)
+{
+	int	idx;
+
+	if (!is_valid_env_name(name))
+	{
+		ft_putstr_fd("export: not a valid identifier", 2);
+		ft_putendl_fd(name, 2);
+		return ;
+	}
+	idx = get_env_index(shell->envp, name);
+	if (!has_equal)
+		return ;
+	if (idx != -1)
+	{
+		free(shell->envp[idx]);
+		if (has_equal)
+			shell->envp[idx] = ft_strdup(arg);
+		else
+			shell->envp[idx] = ft_strdup(shell->envp[idx]);
+		if (!shell->envp[idx])
+			perror("strdup failed");
+		return ;
+	}
+	else
+		append_env_var(shell, arg);
 }
 
 void	ft_export(t_shell *shell)
 {
-	int		idx;
 	int		i;
+	char	*name;
+	int		has_equal;
+	char	**args;
 
 	if (!shell || !shell->envp || !shell->ast
 		|| !shell->ast->args || !shell->ast->args[1])
 		return ;
 	i = 0;
-	while (shell->ast->args[++i])
+	args = shell->ast->args;
+	while (args[++i])
 	{
-		if (!valid_identifier(shell->ast->args[i]))
-		{
-			write(2, "export: not a valid identifier\n", 31);
+		name = get_name(args[i], &has_equal);
+		if (!name)
 			continue ;
-		}
-		idx = find_env(shell->envp, shell->ast->args[i]);
-		if (idx != -1)
-		{
-			free(shell->envp[idx]);
-			shell->envp[idx] = ft_strdup(shell->ast->args[i]);
-			continue ;
-		}
-		new_envp(shell, shell->ast->args[i]);
+		handle_export_arg(shell, name, has_equal, args[i]);
+		free(name);
 	}
 }

@@ -67,6 +67,7 @@ BUILTIN_SRCS = \
 		$(SRCS_DIR)/builtins/ft_export.c \
 		$(SRCS_DIR)/builtins/builtin.c \
 		$(SRCS_DIR)/builtins/ft_unset.c \
+		$(SRCS_DIR)/builtins/ft_env.c
 
 # Combine all sources
 SRCS =	$(MAIN) \

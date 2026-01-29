@@ -17,6 +17,7 @@ void	free_ast(t_ast *node)
 		node->args = NULL;
 	}
 	free(node->file);
+	node->file = NULL;
 	free(node);
 }
 

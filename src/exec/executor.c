@@ -31,7 +31,8 @@ void	execute_simple(t_ast *node, t_shell *sh)
 	path = get_path(node->args[0], sh->envp);
 	if (!path)
 	{
-		perror(node->args[0]);
+		ft_putstr_fd(node->args[0], 2);
+		ft_putstr_fd(": command not found\n", 2);
 		exit(127);
 	}
 	set_signals_child();
