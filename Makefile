@@ -65,6 +65,7 @@ BUILTIN_SRCS = \
 		$(SRCS_DIR)/builtins/ft_cd.c \
 		$(SRCS_DIR)/builtins/ft_exit.c \
 		$(SRCS_DIR)/builtins/ft_export.c \
+		$(SRCS_DIR)/builtins/ft_export_utils.c \
 		$(SRCS_DIR)/builtins/builtin.c \
 		$(SRCS_DIR)/builtins/ft_unset.c \
 		$(SRCS_DIR)/builtins/ft_env.c

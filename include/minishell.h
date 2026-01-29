@@ -197,6 +197,7 @@ void	ft_exit(t_shell *shell);
 void	ft_unset(t_shell *shell);
 
 void	ft_export(t_shell *sh);
+void	handle_export_arg(t_shell *shell, char *name, int has_equal, char *arg);
 
 void	ft_env(t_shell *sh);
 
