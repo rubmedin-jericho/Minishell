@@ -12,36 +12,61 @@
 
 #include "minishell.h"
 
-void	ft_exit(t_shell *shell)
+static int	is_numeric(char *s)
 {
 	int	i;
-	int	is_number;
 
-	shell->exit_status = 127;
-	if (!shell->ast || !shell->ast->args[1])
-	{
-		free_ast(shell->ast);
-		free_string_array(shell->envp);
-		free_tokens(shell->tokens);
-		free(shell->str);
-		exit(shell->exit_status);
-	}
+	if (!s || !*s)
+		return (0);
 	i = 0;
-	while (shell->ast->args[1][i] != '\0')
+	if (s[i] == '+' || s[i] == '-')
+		i++;
+	if (!s[i])
+		return (0);
+	while (s[i])
 	{
-		is_number = 1;
-		if (!ft_isdigit(shell->ast->args[1][i]))
-		{
-			is_number = 0;
-			break ;
-		}
+		if (!ft_isdigit(s[i]))
+			return (0);
 		i++;
 	}
-	if (is_number == 1)
-		shell->exit_status = ft_atoi(shell->ast->args[1]);
-	free_ast(shell->ast);
+	return (1);
+}
+
+static void	exit_error(t_shell *shell)
+{
+	char	*str;
+
+	str = shell->ast->args[1];
+	if (!is_numeric(str))
+	{
+		printf("exit\n");
+		printf("bash: exit: %s: numeric argument required\n", str);
+		free_string_array(shell->envp);
+		free_shell(shell);
+		shell->exit_status = 2;
+		exit(shell->exit_status);
+	}
+	if (shell->ast->args[2])
+	{
+		printf("exit: too many arguments\n");
+		shell->exit_status = 1;
+		return ;
+	}
+	shell->exit_status = (unsigned char)ft_atoi(str);
+	printf("exit\n");
 	free_string_array(shell->envp);
-	free_tokens(shell->tokens);
-	free(shell->str);
+	free_shell(shell);
 	exit(shell->exit_status);
+}
+
+void	ft_exit(t_shell *shell)
+{
+	if (!shell->ast || !shell->ast->args[1])
+	{
+		free_string_array(shell->envp);
+		free_shell(shell);
+		printf("exit\n");
+		exit(shell->exit_status);
+	}
+	exit_error(shell);
 }
