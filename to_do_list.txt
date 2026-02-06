@@ -21,3 +21,15 @@ check leaks in exec and parser
 add some comments
 
 
+Handle exit status
+	* need to add correct exit status for signals, and other stuffs
+Handle heredocs → <<
+	* need to start
+Cleanup memory → free tokens & buffers
+	* have memory leaks when using pipes 
+
+TEST CASES
+	*cat | cat | ls
+		- error probably when is closing the fds
+	*Try ctrl-\ after running a blocking command like cat without arguments or grep “something“.
+		when using this commandd in bash it gives "^\Quit (core dumped)" but in the minishell gives "^\minishell>" 
